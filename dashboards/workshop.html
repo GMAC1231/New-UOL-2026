@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UOL Analytics | Workshop Analytics</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <style>
+    :root{
+      --side:292px;
+      --ink:#0f172a;
+      --muted:#64748b;
+      --line:#dbe4f0;
+      --bg:#f3f7fd;
+      --blue:#2563eb;
+      --purple:#7c3aed;
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;overflow-x:hidden}
+    body{
+      color:var(--ink);
+      font-family:Inter,Segoe UI,Arial,sans-serif;
+      background:
+        radial-gradient(circle at 7% 3%,rgba(37,99,235,.12),transparent 25%),
+        radial-gradient(circle at 98% 95%,rgba(124,58,237,.08),transparent 28%),
+        var(--bg);
+    }
+
+    .side{
+      position:fixed;
+      inset:0 auto 0 0;
+      width:var(--side);
+      height:100vh;
+      padding:20px 14px;
+      overflow-y:auto;
+      z-index:1000;
+      background:linear-gradient(180deg,#061326 0%,#102a5d 48%,#5b21b6 100%);
+      box-shadow:10px 0 34px rgba(15,23,42,.16);
+    }
+    .brand-wrap{
+      padding:12px 13px 18px;
+      margin-bottom:13px;
+      border-bottom:1px solid rgba(255,255,255,.12);
+    }
+    .brand-title{font-size:22px;font-weight:900;color:#fff}
+    .brand-sub{
+      margin-top:4px;font-size:10px;font-weight:800;
+      letter-spacing:.18em;text-transform:uppercase;color:#bfdbfe;
+    }
+    .nav-link{
+      display:flex;align-items:center;width:100%;
+      padding:11px 13px;margin:5px 0;border-radius:11px;
+      color:#e5efff;text-decoration:none;font-size:13px;font-weight:700;
+      transition:.2s;
+    }
+    .nav-link:hover{background:rgba(255,255,255,.10)}
+    .nav-link.active{
+      background:linear-gradient(135deg,#1769ff,#8438f5);
+      color:#fff;box-shadow:0 10px 24px rgba(37,99,235,.28);
+    }
+
+    .main{
+      margin-left:var(--side);
+      width:calc(100% - var(--side));
+      padding:18px 24px 32px;
+    }
+
+    .hero{
+      position:relative;overflow:hidden;
+      min-height:145px;padding:27px 29px;border-radius:25px;color:#fff;
+      background:linear-gradient(115deg,#1647c8 0%,#5b21b6 56%,#0697b5 100%);
+      box-shadow:0 18px 42px rgba(37,99,235,.18);
+    }
+    .hero:after{
+      content:"";position:absolute;width:310px;height:310px;border-radius:50%;
+      right:-80px;top:-160px;background:rgba(255,255,255,.10);
+    }
+
+    .card{
+      background:#fff;border:1px solid #dfe7f2;border-radius:20px;
+      box-shadow:0 10px 28px rgba(15,23,42,.055);
+    }
+    .filter{
+      width:100%;height:43px;padding:0 13px;border:1px solid #cbd7e6;
+      border-radius:11px;background:#fff;outline:none;font-size:12px;
+    }
+    .filter:focus{border-color:#6366f1;box-shadow:0 0 0 4px rgba(99,102,241,.1)}
+    .btn{
+      min-height:42px;border:0;border-radius:11px;padding:10px 16px;
+      color:#fff;font-size:12px;font-weight:900;cursor:pointer;
+      background:linear-gradient(135deg,#2563eb,#7c3aed);
+      box-shadow:0 8px 20px rgba(79,70,229,.20);
+    }
+    .btn:hover{filter:brightness(1.05)}
+    .muted{color:var(--muted)}
+
+    .kpi-card{min-height:90px;padding:18px;position:relative;overflow:hidden}
+    .kpi-card:after{
+      content:"";position:absolute;width:95px;height:95px;border-radius:50%;
+      right:-38px;top:-38px;
+      background:linear-gradient(135deg,rgba(37,99,235,.07),rgba(124,58,237,.12));
+    }
+    .kpi-label{
+      font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+      color:#60718a;font-weight:800;
+    }
+    .kpi{font-size:30px;line-height:1.1;margin-top:7px;color:#2563eb;font-weight:900}
+
+    .section-title{display:flex;align-items:center;gap:10px}
+    .section-title:before{
+      content:"";width:5px;height:24px;border-radius:8px;
+      background:linear-gradient(180deg,#2563eb,#7c3aed);
+    }
+
+    .chart-box{height:350px}
+    .chart-dynamic{min-height:420px;height:420px}
+    .small-chart{height:310px}
+
+    .mobile-nav-toggle{display:none}
+
+    @media(min-width:1200px){
+      .kpi-grid{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+    }
+
+    @media(max-width:1050px) and (min-width:769px){
+      :root{--side:245px}
+      .main{padding:18px}
+    }
+
+    @media(max-width:768px){
+      .side{
+        position:sticky;top:0;width:100%;height:auto;
+        padding:10px 12px;overflow:visible;
+      }
+      .main{margin-left:0;width:100%;padding:12px}
+      .brand-wrap{padding:5px 5px 9px;margin-bottom:8px;border-bottom:0}
+      .brand-title{font-size:19px}
+      .mobile-nav-toggle{
+        display:flex;width:100%;align-items:center;justify-content:space-between;
+        padding:12px 14px;border:1px solid rgba(255,255,255,.15);
+        border-radius:14px;background:rgba(255,255,255,.10);
+        color:#fff;font-weight:800;cursor:pointer;
+      }
+      .mobile-nav-menu{
+        display:none;margin-top:8px;padding:8px;max-height:65vh;overflow-y:auto;
+        border:1px solid rgba(255,255,255,.12);border-radius:16px;
+        background:rgba(2,6,23,.98);
+      }
+      .side.mobile-open .mobile-nav-menu{display:block}
+      .mobile-nav-menu .nav-link{margin:3px 0}
+      .hero{min-height:auto;padding:20px;border-radius:18px}
+      .hero h1{font-size:30px!important}
+      .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+      .chart-box{height:300px}
+      .small-chart{height:270px}
+    }
+
+    @media(max-width:480px){
+      .main{padding:10px}
+      .kpi-grid{grid-template-columns:1fr!important}
+      .card{border-radius:16px}
+    }
+  
+    /* ===== Chart Detail Popup ===== */
+    .detail-modal{
+      position:fixed;inset:0;z-index:99999;display:none;
+      align-items:center;justify-content:center;padding:20px;
+      background:rgba(2,6,23,.62);backdrop-filter:blur(5px);
+    }
+    .detail-modal.open{display:flex}
+    .detail-dialog{
+      width:min(760px,96vw);max-height:88vh;overflow:auto;
+      background:#fff;border:1px solid #dbe4f0;border-radius:24px;
+      box-shadow:0 30px 90px rgba(2,6,23,.30);
+      animation:popupIn .18s ease-out;
+    }
+    @keyframes popupIn{
+      from{opacity:0;transform:translateY(12px) scale(.98)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+    .detail-head{
+      position:sticky;top:0;z-index:2;
+      display:flex;align-items:flex-start;justify-content:space-between;gap:18px;
+      padding:20px 22px;color:#fff;
+      background:linear-gradient(115deg,#1647c8,#5b21b6 58%,#0697b5);
+      border-radius:23px 23px 0 0;
+    }
+    .detail-close{
+      flex:0 0 auto;width:38px;height:38px;border:0;border-radius:50%;
+      background:rgba(255,255,255,.16);color:#fff;font-size:22px;
+      line-height:1;cursor:pointer;font-weight:900;
+    }
+    .detail-close:hover{background:rgba(255,255,255,.26)}
+    .detail-body{padding:22px}
+    .detail-summary{
+      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;
+      margin-bottom:18px;
+    }
+    .detail-stat{
+      padding:14px;border:1px solid #e2e8f0;border-radius:15px;background:#f8fafc;
+    }
+    .detail-stat-label{
+      font-size:10px;text-transform:uppercase;letter-spacing:.11em;
+      color:#64748b;font-weight:900;
+    }
+    .detail-stat-value{margin-top:5px;font-size:20px;font-weight:900;color:#2563eb}
+    .detail-record{
+      padding:16px 0;border-bottom:1px solid #e2e8f0;
+    }
+    .detail-record:last-child{border-bottom:0}
+    .detail-grid{
+      display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 18px;
+      margin-top:11px;
+    }
+    .detail-field small{
+      display:block;color:#64748b;font-size:10px;text-transform:uppercase;
+      letter-spacing:.08em;font-weight:800;margin-bottom:2px;
+    }
+    .detail-field strong{font-size:12px;color:#0f172a;word-break:break-word}
+    .click-hint{font-size:11px;color:#64748b;margin-top:6px;font-weight:700}
+    @media(max-width:600px){
+      .detail-summary,.detail-grid{grid-template-columns:1fr}
+      .detail-dialog{border-radius:18px}
+      .detail-head{border-radius:17px 17px 0 0}
+    }
+
+  </style>
+</head>
+
+<body>
+<aside class="side" id="sidebar">
+  <div class="brand-wrap">
+    <div class="brand-title">🏛 UOL Analytics</div>
+    <div class="brand-sub">Performance Intelligence</div>
+  </div>
+
+  <button class="mobile-nav-toggle" id="mobileNavToggle">
+    <span>🛠 Workshop Analytics</span><span>▼</span>
+  </button>
+
+  <div class="mobile-nav-menu" id="navMenu">
+<a class="nav-link" href="../index.html">📊 Executive Dashboard</a>
+    <a class="nav-link" href="workshop.html">🛠 Workshop Dashboard </a>
+    <a class="nav-link" href="seminar.html">🎤 Seminar Dashboard</a>
+    <a class="nav-link" href="conference.html">🎓 Conference Dashboard</a>
+    <a class="nav-link" href="guest.html">👨‍🏫 Guest Lecture</a>
+    <a class="nav-link" href="internship-placement.html">💼 Internship / Placement</a>
+    <a class="nav-link" href="mou.html">🤝 MoU and MoU Signing</a>
+    <a class="nav-link" href="iv.html">🏭 Industrial Visit</a>
+    <a class="nav-link" href="others.html">📌 Others</a>
+    <a class="nav-link" href="iab.html">🤝 IAB Meeting / Industry Consultation</a>
+    <a class="nav-link" href="research-collaboration.html">🔬 Research Collaboration</a>
+    <a class="nav-link" href="community.html">🌍 Community Engagement</a>
+    <a class="nav-link" href="alumni.html">🎓 Alumni Talk / Mentoring</a>
+    <a class="nav-link" href="curriculum-feedback.html">📝 Curriculum Feedback Session</a>
+  </div>
+</aside>
+
+<main class="main">
+  <section class="hero mb-7">
+    <div class="relative z-10 flex flex-wrap items-end justify-between gap-5">
+      <div>
+        <div class="text-blue-100 text-xs uppercase tracking-[.22em] font-black">University of Lahore</div>
+        <h1 class="text-4xl md:text-5xl font-black mt-2">Workshop Analytics</h1>
+        <p class="text-blue-100 mt-3 max-w-3xl">
+          Live analytics from <strong>UOL_Workshop_Only_Separated.xlsx</strong>.
+        </p>
+      </div>
+      <div class="bg-white/15 backdrop-blur px-5 py-4 rounded-2xl">
+        <div class="text-xs text-blue-100 uppercase font-bold">Excel connection</div>
+        <div id="connection" class="font-black mt-1">Loading Excel…</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card p-5 mb-7">
+    <div class="mb-4">
+      <h2 class="text-xl font-black">Workshop Filters</h2>
+      <p class="muted text-sm mt-1">Filter the separated workshop data by faculty, department, person and status.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 xl:grid-cols-5 gap-3">
+      <select id="facultyFilter" class="filter"><option value="All">All Faculties</option></select>
+      <select id="departmentFilter" class="filter"><option value="All">All Departments</option></select>
+      <select id="personFilter" class="filter"><option value="All">All People</option></select>
+      <select id="plannedFilter" class="filter">
+        <option value="All">All Planned Status</option>
+        <option value="Yes">Planned: Yes</option>
+        <option value="No">Planned: No</option>
+      </select>
+      <select id="scheduledFilter" class="filter">
+        <option value="All">All Scheduled Status</option>
+        <option value="Yes">Scheduled: Yes</option>
+        <option value="No">Scheduled: No</option>
+      </select>
+    </div>
+
+    <div class="grid md:grid-cols-[1fr_auto_auto] gap-3 mt-3">
+      <input id="searchFilter" class="filter" placeholder="Search title, organization, person or designation">
+      <button class="btn" id="resetBtn">↺ Reset</button>
+      <button class="btn" id="exportBtn">📥 Export Workshop Excel</button>
+    </div>
+  </section>
+
+  <section class="grid kpi-grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+    <div class="card kpi-card"><div class="kpi-label">Workshop Records</div><div id="kWorkshopRecords" class="kpi">0</div></div>
+    <div class="card kpi-card"><div class="kpi-label">Workshop Events</div><div id="kWorkshopEvents" class="kpi">0</div></div>
+    <div class="card kpi-card"><div class="kpi-label">People Involved</div><div id="kWorkshopPeople" class="kpi">0</div></div>
+    <div class="card kpi-card"><div class="kpi-label">Faculties</div><div id="kFaculties" class="kpi">0</div></div>
+    <div class="card kpi-card"><div class="kpi-label">Planned</div><div id="kPlanned" class="kpi">0</div></div>
+    <div class="card kpi-card"><div class="kpi-label">Scheduled</div><div id="kScheduled" class="kpi">0</div></div>
+  </section>
+
+  <section class="mb-8">
+    <div class="mb-4">
+      <h2 class="text-3xl font-black section-title">Workshop Analytics</h2>
+      <p class="muted mt-1">Charts use only the records from the Workshop worksheet.</p>
+    </div>
+
+    <div class="grid xl:grid-cols-2 gap-6">
+      <div class="card p-6 xl:col-span-2">
+        <h3 class="font-black text-lg mb-1">Workshops by Person &amp; Designation</h3>
+        <p class="muted text-sm mb-1">Person name, designation and total workshop events.</p><div class="click-hint">Click a bar to view full workshop details.</div>
+        <div id="peopleChartWrap" class="chart-dynamic"><canvas id="workshopPeopleChart"></canvas></div>
+      </div>
+
+      <div class="card p-6 xl:col-span-2">
+        <h3 class="font-black text-lg mb-1">Workshop Titles / Organizations</h3>
+        <p class="muted text-sm mb-1">Workshop titles and organizations from the Excel file.</p><div class="click-hint">Click a bar to view full workshop details.</div>
+        <div id="titleChartWrap" class="chart-dynamic"><canvas id="workshopTitleChart"></canvas></div>
+      </div>
+
+      <div class="card p-6">
+        <h3 class="font-black text-lg mb-1">Workshops by Faculty</h3>
+        <p class="muted text-sm mb-1">Workshop events contributed by faculty.</p><div class="click-hint">Click a bar to view matching workshop details.</div>
+        <div class="chart-box"><canvas id="workshopFacultyChart"></canvas></div>
+      </div>
+
+      <div class="card p-6">
+        <h3 class="font-black text-lg mb-1">Workshops by Department</h3>
+        <p class="muted text-sm mb-1">Workshop events contributed by department.</p><div class="click-hint">Click a bar to view matching workshop details.</div>
+        <div class="chart-box"><canvas id="workshopDepartmentChart"></canvas></div>
+      </div>
+
+      <div class="card p-6 xl:col-span-2">
+        <h3 class="font-black text-lg mb-1">Planned vs Scheduled Workshops</h3>
+        <p class="muted text-sm mb-3">Status of the workshop records.</p>
+        <div class="small-chart"><canvas id="workshopStatusChart"></canvas></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="detail-modal" id="detailModal" aria-hidden="true">
+  <div class="detail-dialog" role="dialog" aria-modal="true" aria-labelledby="detailModalTitle">
+    <div class="detail-head">
+      <div>
+        <div class="text-blue-100 text-xs uppercase tracking-[.18em] font-black">Workshop Details</div>
+        <h2 id="detailModalTitle" class="text-2xl font-black mt-1">Details</h2>
+      </div>
+      <button class="detail-close" id="detailClose" aria-label="Close popup">&times;</button>
+    </div>
+    <div class="detail-body" id="detailModalBody"></div>
+  </div>
+</div>
+
+
+<script>
+let workshopRows = [];
+let filteredWorkshops = [];
+const charts = {};
+const $ = id => document.getElementById(id);
+
+function clean(v){
+  if(v === undefined || v === null) return "";
+  const s = String(v).trim();
+  return (!s || s.toLowerCase()==="undefined" || s.toLowerCase()==="null") ? "" : s;
+}
+
+function normalizeHeader(s){
+  return clean(s).toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+}
+
+function getRowValue(row, names){
+  const keys = Object.keys(row);
+  for(const name of names){
+    const wanted = normalizeHeader(name);
+    const exact = keys.find(k => normalizeHeader(k) === wanted);
+    if(exact && clean(row[exact])) return clean(row[exact]);
+  }
+  for(const name of names){
+    const wanted = normalizeHeader(name);
+    const partial = keys.find(k => normalizeHeader(k).includes(wanted));
+    if(partial && clean(row[partial])) return clean(row[partial]);
+  }
+  return "";
+}
+
+function numberFrom(v){
+  const m = clean(v).replace(/,/g,"").match(/\d+(?:\.\d+)?/);
+  return m ? Number(m[0]) : 0;
+}
+
+function normalizeYesNo(v){
+  const s = clean(v).toLowerCase();
+  if(["yes","y","true","1","planned","scheduled"].includes(s)) return "Yes";
+  if(["no","n","false","0"].includes(s)) return "No";
+  return clean(v) || "Not Available";
+}
+
+function parseWorkshopRows(rows){
+  return rows.map(row => {
+    const separatedType = getRowValue(row,["Separated Activity Type","Activity Type"]);
+    const originalType = getRowValue(row,["Original Activity Type"]);
+
+    return {
+      separatedType,
+      originalType,
+      person: getRowValue(row,["Focal Person","Submitted By","Person","Name"]) || "Not Available",
+      designation: getRowValue(row,["Designation"]) || "Not Available",
+      faculty: getRowValue(row,["Faculty","Faculty Name"]) || "Not Available",
+      department: getRowValue(row,["Department","Department Name"]) || "Not Available",
+      title: getRowValue(row,[
+        "Organization / Activity Title",
+        "Organization / Activity",
+        "Activity Title",
+        "Organization",
+        "Name Of Organization Planned with"
+      ]) || "Workshop",
+      events: numberFrom(getRowValue(row,["How Many","No. of Events","Number of Events"])) || 1,
+      planned: normalizeYesNo(getRowValue(row,["Planned","Is Planned"])),
+      scheduled: normalizeYesNo(getRowValue(row,["Scheduled","Is Scheduled"]))
+    };
+  }).filter(row => {
+    const s = row.separatedType.toLowerCase();
+    const o = row.originalType.toLowerCase();
+
+    // The workbook itself is workshop-only. Keep blank type values too,
+    // but reject a row only when it explicitly identifies another separated type.
+    if(!s && !o) return true;
+    if(s) return s === "workshop" || s.includes("workshop");
+    return o.includes("workshop");
+  });
+}
+
+function uniqueSorted(values){
+  return [...new Set(values.map(clean).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+}
+
+function fillSelect(id, values, label){
+  const el = $(id);
+  el.innerHTML = `<option value="All">${label}</option>`;
+  uniqueSorted(values).forEach(v=>{
+    const option=document.createElement("option");
+    option.value=v; option.textContent=v; el.appendChild(option);
+  });
+}
+
+function populateFilters(){
+  fillSelect("facultyFilter",workshopRows.map(x=>x.faculty),"All Faculties");
+  fillSelect("departmentFilter",workshopRows.map(x=>x.department),"All Departments");
+  fillSelect("personFilter",workshopRows.map(x=>x.person),"All People");
+}
+
+function applyFilters(){
+  const faculty=$("facultyFilter").value;
+  const department=$("departmentFilter").value;
+  const person=$("personFilter").value;
+  const planned=$("plannedFilter").value;
+  const scheduled=$("scheduledFilter").value;
+  const q=$("searchFilter").value.toLowerCase().trim();
+
+  filteredWorkshops=workshopRows.filter(r =>
+    (faculty==="All" || r.faculty===faculty) &&
+    (department==="All" || r.department===department) &&
+    (person==="All" || r.person===person) &&
+    (planned==="All" || r.planned===planned) &&
+    (scheduled==="All" || r.scheduled===scheduled) &&
+    (!q || [r.person,r.designation,r.title,r.faculty,r.department]
+      .some(v=>String(v).toLowerCase().includes(q)))
+  );
+  renderDashboard();
+}
+
+function resetFilters(){
+  ["facultyFilter","departmentFilter","personFilter","plannedFilter","scheduledFilter"]
+    .forEach(id=>$(id).value="All");
+  $("searchFilter").value="";
+  filteredWorkshops=[...workshopRows];
+  renderDashboard();
+}
+
+function groupBy(key){
+  const out={};
+  filteredWorkshops.forEach(r=>{
+    const label=clean(r[key]) || "Not Available";
+    out[label]=(out[label]||0)+Number(r.events||0);
+  });
+  return out;
+}
+
+function wrapLabel(text,max=42){
+  const words=String(text).split(/\s+/);
+  const lines=[]; let line="";
+  words.forEach(word=>{
+    const next=line ? line+" "+word : word;
+    if(next.length>max && line){lines.push(line);line=word}
+    else line=next;
+  });
+  if(line) lines.push(line);
+  return lines;
+}
+
+
+function escapeHtml(value){
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function matchingRows(chartId,label){
+  if(chartId==="workshopPeopleChart"){
+    return filteredWorkshops.filter(r=>{
+      const personLabel=r.designation!=="Not Available"
+        ? `${r.person} — ${r.designation}` : r.person;
+      return personLabel===label;
+    });
+  }
+  if(chartId==="workshopTitleChart")
+    return filteredWorkshops.filter(r=>r.title===label);
+  if(chartId==="workshopFacultyChart")
+    return filteredWorkshops.filter(r=>r.faculty===label);
+  if(chartId==="workshopDepartmentChart")
+    return filteredWorkshops.filter(r=>r.department===label);
+  return [];
+}
+
+function openDetailPopup(chartId,label){
+  const rows=matchingRows(chartId,label);
+  if(!rows.length) return;
+
+  const events=rows.reduce((sum,r)=>sum+Number(r.events||0),0);
+  const planned=rows.filter(r=>r.planned==="Yes").length;
+  const scheduled=rows.filter(r=>r.scheduled==="Yes").length;
+
+  $("detailModalTitle").textContent=label;
+
+  $("detailModalBody").innerHTML=`
+    <div class="detail-summary">
+      <div class="detail-stat">
+        <div class="detail-stat-label">Matching Records</div>
+        <div class="detail-stat-value">${rows.length}</div>
+      </div>
+      <div class="detail-stat">
+        <div class="detail-stat-label">Total Events</div>
+        <div class="detail-stat-value">${events}</div>
+      </div>
+      <div class="detail-stat">
+        <div class="detail-stat-label">Planned / Scheduled</div>
+        <div class="detail-stat-value">${planned} / ${scheduled}</div>
+      </div>
+    </div>
+
+    ${rows.map((r,i)=>`
+      <div class="detail-record">
+        <div class="font-black text-sm text-blue-700">Workshop ${i+1}</div>
+        <div class="detail-grid">
+          <div class="detail-field"><small>Person</small><strong>${escapeHtml(r.person)}</strong></div>
+          <div class="detail-field"><small>Designation</small><strong>${escapeHtml(r.designation)}</strong></div>
+          <div class="detail-field"><small>Faculty</small><strong>${escapeHtml(r.faculty)}</strong></div>
+          <div class="detail-field"><small>Department</small><strong>${escapeHtml(r.department)}</strong></div>
+          <div class="detail-field" style="grid-column:1/-1"><small>Workshop / Organization</small><strong>${escapeHtml(r.title)}</strong></div>
+          <div class="detail-field"><small>Events</small><strong>${escapeHtml(r.events)}</strong></div>
+          <div class="detail-field"><small>Planned</small><strong>${escapeHtml(r.planned)}</strong></div>
+          <div class="detail-field"><small>Scheduled</small><strong>${escapeHtml(r.scheduled)}</strong></div>
+        </div>
+      </div>
+    `).join("")}
+  `;
+
+  $("detailModal").classList.add("open");
+  $("detailModal").setAttribute("aria-hidden","false");
+  document.body.style.overflow="hidden";
+}
+
+function closeDetailPopup(){
+  $("detailModal").classList.remove("open");
+  $("detailModal").setAttribute("aria-hidden","true");
+  document.body.style.overflow="";
+}
+
+function horizontalChart(id,data,label,wrapId){
+  if(charts[id]) charts[id].destroy();
+
+  const labels=Object.keys(data);
+  const values=Object.values(data);
+
+  if(wrapId){
+    $(wrapId).style.height=Math.max(420,labels.length*58)+"px";
+  }
+
+  charts[id]=new Chart($(id),{
+    type:"bar",
+    data:{
+      labels,
+      datasets:[{
+        label,
+        data:values,
+        backgroundColor: labels.map((_,i)=>[
+          "#2563eb","#7c3aed","#06b6d4","#16a34a","#f59e0b",
+          "#ef4444","#ec4899","#14b8a6","#6366f1","#0ea5e9",
+          "#84cc16","#f97316"
+        ][i % 12]),
+        borderRadius:7,
+        maxBarThickness:28
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      indexAxis:"y",
+      onHover:(event,elements)=>{
+        event.native.target.style.cursor=elements.length ? "pointer" : "default";
+      },
+      onClick:(event,elements)=>{
+        if(!elements.length) return;
+        const index=elements[0].index;
+        openDetailPopup(id,labels[index]);
+      },
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{title:items=>items.length ? labels[items[0].dataIndex] : ""}}
+      },
+      scales:{
+        x:{beginAtZero:true,ticks:{precision:0,color:"#475569"},grid:{color:"#e2e8f0"}},
+        y:{
+          ticks:{
+            autoSkip:false,color:"#334155",font:{size:11},
+            callback:function(value){
+              const full=this.getLabelForValue(value);
+              return wrapLabel(full,window.innerWidth<=768 ? 24 : 48);
+            }
+          },
+          grid:{display:false}
+        }
+      }
+    }
+  });
+}
+
+function statusChart(){
+  if(charts.status) charts.status.destroy();
+  const planned=filteredWorkshops.filter(x=>x.planned==="Yes").length;
+  const scheduled=filteredWorkshops.filter(x=>x.scheduled==="Yes").length;
+
+  charts.status=new Chart($("workshopStatusChart"),{
+    type:"doughnut",
+    data:{
+      labels:["Planned","Scheduled"],
+      datasets:[{data:[planned,scheduled],backgroundColor:["#2563eb","#7c3aed"],borderColor:"#fff",borderWidth:3}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}}}
+  });
+}
+
+function renderDashboard(){
+  const eventTotal=filteredWorkshops.reduce((s,r)=>s+Number(r.events||0),0);
+  const people=new Set(filteredWorkshops.map(x=>x.person).filter(x=>x && x!=="Not Available"));
+  const faculties=new Set(filteredWorkshops.map(x=>x.faculty).filter(x=>x && x!=="Not Available"));
+  const planned=filteredWorkshops.filter(x=>x.planned==="Yes").length;
+  const scheduled=filteredWorkshops.filter(x=>x.scheduled==="Yes").length;
+
+  $("kWorkshopRecords").textContent=filteredWorkshops.length;
+  $("kWorkshopEvents").textContent=eventTotal;
+  $("kWorkshopPeople").textContent=people.size;
+  $("kFaculties").textContent=faculties.size;
+  $("kPlanned").textContent=planned;
+  $("kScheduled").textContent=scheduled;
+
+  const personData={};
+  filteredWorkshops.forEach(r=>{
+    const label=r.designation!=="Not Available" ? `${r.person} — ${r.designation}` : r.person;
+    personData[label]=(personData[label]||0)+Number(r.events||0);
+  });
+
+  horizontalChart("workshopPeopleChart",personData,"Workshop Events","peopleChartWrap");
+  horizontalChart("workshopTitleChart",groupBy("title"),"Workshop Events","titleChartWrap");
+  horizontalChart("workshopFacultyChart",groupBy("faculty"),"Workshop Events");
+  horizontalChart("workshopDepartmentChart",groupBy("department"),"Workshop Events");
+  statusChart();
+}
+
+function exportWorkshops(){
+  if(!filteredWorkshops.length){alert("There is no workshop data to export.");return}
+  const rows=filteredWorkshops.map(r=>({
+    "Person":r.person,
+    "Designation":r.designation,
+    "Faculty":r.faculty,
+    "Department":r.department,
+    "Workshop Title / Organization":r.title,
+    "Events":r.events,
+    "Planned":r.planned,
+    "Scheduled":r.scheduled
+  }));
+  const ws=XLSX.utils.json_to_sheet(rows);
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"Workshops");
+  XLSX.writeFile(wb,"UOL_Workshop_Analytics.xlsx");
+}
+
+function processWorkbook(buffer,source){
+  const wb=XLSX.read(new Uint8Array(buffer),{type:"array"});
+
+  // Prefer a sheet called Workshop. If the separated workbook has only one
+  // worksheet, use that worksheet automatically.
+  let sheetName=wb.SheetNames.find(n=>n.trim().toLowerCase()==="workshop");
+  if(!sheetName && wb.SheetNames.length===1) sheetName=wb.SheetNames[0];
+  if(!sheetName) throw new Error('No "Workshop" worksheet was found.');
+
+  const rows=XLSX.utils.sheet_to_json(wb.Sheets[sheetName],{defval:"",raw:false});
+  if(!rows.length) throw new Error("The Workshop worksheet is empty.");
+
+  workshopRows=parseWorkshopRows(rows);
+  if(!workshopRows.length) throw new Error("The worksheet loaded, but no workshop records were detected.");
+
+  filteredWorkshops=[...workshopRows];
+  populateFilters();
+  renderDashboard();
+
+  const events=workshopRows.reduce((s,r)=>s+Number(r.events||0),0);
+  $("connection").innerHTML=
+    `<span style="color:#86efac">●</span> Connected • ${workshopRows.length} records • ${events} events`;
+
+  console.log("Loaded",source,"sheet:",sheetName,"raw rows:",rows.length,"workshop rows:",workshopRows.length);
+}
+
+async function loadExcel(){
+  const candidates=[
+    "../data/UOL_Workshop_Only.xlsx",
+    "./data/UOL_Workshop_Only.xlsx",
+    "data/UOL_Workshop_Only.xlsx",
+    "../UOL_Workshop_Only.xlsx"
+  ];
+
+  let lastError=null;
+  for(const url of candidates){
+    try{
+      const response=await fetch(url,{cache:"no-store"});
+      if(!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
+      const buffer=await response.arrayBuffer();
+      processWorkbook(buffer,url);
+      return;
+    }catch(err){
+      lastError=err;
+      console.warn("Failed:",url,err);
+    }
+  }
+
+  $("connection").innerHTML='<span style="color:#f87171">●</span> Excel connection failed';
+  console.error("Excel could not be loaded. Use Live Server and keep the workbook in the data folder.",lastError);
+}
+
+["facultyFilter","departmentFilter","personFilter","plannedFilter","scheduledFilter"]
+  .forEach(id=>$(id).addEventListener("change",applyFilters));
+$("searchFilter").addEventListener("input",applyFilters);
+$("resetBtn").addEventListener("click",resetFilters);
+$("exportBtn").addEventListener("click",exportWorkshops);
+
+$("mobileNavToggle").addEventListener("click",()=>{
+  $("sidebar").classList.toggle("mobile-open");
+});
+
+
+$("detailClose").addEventListener("click",closeDetailPopup);
+$("detailModal").addEventListener("click",event=>{
+  if(event.target===$("detailModal")) closeDetailPopup();
+});
+document.addEventListener("keydown",event=>{
+  if(event.key==="Escape" && $("detailModal").classList.contains("open")){
+    closeDetailPopup();
+  }
+});
+
+loadExcel();
+</script>
+</body>
+</html>

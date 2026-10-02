@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>UOL Analytics | Internship / Placement</title>
+
+
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+
+
+<style>
+
+  :root{
+
+    --side:292px;
+
+    --ink:#0f172a;
+
+    --muted:#64748b;
+
+    --line:#dbe4f0;
+
+    --bg:#f3f7fd;
+
+    --blue:#2563eb;
+
+    --purple:#7c3aed;
+
+  }
+
+  *{box-sizing:border-box}
+
+  html,body{margin:0;min-height:100%;overflow-x:hidden}
+
+  body{
+
+    color:var(--ink);
+
+    font-family:Inter,"Segoe UI",Arial,sans-serif;
+
+    background:
+
+      radial-gradient(circle at 7% 3%,rgba(37,99,235,.12),transparent 25%),
+
+      radial-gradient(circle at 98% 95%,rgba(124,58,237,.08),transparent 28%),
+
+      var(--bg);
+
+  }
+
+
+
+  /* ===== Sidebar ===== */
+
+  .side{
+
+    position:fixed;inset:0 auto 0 0;width:var(--side);height:100vh;
+
+    padding:20px 14px;overflow-y:auto;z-index:1000;
+
+    background:linear-gradient(180deg,#061326 0%,#102a5d 48%,#5b21b6 100%);
+
+    box-shadow:10px 0 34px rgba(15,23,42,.16);
+
+  }
+
+  .brand-wrap{
+
+    padding:12px 13px 18px;margin-bottom:13px;
+
+    border-bottom:1px solid rgba(255,255,255,.12);
+
+  }
+
+  .brand-title{font-size:22px;font-weight:900;color:#fff}
+
+  .brand-sub{
+
+    margin-top:4px;font-size:10px;font-weight:800;
+
+    letter-spacing:.18em;text-transform:uppercase;color:#bfdbfe;
+
+  }
+
+  .nav-link{
+
+    display:flex;align-items:center;width:100%;
+
+    padding:11px 13px;margin:5px 0;border-radius:11px;
+
+    color:#e5efff;text-decoration:none;font-size:13px;font-weight:700;
+
+    transition:.2s;
+
+  }
+
+  .nav-link:hover{background:rgba(255,255,255,.10)}
+
+  .nav-link.active{
+
+    background:linear-gradient(135deg,#1769ff,#8438f5);
+
+    color:#fff;box-shadow:0 10px 24px rgba(37,99,235,.28);
+
+  }
+
+
+
+  /* ===== Layout ===== */
+
+  .main{
+
+    margin-left:var(--side);width:calc(100% - var(--side));
+
+    padding:18px 24px 32px;
+
+  }
+
+  .hero{
+
+    position:relative;overflow:hidden;
+
+    min-height:145px;padding:27px 29px;border-radius:25px;color:#fff;
+
+    background:linear-gradient(115deg,#1647c8 0%,#5b21b6 56%,#0697b5 100%);
+
+    box-shadow:0 18px 42px rgba(37,99,235,.18);
+
+  }
+
+  .hero:after{
+
+    content:"";position:absolute;width:310px;height:310px;border-radius:50%;
+
+    right:-80px;top:-160px;background:rgba(255,255,255,.10);
+
+  }
+
+  .card{
+
+    background:#fff;border:1px solid #dfe7f2;border-radius:20px;
+
+    box-shadow:0 10px 28px rgba(15,23,42,.055);
+
+  }
+
+  .filter{
+
+    width:100%;height:43px;padding:0 13px;border:1px solid #cbd7e6;
+
+    border-radius:11px;background:#fff;outline:none;font-size:12px;
+
+  }
+
+  .filter:focus{border-color:#6366f1;box-shadow:0 0 0 4px rgba(99,102,241,.1)}
+
+  .btn{
+
+    min-height:42px;border:0;border-radius:11px;padding:10px 16px;
+
+    color:#fff;font-size:12px;font-weight:900;cursor:pointer;
+
+    background:linear-gradient(135deg,#2563eb,#7c3aed);
+
+    box-shadow:0 8px 20px rgba(79,70,229,.20);
+
+  }
+
+  .btn:hover{filter:brightness(1.05)}
+
+  .muted{color:var(--muted)}
+
+
+
+  /* ===== KPIs ===== */
+
+  .kpi-card{min-height:90px;padding:18px;position:relative;overflow:hidden}
+
+  .kpi-card:after{
+
+    content:"";position:absolute;width:95px;height:95px;border-radius:50%;
+
+    right:-38px;top:-38px;
+
+    background:linear-gradient(135deg,rgba(37,99,235,.07),rgba(124,58,237,.12));
+
+  }
+
+  .kpi-label{
+
+    font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+
+    color:#60718a;font-weight:800;
+
+  }
+
+  .kpi{font-size:30px;line-height:1.1;margin-top:7px;color:#2563eb;font-weight:900}
+
+
+
+  .section-title{display:flex;align-items:center;gap:10px}
+
+  .section-title:before{
+
+    content:"";width:5px;height:24px;border-radius:8px;
+
+    background:linear-gradient(180deg,#2563eb,#7c3aed);
+
+  }
+
+
+
+  .chart-box{position:relative;height:350px}
+
+  .chart-dynamic{position:relative;min-height:420px;height:420px}
+
+  .small-chart{position:relative;height:310px}
+
+  .click-hint{font-size:11px;color:#64748b;margin-top:6px;margin-bottom:8px;font-weight:700}
+
+
+
+  .mobile-nav-toggle{display:none}
+
+
+
+  /* ===== Detail popup ===== */
+
+  .detail-modal{
+
+    position:fixed;inset:0;z-index:99999;display:none;
+
+    align-items:center;justify-content:center;padding:6px;
+
+    background:rgba(2,6,23,.60);backdrop-filter:blur(4px);
+
+  }
+
+  .detail-modal.open{display:flex}
+
+  .detail-dialog{
+
+    width:min(690px,98vw);max-height:92vh;overflow:auto;background:#fff;
+
+    border:1px solid #dbe4f0;border-radius:0 0 22px 22px;
+
+    box-shadow:0 30px 90px rgba(2,6,23,.30);
+
+    animation:popupIn .18s ease-out;
+
+  }
+
+  @keyframes popupIn{
+
+    from{opacity:0;transform:translateY(12px) scale(.98)}
+
+    to{opacity:1;transform:translateY(0) scale(1)}
+
+  }
+
+  .detail-head{
+
+    position:sticky;top:0;z-index:3;display:flex;align-items:flex-start;
+
+    justify-content:space-between;gap:18px;padding:13px 20px 16px;color:#fff;
+
+    background:linear-gradient(115deg,#2537d4,#6421c7 58%,#0697b5);
+
+  }
+
+  .detail-close{
+
+    flex:0 0 auto;width:38px;height:38px;border:0;border-radius:50%;
+
+    background:rgba(255,255,255,.18);color:#fff;font-size:22px;
+
+    cursor:pointer;font-weight:900;
+
+  }
+
+  .detail-close:hover{background:rgba(255,255,255,.28)}
+
+  .detail-body{padding:18px 20px 24px}
+
+  .detail-summary{
+
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+
+    gap:11px;margin-bottom:17px;
+
+  }
+
+  .detail-stat{
+
+    padding:14px;border:1px solid #dbe4f0;border-radius:13px;background:#f8fafc;
+
+  }
+
+  .detail-stat-label{
+
+    font-size:10px;text-transform:uppercase;letter-spacing:.10em;
+
+    color:#64748b;font-weight:900;
+
+  }
+
+  .detail-stat-value{margin-top:5px;font-size:20px;font-weight:900;color:#2563eb}
+
+  .detail-record{padding:14px 0 17px;border-bottom:1px solid #dbe4f0}
+
+  .detail-record:last-child{border-bottom:0}
+
+  .detail-record-title{font-size:14px;font-weight:900;color:#1d4ed8;margin-bottom:11px}
+
+  .detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 24px}
+
+  .detail-field small{
+
+    display:block;color:#64748b;font-size:9px;text-transform:uppercase;
+
+    letter-spacing:.09em;font-weight:900;margin-bottom:3px;
+
+  }
+
+  .detail-field strong{display:block;font-size:12px;color:#0f172a;word-break:break-word}
+
+  .detail-field.full{grid-column:1/-1}
+
+
+
+  /* ===== Responsive ===== */
+
+  @media(min-width:1200px){
+
+    .kpi-grid{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+
+  }
+
+  @media(max-width:1050px) and (min-width:769px){
+
+    :root{--side:245px}
+
+    .main{padding:18px}
+
+  }
+
+  @media(max-width:768px){
+
+    .side{position:sticky;top:0;width:100%;height:auto;padding:10px 12px;overflow:visible}
+
+    .main{margin-left:0;width:100%;padding:12px}
+
+    .brand-wrap{padding:5px 5px 9px;margin-bottom:8px;border-bottom:0}
+
+    .brand-title{font-size:19px}
+
+    .mobile-nav-toggle{
+
+      display:flex;width:100%;align-items:center;justify-content:space-between;
+
+      padding:12px 14px;border:1px solid rgba(255,255,255,.15);
+
+      border-radius:14px;background:rgba(255,255,255,.10);
+
+      color:#fff;font-weight:800;cursor:pointer;
+
+    }
+
+    .mobile-nav-menu{
+
+      display:none;margin-top:8px;padding:8px;max-height:65vh;overflow-y:auto;
+
+      border:1px solid rgba(255,255,255,.12);border-radius:16px;
+
+      background:rgba(2,6,23,.98);
+
+    }
+
+    .side.mobile-open .mobile-nav-menu{display:block}
+
+    .mobile-nav-menu .nav-link{margin:3px 0}
+
+    .data-source{display:none}
+
+    .hero{min-height:auto;padding:20px;border-radius:18px}
+
+    .hero h1{font-size:30px!important}
+
+    .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+
+    .chart-box{height:300px}
+
+    .small-chart{height:270px}
+
+  }
+
+  @media(max-width:600px){
+
+    .detail-summary,.detail-grid{grid-template-columns:1fr}
+
+    .detail-dialog{width:100%;max-height:95vh}
+
+  }
+
+  @media(max-width:480px){
+
+    .main{padding:10px}
+
+    .kpi-grid{grid-template-columns:1fr!important}
+
+    .card{border-radius:16px}
+
+  }
+
+</style>
+
+</head>
+
+
+
+<body>
+
+<aside class="side" id="sidebar">
+
+  <div class="brand-wrap">
+
+    <div class="brand-title">🏛 UOL Analytics</div>
+
+    <div class="brand-sub">Performance Intelligence</div>
+
+  </div>
+
+
+
+  <button class="mobile-nav-toggle" id="mobileNavToggle" type="button">
+
+    <span>💼 Internship / Placement</span><span>▼</span>
+
+  </button>
+
+
+
+  <div class="mobile-nav-menu" id="navMenu">
+
+<a class="nav-link" href="../index.html">📊 Executive Dashboard</a>
+    <a class="nav-link" href="workshop.html">🛠 Workshop Dashboard </a>
+    <a class="nav-link" href="seminar.html">🎤 Seminar Dashboard</a>
+    <a class="nav-link" href="conference.html">🎓 Conference Dashboard</a>
+    <a class="nav-link" href="guest.html">👨‍🏫 Guest Lecture</a>
+    <a class="nav-link" href="internship-placement.html">💼 Internship / Placement</a>
+    <a class="nav-link" href="mou.html">🤝 MoU and MoU Signing</a>
+    <a class="nav-link" href="iv.html">🏭 Industrial Visit</a>
+    <a class="nav-link" href="others.html">📌 Others</a>
+    <a class="nav-link" href="iab.html">🤝 IAB Meeting / Industry Consultation</a>
+    <a class="nav-link" href="research-collaboration.html">🔬 Research Collaboration</a>
+    <a class="nav-link" href="community.html">🌍 Community Engagement</a>
+    <a class="nav-link" href="alumni.html">🎓 Alumni Talk / Mentoring</a>
+    <a class="nav-link" href="curriculum-feedback.html">📝 Curriculum Feedback Session</a>
+  </div>
+
+
+
+  <div class="data-source text-blue-100" style="margin:18px 5px 4px;padding:13px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.07)">
+
+    <div class="text-xs uppercase tracking-widest font-black">Data source</div>
+
+    <div class="text-sm font-bold mt-1 break-words">UOL_Internship_Placement_Planned_All_Entries_With_Summary.xlsx</div>
+
+    <div class="text-xs mt-2 text-blue-200">Live Excel analytics</div>
+
+  </div>
+
+</aside>
+
+
+
+<main class="main">
+
+  <section class="hero mb-7">
+
+    <div class="relative z-10 flex flex-wrap items-end justify-between gap-5">
+
+      <div>
+
+        <div class="text-blue-100 text-xs uppercase tracking-[.22em] font-black">University of Lahore</div>
+
+        <h1 class="text-4xl md:text-5xl font-black mt-2">Internship / Placement</h1>
+
+        <p class="text-blue-100 mt-3">Live analytics from <strong>UOL_Internship_Placement_Planned_All_Entries_With_Summary.xlsx</strong>.</p>
+
+      </div>
+
+      <div class="bg-white/15 backdrop-blur px-5 py-4 rounded-2xl">
+
+        <div class="text-xs text-blue-100 uppercase font-bold">Excel connection</div>
+
+        <div id="connection" class="font-black mt-1">Loading Excel…</div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <section class="card p-5 mb-7">
+  <div class="mb-4">
+    <h2 class="text-xl font-black">Internship / Placement Filters</h2>
+    <p class="muted text-sm mt-1">Filter the source entries by category, company, sector and mode.</p>
+  </div>
+  <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-3">
+    <select id="categoryFilter" class="filter"><option value="All">All Categories</option></select>
+    <select id="companyFilter" class="filter"><option value="All">All Companies</option></select>
+    <select id="sectorFilter" class="filter"><option value="All">All Sectors</option></select>
+    <select id="modeFilter" class="filter"><option value="All">All Modes</option></select>
+  </div>
+  <div class="grid md:grid-cols-[1fr_auto_auto] gap-3 mt-3">
+    <input id="searchFilter" class="filter" placeholder="Search company, sector, duration or category">
+    <button class="btn" id="resetBtn" type="button">↺ Reset</button>
+    <button class="btn" id="exportBtn" type="button">📥 Export Analytics Excel</button>
+  </div>
+</section>
+
+
+
+  <section class="grid kpi-grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  <div class="card kpi-card"><div class="kpi-label">Valid Entries</div><div id="kRecords" class="kpi">0</div></div>
+  <div class="card kpi-card"><div class="kpi-label">Total Students</div><div id="kTotal" class="kpi">0</div></div>
+  <div class="card kpi-card"><div class="kpi-label">Internship Students</div><div id="kInternship" class="kpi">0</div></div>
+  <div class="card kpi-card"><div class="kpi-label">Placement Students</div><div id="kPlacement" class="kpi">0</div></div>
+  <div class="card kpi-card"><div class="kpi-label">Planned Students</div><div id="kPlanned" class="kpi">0</div></div>
+  <div class="card kpi-card"><div class="kpi-label">Companies</div><div id="kCompanies" class="kpi">0</div></div>
+</section>
+
+
+
+  <section class="mb-8">
+
+    <div class="mb-4">
+
+      <h2 class="text-3xl font-black section-title">Internship / Placement Analytics</h2>
+
+      <p class="muted mt-1">Click any bar to see the matching records in a popup.</p>
+
+    </div>
+
+
+
+    <div class="grid xl:grid-cols-2 gap-6">
+
+      <div class="card p-6 xl:col-span-2">
+
+        <h3 class="font-black text-lg mb-1">Students by Company</h3>
+
+        <p class="muted text-sm">Companies and their total internship, placement or planned students.</p>
+
+        <div class="click-hint">Click a bar to view full details.</div>
+
+        <div id="peopleWrap" class="chart-dynamic"><canvas id="peopleChart"></canvas></div>
+
+      </div>
+
+
+
+      <div class="card p-6 xl:col-span-2">
+
+        <h3 class="font-black text-lg mb-1">Students by Sector</h3>
+
+        <p class="muted text-sm">Student totals grouped by sector.</p>
+
+        <div class="click-hint">Click a bar to view full details.</div>
+
+        <div id="orgWrap" class="chart-dynamic"><canvas id="orgChart"></canvas></div>
+
+      </div>
+
+
+
+      <div class="card p-6">
+
+        <h3 class="font-black text-lg mb-1">Students by Category</h3>
+
+        <p class="muted text-sm">Internship, Placement and Planned student totals.</p>
+
+        <div class="click-hint">Click a bar to view full details.</div>
+
+        <div class="chart-box"><canvas id="facultyChart"></canvas></div>
+
+      </div>
+
+
+
+      <div class="card p-6">
+
+        <h3 class="font-black text-lg mb-1">Students by Mode</h3>
+
+        <p class="muted text-sm">Student totals grouped by Physical / Remote mode.</p>
+
+        <div class="click-hint">Click a bar to view full details.</div>
+
+        <div class="chart-box"><canvas id="departmentChart"></canvas></div>
+
+      </div>
+
+
+
+      <div class="card p-6 xl:col-span-2">
+
+        <h3 class="font-black text-lg mb-1">Internship / Placement / Planned</h3>
+
+        <p class="muted text-sm">Correct source totals by category.</p>
+
+        <div class="click-hint">Click a bar to view full details.</div>
+
+        <div class="small-chart"><canvas id="typeChart"></canvas></div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+
+<!-- Detail popup -->
+
+<div class="detail-modal" id="detailModal" aria-hidden="true">
+
+  <div class="detail-dialog" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+
+    <div class="detail-head">
+
+      <div>
+
+        <div style="font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#dbeafe">Internship / Placement Details</div>
+
+        <h3 id="detailTitle" style="margin:5px 0 0;font-size:21px;font-weight:900">Details</h3>
+
+        <div id="detailSubtitle" style="margin-top:5px;font-size:12px;color:#dbeafe"></div>
+
+      </div>
+
+      <button class="detail-close" id="detailClose" type="button" aria-label="Close">×</button>
+
+    </div>
+
+    <div class="detail-body">
+
+      <div class="detail-summary">
+
+        <div class="detail-stat"><div class="detail-stat-label">Matching Records</div><div class="detail-stat-value" id="detailRecordCount">0</div></div>
+
+        <div class="detail-stat"><div class="detail-stat-label">Total Students</div><div class="detail-stat-value" id="detailTotalCount">0</div></div>
+
+        <div class="detail-stat"><div class="detail-stat-label">Categories</div><div class="detail-stat-value" id="detailStatusCount">0</div></div>
+
+      </div>
+
+      <div id="detailRecords"></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<script>
+"use strict";
+const NA="Not Available";
+const FILE="UOL_Internship_Placement_Planned_All_Entries_With_Summary.xlsx";
+const $=id=>document.getElementById(id);
+const PALETTE=["#2563eb","#7c3aed","#06b6d4","#16a34a","#f59e0b","#ef4444","#ec4899","#14b8a6"];
+let rows=[],filtered=[],charts={};
+
+function clean(v){if(v===undefined||v===null)return"";const x=String(v).trim();return(!x||["null","undefined","nan"].includes(x.toLowerCase()))?"":x}
+function num(v){const m=clean(v).replace(/,/g,"").match(/-?\d+(?:\.\d+)?/);return m?Number(m[0]):0}
+function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")}
+function sum(list){return list.reduce((a,r)=>a+r.students,0)}
+function unique(key){return new Set(filtered.map(r=>r[key]).filter(v=>v&&v!==NA)).size}
+function fill(id,vals,label){const e=$(id);e.innerHTML="";e.add(new Option(label,"All"));[...new Set(vals.filter(Boolean))].sort((a,b)=>a.localeCompare(b)).forEach(v=>e.add(new Option(v,v)))}
+function group(key){const o={};filtered.forEach(r=>{const k=r[key]||NA;o[k]=(o[k]||0)+r.students});return o}
+
+function draw(id,data,horizontal=false){
+ if(charts[id])charts[id].destroy();
+ const labels=Object.keys(data),values=Object.values(data);
+ charts[id]=new Chart($(id),{type:"bar",data:{labels,datasets:[{data:values,backgroundColor:labels.map((_,i)=>PALETTE[i%PALETTE.length]),borderRadius:8}]},
+ options:{responsive:true,maintainAspectRatio:false,indexAxis:horizontal?"y":"x",plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.raw} students`}}},
+ scales:horizontal?{x:{beginAtZero:true},y:{grid:{display:false}}}:{y:{beginAtZero:true},x:{grid:{display:false}}},
+ onClick:(e,els)=>{if(!els.length)return;const label=labels[els[0].index];const map={peopleChart:"company",orgChart:"sector",facultyChart:"category",departmentChart:"mode",typeChart:"category"};openDetail(label,filtered.filter(r=>r[map[id]]===label));}}});
+}
+function openDetail(label,matched){
+ $("detailTitle").textContent=label;
+ $("detailSubtitle").textContent="Matching source entries";
+ $("detailRecordCount").textContent=matched.length;
+ $("detailTotalCount").textContent=sum(matched).toLocaleString();
+ $("detailStatusCount").textContent=matched.map(r=>r.category).filter((v,i,a)=>a.indexOf(v)===i).join(", ")||NA;
+ $("detailRecords").innerHTML=matched.map((r,i)=>`<div class="detail-record"><div class="detail-record-title">Entry ${i+1}</div><div class="detail-grid">
+ <div class="detail-field"><small>Category</small><strong>${esc(r.category)}</strong></div>
+ <div class="detail-field"><small>Students</small><strong>${r.students.toLocaleString()}</strong></div>
+ <div class="detail-field full"><small>Company</small><strong>${esc(r.company)}</strong></div>
+ <div class="detail-field"><small>Sector</small><strong>${esc(r.sector||NA)}</strong></div>
+ <div class="detail-field"><small>Duration</small><strong>${esc(r.duration||NA)}</strong></div>
+ <div class="detail-field"><small>Mode</small><strong>${esc(r.mode||NA)}</strong></div>
+ <div class="detail-field full"><small>Evidence</small><strong>${esc(r.evidence||NA)}</strong></div>
+ </div></div>`).join("");
+ $("detailModal").classList.add("open");document.body.style.overflow="hidden";
+}
+function closeDetail(){$("detailModal").classList.remove("open");document.body.style.overflow=""}
+
+function render(){
+ $("kRecords").textContent=filtered.length.toLocaleString();
+ $("kTotal").textContent=sum(filtered).toLocaleString();
+ $("kInternship").textContent=sum(filtered.filter(r=>r.category==="Internship")).toLocaleString();
+ $("kPlacement").textContent=sum(filtered.filter(r=>r.category==="Placement")).toLocaleString();
+ $("kPlanned").textContent=sum(filtered.filter(r=>r.category==="Planned")).toLocaleString();
+ $("kCompanies").textContent=unique("company");
+ draw("peopleChart",group("company"),true);
+ draw("orgChart",group("sector"),true);
+ draw("facultyChart",group("category"));
+ draw("departmentChart",group("mode"));
+ draw("typeChart",group("category"));
+}
+function applyFilters(){
+ const q=$("searchFilter").value.trim().toLowerCase(), ok=(id,val)=>$(id).value==="All"||$(id).value===val;
+ filtered=rows.filter(r=>ok("categoryFilter",r.category)&&ok("companyFilter",r.company)&&ok("sectorFilter",r.sector)&&ok("modeFilter",r.mode)&&(!q||[r.category,r.company,r.sector,r.duration,r.mode].some(x=>String(x).toLowerCase().includes(q))));
+ render();
+}
+function resetFilters(){["categoryFilter","companyFilter","sectorFilter","modeFilter"].forEach(id=>$(id).value="All");$("searchFilter").value="";filtered=rows.slice();render()}
+function exportData(){const ws=XLSX.utils.json_to_sheet(filtered.map(r=>({"Category":r.category,"Company":r.company,"Sector":r.sector,"Number of Students":r.students,"Duration":r.duration,"Mode":r.mode,"Evidence":r.evidence})));const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Entries");XLSX.writeFile(wb,"UOL_Internship_Placement_Filtered.xlsx")}
+
+function processWorkbook(buffer,source){
+ const wb=XLSX.read(buffer,{type:"array"}), sheet=wb.Sheets["Entries"];
+ if(!sheet)throw new Error('Worksheet "Entries" not found.');
+ const data=XLSX.utils.sheet_to_json(sheet,{defval:"",raw:false});
+ rows=data.map(r=>({category:clean(r["Category"])||NA,company:clean(r["Company"])||NA,sector:clean(r["Sector"])||NA,students:num(r["Number of Students"]),duration:clean(r["Duration"]),mode:clean(r["Mode"])||NA,evidence:clean(r["Evidence"])})).filter(r=>r.students>0);
+ filtered=rows.slice();
+ fill("categoryFilter",rows.map(r=>r.category),"All Categories");
+ fill("companyFilter",rows.map(r=>r.company),"All Companies");
+ fill("sectorFilter",rows.map(r=>r.sector),"All Sectors");
+ fill("modeFilter",rows.map(r=>r.mode),"All Modes");
+ render();
+ $("connection").innerHTML=`<span style="color:#86efac">●</span> Connected • ${rows.length} entries • ${sum(rows)} students`;
+}
+async function loadExcel(){
+ $("connection").innerHTML='<span style="color:#fde68a">●</span> Connecting to Excel…';
+ const paths=["../data/","./data/","data/","../","./"].map(p=>p+FILE);
+ for(const url of paths){try{const res=await fetch(encodeURI(url),{cache:"no-store"});if(!res.ok)throw new Error(res.status);processWorkbook(await res.arrayBuffer(),url);return}catch(e){}}
+ $("connection").innerHTML='<span style="color:#f87171">●</span> Excel connection failed';
+}
+["categoryFilter","companyFilter","sectorFilter","modeFilter"].forEach(id=>$(id).addEventListener("change",applyFilters));
+$("searchFilter").addEventListener("input",applyFilters);$("resetBtn").addEventListener("click",resetFilters);$("exportBtn").addEventListener("click",exportData);
+$("detailClose").addEventListener("click",closeDetail);$("detailModal").addEventListener("click",e=>{if(e.target===$("detailModal"))closeDetail()});
+$("mobileNavToggle").addEventListener("click",()=>$("sidebar").classList.toggle("mobile-open"));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDetail()});
+loadExcel();
+</script>
+
+</body>
+
+</html>
