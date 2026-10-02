@@ -1,20 +1,15 @@
 /* =========================================================
-   UOL TENTATIVE DASHBOARD — FULL APP.JS
+   UOL TENTATIVE DASHBOARD — APP.JS
 
-   ACTIVITY WORKBOOK:
+   WORKBOOK:
    data/UOL_Separated_All_Activity_Data_Cleaned.xlsx
 
-   INTERNSHIP / PLACEMENT BREAKDOWN:
-   Built directly from the main cleaned workbook.
-
-   FILTERS:
-   Faculty -> Department -> Activity Type -> Reporting Month
-
-   Internship / Placement KPI:
-   - Built from the main cleaned workbook
-   - Changes by selected Faculty
-   - Changes by selected Department
-   - Does NOT show zero-value categories
+   CASCADING FILTERS:
+   Faculty
+      -> Department
+      -> Activity Type
+      -> Reporting Month
+      -> Organization
    ========================================================= */
 
 let allRows = [];
@@ -24,7 +19,9 @@ let allIpRows = [];
 let ipWorkbookLoaded = false;
 
 const charts = {};
-const $ = id => document.getElementById(id);
+
+const $ = id =>
+  document.getElementById(id);
 
 
 /* =========================================================
@@ -32,13 +29,26 @@ const $ = id => document.getElementById(id);
    ========================================================= */
 
 function clean(value) {
-  if (value === undefined || value === null) return "";
 
-  const text = String(value).trim();
+  if (
+    value === undefined ||
+    value === null
+  ) {
+    return "";
+  }
+
+  const text =
+    String(value).trim();
 
   if (
     !text ||
-    ["undefined", "null", "nan"].includes(text.toLowerCase())
+    [
+      "undefined",
+      "null",
+      "nan"
+    ].includes(
+      text.toLowerCase()
+    )
   ) {
     return "";
   }
@@ -46,50 +56,115 @@ function clean(value) {
   return text;
 }
 
+
 function norm(value) {
+
   return clean(value)
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, " ")
+    .replace(
+      /[^a-z0-9]+/g,
+      " "
+    )
     .trim();
 }
 
-function val(row, names) {
-  const keys = Object.keys(row);
 
-  for (const name of names) {
-    const key = keys.find(k => norm(k) === norm(name));
+function val(
+  row,
+  names
+) {
 
-    if (key !== undefined && clean(row[key])) {
-      return clean(row[key]);
+  const keys =
+    Object.keys(row);
+
+  for (
+    const name
+    of names
+  ) {
+
+    const key =
+      keys.find(
+        k =>
+          norm(k) ===
+          norm(name)
+      );
+
+    if (
+      key !== undefined &&
+      clean(row[key])
+    ) {
+
+      return clean(
+        row[key]
+      );
     }
   }
 
   return "";
 }
 
-function num(value) {
-  const match = clean(value)
-    .replace(/,/g, "")
-    .match(/-?\d+(?:\.\d+)?/);
 
-  return match ? Number(match[0]) : 0;
+function num(value) {
+
+  const match =
+    clean(value)
+      .replace(
+        /,/g,
+        ""
+      )
+      .match(
+        /-?\d+(?:\.\d+)?/
+      );
+
+  return match
+    ? Number(match[0])
+    : 0;
 }
+
 
 function yes(value) {
-  return ["yes", "y", "true", "1", "scheduled"]
-    .includes(clean(value).toLowerCase());
+
+  return [
+    "yes",
+    "y",
+    "true",
+    "1",
+    "scheduled"
+  ].includes(
+    clean(value)
+      .toLowerCase()
+  );
 }
+
 
 function esc(value) {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+
+  return String(
+    value ?? ""
+  )
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    );
 }
 
+
 function isInvalidLabel(value) {
-  const text = norm(value);
+
+  const text =
+    norm(value);
 
   return (
     !text ||
@@ -108,54 +183,96 @@ function isInvalidLabel(value) {
    ========================================================= */
 
 function standardizeActivityType(value) {
-  const type = norm(value);
 
-  if (type === "glit" || type.includes("guest lecture")) {
+  const type =
+    norm(value);
+
+  if (
+    type === "glit" ||
+    type.includes(
+      "guest lecture"
+    )
+  ) {
     return "Guest Lecture / GLIT";
   }
 
-  if (type === "iv" || type.includes("industrial visit")) {
+  if (
+    type === "iv" ||
+    type.includes(
+      "industrial visit"
+    )
+  ) {
     return "Industrial Visit / IV";
   }
 
   if (
     type === "ip" ||
     type === "internship placement" ||
-    type.includes("internship") ||
-    type.includes("intership") ||
-    type.includes("placement")
+    type.includes(
+      "internship"
+    ) ||
+    type.includes(
+      "intership"
+    ) ||
+    type.includes(
+      "placement"
+    )
   ) {
     return "Internship / Placement";
   }
 
   if (
     type === "mou" ||
-    type.includes("mou signing") ||
-    type.includes("memorandum of understanding")
+    type.includes(
+      "mou signing"
+    ) ||
+    type.includes(
+      "memorandum of understanding"
+    )
   ) {
     return "MoU / MoU Signing";
   }
 
   if (
-    type.includes("iab") ||
-    type.includes("industry consultation")
+    type.includes(
+      "iab"
+    ) ||
+    type.includes(
+      "industry consultation"
+    )
   ) {
     return "IAB / Industry Consultation";
   }
 
-  if (type.includes("research collaboration")) {
+  if (
+    type.includes(
+      "research collaboration"
+    )
+  ) {
     return "Research Collaboration";
   }
 
-  if (type.includes("community engagement")) {
+  if (
+    type.includes(
+      "community engagement"
+    )
+  ) {
     return "Community Engagement";
   }
 
-  if (type.includes("alumni")) {
+  if (
+    type.includes(
+      "alumni"
+    )
+  ) {
     return "Alumni Talk / Mentoring";
   }
 
-  if (type.includes("curriculum feedback")) {
+  if (
+    type.includes(
+      "curriculum feedback"
+    )
+  ) {
     return "Curriculum Feedback";
   }
 
@@ -168,144 +285,231 @@ function standardizeActivityType(value) {
    ========================================================= */
 
 function parseActivities(rows) {
-  const parsed = rows.map(row => {
-    const rawType = val(row, [
-      "Separated Activity Type",
-      "Activity Type"
-    ]);
 
-    return {
-      raw: row,
+  const parsed =
+    rows.map(
+      row => {
 
-      ref: val(row, [
-        "Ref #",
-        "Ref",
-        "Reference"
-      ]),
+        const rawType =
+          val(
+            row,
+            [
+              "Separated Activity Type",
+              "Activity Type"
+            ]
+          );
 
-      month: val(row, [
-        "Reporting Month",
-        "Month"
-      ]),
+        return {
 
-      faculty: val(row, ["Faculty"]),
+          raw:
+            row,
 
-      department: val(row, ["Department"]),
+          ref:
+            val(
+              row,
+              [
+                "Ref #",
+                "Ref",
+                "Reference"
+              ]
+            ),
 
-      person: val(row, [
-        "Focal Person",
-        "Submitted By",
-        "Person",
-        "Name"
-      ]),
+          month:
+            val(
+              row,
+              [
+                "Reporting Month",
+                "Month"
+              ]
+            ),
 
-      designation: val(row, ["Designation"]),
+          faculty:
+            val(
+              row,
+              [
+                "Faculty"
+              ]
+            ),
 
-      originalType: rawType,
+          department:
+            val(
+              row,
+              [
+                "Department"
+              ]
+            ),
 
-      type: standardizeActivityType(rawType),
+          person:
+            val(
+              row,
+              [
+                "Focal Person",
+                "Submitted By",
+                "Person",
+                "Name"
+              ]
+            ),
 
-      events: num(
-        val(row, [
-          "How Many",
-          "Planned Quantity",
-          "Total Activities"
-        ])
-      ),
+          designation:
+            val(
+              row,
+              [
+                "Designation"
+              ]
+            ),
 
-      organization: val(row, [
-        "Organization / Activity Title",
-        "Organization / Activity",
-        "Name Of Organization Planned with",
-        "Name of Organization Planned with",
-        "Planned Partner / Organization",
-        "Organization"
-      ]),
+          originalType:
+            rawType,
 
-      planned: val(row, [
-        "Planned",
-        "Planned?"
-      ]),
+          type:
+            standardizeActivityType(
+              rawType
+            ),
 
-      scheduled: val(row, [
-        "Scheduled",
-        "Scheduled?"
-      ]),
+          events:
+            num(
+              val(
+                row,
+                [
+                  "How Many",
+                  "Planned Quantity",
+                  "Total Activities"
+                ]
+              )
+            ),
 
-      remarks: val(row, [
-        "Remarks / Result",
-        "Remarks/Result",
-        "Actual Outcome",
-        "Remarks"
-      ])
-    };
-  });
+          organization:
+            val(
+              row,
+              [
+                "Organization / Activity Title",
+                "Organization / Activity",
+                "Name Of Organization Planned with",
+                "Name of Organization Planned with",
+                "Planned Partner / Organization",
+                "Organization"
+              ]
+            ),
 
-  return parsed.filter(row => (
-    !isInvalidLabel(row.faculty) &&
-    !isInvalidLabel(row.department) &&
-    !isInvalidLabel(row.type)
-  ));
+          planned:
+            val(
+              row,
+              [
+                "Planned",
+                "Planned?"
+              ]
+            ),
+
+          scheduled:
+            val(
+              row,
+              [
+                "Scheduled",
+                "Scheduled?"
+              ]
+            ),
+
+          remarks:
+            val(
+              row,
+              [
+                "Remarks / Result",
+                "Remarks/Result",
+                "Actual Outcome",
+                "Remarks"
+              ]
+            )
+        };
+      }
+    );
+
+  return parsed.filter(
+    row => (
+      !isInvalidLabel(
+        row.faculty
+      ) &&
+      !isInvalidLabel(
+        row.department
+      ) &&
+      !isInvalidLabel(
+        row.type
+      )
+    )
+  );
 }
 
 
 /* =========================================================
-   BUILD INTERNSHIP / PLACEMENT BREAKDOWN
-   DIRECTLY FROM MAIN ACTIVITY DATA
+   INTERNSHIP / PLACEMENT BREAKDOWN
    ========================================================= */
 
 function buildIpBreakdownFromActivities() {
-  const grouped = {};
 
-  allRows.forEach(row => {
+  const grouped =
+    {};
 
-    if (
-      row.type !== "Internship / Placement"
-    ) {
-      return;
-    }
+  allRows.forEach(
+    row => {
 
-    if (
-      row.events <= 0
-    ) {
-      return;
-    }
+      if (
+        row.type !==
+        "Internship / Placement"
+      ) {
+        return;
+      }
 
-    let sourceType =
-      "Internship/Placement";
+      if (
+        row.events <= 0
+      ) {
+        return;
+      }
 
-    if (
-      norm(row.originalType) === "ip"
-    ) {
-      sourceType =
-        "IP";
-    }
+      let sourceType =
+        "Internship/Placement";
 
-    const key = [
-      row.faculty,
-      row.department,
-      sourceType
-    ].join("||");
+      if (
+        norm(
+          row.originalType
+        ) === "ip"
+      ) {
+        sourceType =
+          "IP";
+      }
 
-    if (!grouped[key]) {
-      grouped[key] = {
-        faculty:
+      const key =
+        [
           row.faculty,
-
-        department:
           row.department,
+          sourceType
+        ].join(
+          "||"
+        );
 
-        sourceType:
-          sourceType,
+      if (
+        !grouped[key]
+      ) {
 
-        students:
-          0
-      };
+        grouped[key] = {
+
+          faculty:
+            row.faculty,
+
+          department:
+            row.department,
+
+          sourceType:
+            sourceType,
+
+          students:
+            0
+        };
+      }
+
+      grouped[key]
+        .students +=
+        row.events;
     }
-
-    grouped[key].students +=
-      row.events;
-  });
+  );
 
   allIpRows =
     Object.values(
@@ -314,29 +518,15 @@ function buildIpBreakdownFromActivities() {
 
   ipWorkbookLoaded =
     true;
-
-  const summary =
-    summarizeIpRows(
-      allIpRows
-    );
-
-  console.log(
-    "Internship / Placement breakdown rows:",
-    allIpRows.length
-  );
-
-  console.log(
-    "Internship / Placement student total:",
-    summary.total
-  );
 }
 
 
 /* =========================================================
-   UNIQUE / SELECT HELPERS
+   SELECT HELPERS
    ========================================================= */
 
 function unique(values) {
+
   return [
     ...new Set(
       values
@@ -349,101 +539,45 @@ function unique(values) {
         )
     )
   ].sort(
-    (a, b) =>
-      a.localeCompare(b)
+    (
+      a,
+      b
+    ) =>
+      a.localeCompare(
+        b
+      )
   );
 }
 
 
-function fillSelect(
+function setSelectOptions(
   id,
   values,
-  label
+  allLabel
 ) {
 
-  const element =
+  const select =
     $(id);
 
-  if (!element) {
-    return;
-  }
-
-  element.innerHTML =
-    `<option value="All">${label}</option>`;
-
-  unique(values)
-    .forEach(
-      value => {
-
-        const option =
-          document.createElement(
-            "option"
-          );
-
-        option.value =
-          value;
-
-        option.textContent =
-          value;
-
-        element.appendChild(
-          option
-        );
-      }
-    );
-}
-
-
-/* =========================================================
-   CASCADING FILTER:
-   DEPARTMENT
-   ========================================================= */
-
-function updateDepartmentFilter() {
-
-  const faculty =
-    $("facultyFilter")
-      ?.value ||
-    "All";
-
-  const select =
-    $("departmentFilter");
-
-  if (!select) {
+  if (
+    !select
+  ) {
     return;
   }
 
   const previous =
     select.value;
 
-  let rows =
-    [...allRows];
-
-  if (
-    faculty !== "All"
-  ) {
-
-    rows =
-      rows.filter(
-        row =>
-          row.faculty ===
-          faculty
-      );
-  }
-
-  const departments =
+  const items =
     unique(
-      rows.map(
-        row =>
-          row.department
-      )
+      values
     );
 
   select.innerHTML =
-    `<option value="All">All Departments</option>`;
+    `<option value="All">${allLabel}</option>`;
 
-  departments.forEach(
-    department => {
+  items.forEach(
+    item => {
 
       const option =
         document.createElement(
@@ -451,10 +585,10 @@ function updateDepartmentFilter() {
         );
 
       option.value =
-        department;
+        item;
 
       option.textContent =
-        department;
+        item;
 
       select.appendChild(
         option
@@ -465,7 +599,7 @@ function updateDepartmentFilter() {
   select.value =
     (
       previous !== "All" &&
-      departments.includes(
+      items.includes(
         previous
       )
     )
@@ -475,9 +609,53 @@ function updateDepartmentFilter() {
 
 
 /* =========================================================
-   CASCADING FILTER:
-   ACTIVITY TYPE
+   CASCADING FILTERS
    ========================================================= */
+
+function updateFacultyFilter() {
+
+  setSelectOptions(
+    "facultyFilter",
+    allRows.map(
+      row =>
+        row.faculty
+    ),
+    "All Faculties"
+  );
+}
+
+
+function updateDepartmentFilter() {
+
+  const faculty =
+    $("facultyFilter")
+      ?.value ||
+    "All";
+
+  let rows =
+    [...allRows];
+
+  if (
+    faculty !== "All"
+  ) {
+    rows =
+      rows.filter(
+        row =>
+          row.faculty ===
+          faculty
+      );
+  }
+
+  setSelectOptions(
+    "departmentFilter",
+    rows.map(
+      row =>
+        row.department
+    ),
+    "All Departments"
+  );
+}
+
 
 function updateActivityFilter() {
 
@@ -491,23 +669,12 @@ function updateActivityFilter() {
       ?.value ||
     "All";
 
-  const select =
-    $("activityFilter");
-
-  if (!select) {
-    return;
-  }
-
-  const previous =
-    select.value;
-
   let rows =
     [...allRows];
 
   if (
     faculty !== "All"
   ) {
-
     rows =
       rows.filter(
         row =>
@@ -519,7 +686,6 @@ function updateActivityFilter() {
   if (
     department !== "All"
   ) {
-
     rows =
       rows.filter(
         row =>
@@ -528,53 +694,16 @@ function updateActivityFilter() {
       );
   }
 
-  const activityTypes =
-    unique(
-      rows.map(
-        row =>
-          row.type
-      )
-    );
-
-  select.innerHTML =
-    `<option value="All">All Activity Types</option>`;
-
-  activityTypes.forEach(
-    activity => {
-
-      const option =
-        document.createElement(
-          "option"
-        );
-
-      option.value =
-        activity;
-
-      option.textContent =
-        activity;
-
-      select.appendChild(
-        option
-      );
-    }
+  setSelectOptions(
+    "activityFilter",
+    rows.map(
+      row =>
+        row.type
+    ),
+    "All Activity Types"
   );
-
-  select.value =
-    (
-      previous !== "All" &&
-      activityTypes.includes(
-        previous
-      )
-    )
-      ? previous
-      : "All";
 }
 
-
-/* =========================================================
-   CASCADING FILTER:
-   REPORTING MONTH
-   ========================================================= */
 
 function updateMonthFilter() {
 
@@ -593,23 +722,12 @@ function updateMonthFilter() {
       ?.value ||
     "All";
 
-  const select =
-    $("monthFilter");
-
-  if (!select) {
-    return;
-  }
-
-  const previous =
-    select.value;
-
   let rows =
     [...allRows];
 
   if (
     faculty !== "All"
   ) {
-
     rows =
       rows.filter(
         row =>
@@ -621,7 +739,6 @@ function updateMonthFilter() {
   if (
     department !== "All"
   ) {
-
     rows =
       rows.filter(
         row =>
@@ -633,7 +750,6 @@ function updateMonthFilter() {
   if (
     activity !== "All"
   ) {
-
     rows =
       rows.filter(
         row =>
@@ -642,78 +758,116 @@ function updateMonthFilter() {
       );
   }
 
-  const months =
-    unique(
-      rows
-        .map(
-          row =>
-            row.month
-        )
-        .filter(
-          month =>
-            !isInvalidLabel(
-              month
-            )
-        )
-    );
-
-  select.innerHTML =
-    `<option value="All">All Reporting Months</option>`;
-
-  months.forEach(
-    month => {
-
-      const option =
-        document.createElement(
-          "option"
-        );
-
-      option.value =
-        month;
-
-      option.textContent =
-        month;
-
-      select.appendChild(
-        option
-      );
-    }
+  setSelectOptions(
+    "monthFilter",
+    rows.map(
+      row =>
+        row.month
+    ),
+    "All Reporting Months"
   );
-
-  select.value =
-    (
-      previous !== "All" &&
-      months.includes(
-        previous
-      )
-    )
-      ? previous
-      : "All";
 }
 
 
-/* =========================================================
-   POPULATE FILTERS
-   ========================================================= */
+function updateOrganizationFilter() {
+
+  const faculty =
+    $("facultyFilter")
+      ?.value ||
+    "All";
+
+  const department =
+    $("departmentFilter")
+      ?.value ||
+    "All";
+
+  const activity =
+    $("activityFilter")
+      ?.value ||
+    "All";
+
+  const month =
+    $("monthFilter")
+      ?.value ||
+    "All";
+
+  let rows =
+    [...allRows];
+
+  if (
+    faculty !== "All"
+  ) {
+    rows =
+      rows.filter(
+        row =>
+          row.faculty ===
+          faculty
+      );
+  }
+
+  if (
+    department !== "All"
+  ) {
+    rows =
+      rows.filter(
+        row =>
+          row.department ===
+          department
+      );
+  }
+
+  if (
+    activity !== "All"
+  ) {
+    rows =
+      rows.filter(
+        row =>
+          row.type ===
+          activity
+      );
+  }
+
+  if (
+    month !== "All"
+  ) {
+    rows =
+      rows.filter(
+        row =>
+          row.month ===
+          month
+      );
+  }
+
+  setSelectOptions(
+    "organizationFilter",
+    rows.map(
+      row =>
+        row.organization
+    ),
+    "All Organizations"
+  );
+}
+
 
 function populateFilters() {
 
-  fillSelect(
-    "facultyFilter",
+  updateFacultyFilter();
 
-    allRows.map(
-      row =>
-        row.faculty
-    ),
-
-    "All Faculties"
-  );
+  if (
+    $("facultyFilter")
+  ) {
+    $("facultyFilter")
+      .value =
+      "All";
+  }
 
   updateDepartmentFilter();
 
   updateActivityFilter();
 
   updateMonthFilter();
+
+  updateOrganizationFilter();
 }
 
 
@@ -733,13 +887,18 @@ function applyFilters() {
       ?.value ||
     "All";
 
-  const type =
+  const activity =
     $("activityFilter")
       ?.value ||
     "All";
 
   const month =
     $("monthFilter")
+      ?.value ||
+    "All";
+
+  const organization =
+    $("organizationFilter")
       ?.value ||
     "All";
 
@@ -760,38 +919,45 @@ function applyFilters() {
           (
             faculty === "All" ||
             row.faculty ===
-              faculty
+            faculty
           );
 
         const departmentMatch =
           (
             department === "All" ||
             row.department ===
-              department
+            department
           );
 
         const activityMatch =
           (
-            type === "All" ||
+            activity === "All" ||
             row.type ===
-              type
+            activity
           );
 
         const monthMatch =
           (
             month === "All" ||
             row.month ===
-              month
+            month
+          );
+
+        const organizationMatch =
+          (
+            organization === "All" ||
+            row.organization ===
+            organization
           );
 
         const searchMatch =
           (
             !search ||
-
             [
               row.faculty,
               row.department,
               row.type,
+              row.originalType,
               row.person,
               row.designation,
               row.organization,
@@ -815,6 +981,7 @@ function applyFilters() {
           departmentMatch &&
           activityMatch &&
           monthMatch &&
+          organizationMatch &&
           searchMatch
         );
       }
@@ -836,6 +1003,8 @@ function handleFacultyChange() {
 
   updateMonthFilter();
 
+  updateOrganizationFilter();
+
   applyFilters();
 }
 
@@ -846,6 +1015,8 @@ function handleDepartmentChange() {
 
   updateMonthFilter();
 
+  updateOrganizationFilter();
+
   applyFilters();
 }
 
@@ -854,26 +1025,31 @@ function handleActivityChange() {
 
   updateMonthFilter();
 
+  updateOrganizationFilter();
+
   applyFilters();
 }
 
 
 function handleMonthChange() {
 
+  updateOrganizationFilter();
+
   applyFilters();
 }
 
 
-/* =========================================================
-   RESET FILTERS
-   ========================================================= */
+function handleOrganizationChange() {
+
+  applyFilters();
+}
+
 
 function resetFilters() {
 
   if (
     $("facultyFilter")
   ) {
-
     $("facultyFilter")
       .value =
       "All";
@@ -884,7 +1060,6 @@ function resetFilters() {
   if (
     $("departmentFilter")
   ) {
-
     $("departmentFilter")
       .value =
       "All";
@@ -895,7 +1070,6 @@ function resetFilters() {
   if (
     $("activityFilter")
   ) {
-
     $("activityFilter")
       .value =
       "All";
@@ -906,8 +1080,17 @@ function resetFilters() {
   if (
     $("monthFilter")
   ) {
-
     $("monthFilter")
+      .value =
+      "All";
+  }
+
+  updateOrganizationFilter();
+
+  if (
+    $("organizationFilter")
+  ) {
+    $("organizationFilter")
       .value =
       "All";
   }
@@ -915,7 +1098,6 @@ function resetFilters() {
   if (
     $("searchFilter")
   ) {
-
     $("searchFilter")
       .value =
       "";
@@ -957,14 +1139,14 @@ function getFilteredIpRows() {
         (
           faculty === "All" ||
           row.faculty ===
-            faculty
+          faculty
         );
 
       const departmentMatch =
         (
           department === "All" ||
           row.department ===
-            department
+          department
         );
 
       return (
@@ -975,10 +1157,6 @@ function getFilteredIpRows() {
   );
 }
 
-
-/* =========================================================
-   SUMMARIZE INTERNSHIP / PLACEMENT
-   ========================================================= */
 
 function summarizeIpRows(rows) {
 
@@ -1042,38 +1220,32 @@ function summarizeIpRows(rows) {
 
     departmentCount:
       departments.size
-
   };
 }
 
-
-/* =========================================================
-   HIDE / SHOW IMPACT ROW
-   ========================================================= */
 
 function setImpactRowVisible(
   id,
   visible
 ) {
 
-  const el =
+  const element =
     $(id);
 
   if (
-    !el
+    !element
   ) {
     return;
   }
 
   const row =
-    el.closest(
+    element.closest(
       ".impact-row"
     );
 
   if (
     row
   ) {
-
     row.style.display =
       visible
         ? ""
@@ -1082,26 +1254,22 @@ function setImpactRowVisible(
 }
 
 
-/* =========================================================
-   CHANGE IMPACT LABEL
-   ========================================================= */
-
 function setImpactLabel(
   id,
   text
 ) {
 
-  const el =
+  const element =
     $(id);
 
   if (
-    !el
+    !element
   ) {
     return;
   }
 
   const row =
-    el.closest(
+    element.closest(
       ".impact-row"
     );
 
@@ -1114,67 +1282,13 @@ function setImpactLabel(
   if (
     label
   ) {
-
     label.textContent =
       text;
   }
 }
 
 
-/* =========================================================
-   RENDER INTERNSHIP / PLACEMENT SUMMARY
-   ========================================================= */
-
 function renderStudentSummary() {
-
-  const ids = [
-
-    "kInternshipStudents",
-
-    "sideStudents",
-
-    "impactStudents",
-
-    "impactCombined",
-
-    "impactIpRecords",
-
-    "impactIpDepartments"
-
-  ];
-
-  if (
-    !ipWorkbookLoaded
-  ) {
-
-    ids.forEach(
-      id => {
-
-        if (
-          $(id)
-        ) {
-
-          $(id)
-            .textContent =
-            "—";
-        }
-      }
-    );
-
-    [
-      "impactInternship",
-      "impactPlacement",
-      "impactPlanned"
-    ].forEach(
-      id =>
-        setImpactRowVisible(
-          id,
-          false
-        )
-    );
-
-    return;
-  }
 
   const rows =
     getFilteredIpRows();
@@ -1184,50 +1298,28 @@ function renderStudentSummary() {
       rows
     );
 
-  if (
-    $("kInternshipStudents")
-  ) {
+  [
+    "kInternshipStudents",
+    "sideStudents",
+    "impactStudents",
+    "impactCombined"
+  ].forEach(
+    id => {
 
-    $("kInternshipStudents")
-      .textContent =
-      summary.total
-        .toLocaleString();
-  }
-
-  if (
-    $("sideStudents")
-  ) {
-
-    $("sideStudents")
-      .textContent =
-      summary.total
-        .toLocaleString();
-  }
-
-  if (
-    $("impactStudents")
-  ) {
-
-    $("impactStudents")
-      .textContent =
-      summary.total
-        .toLocaleString();
-  }
-
-  if (
-    $("impactCombined")
-  ) {
-
-    $("impactCombined")
-      .textContent =
-      summary.total
-        .toLocaleString();
-  }
+      if (
+        $(id)
+      ) {
+        $(id)
+          .textContent =
+          summary.total
+            .toLocaleString();
+      }
+    }
+  );
 
   if (
     $("impactIpRecords")
   ) {
-
     $("impactIpRecords")
       .textContent =
       summary.rowCount
@@ -1237,38 +1329,31 @@ function renderStudentSummary() {
   if (
     $("impactIpDepartments")
   ) {
-
     $("impactIpDepartments")
       .textContent =
       summary.departmentCount
         .toLocaleString();
   }
 
-  const detailSlots = [
+  const slots =
+    [
+      "impactInternship",
+      "impactPlacement",
+      "impactPlanned"
+    ];
 
-    "impactInternship",
-
-    "impactPlacement",
-
-    "impactPlanned"
-
-  ];
-
-  detailSlots.forEach(
-    id => {
-
+  slots.forEach(
+    id =>
       setImpactRowVisible(
         id,
         false
-      );
-    }
+      )
   );
 
   const typeEntries =
     Object.entries(
       summary.byType
     )
-
       .filter(
         (
           [
@@ -1278,7 +1363,6 @@ function renderStudentSummary() {
         ) =>
           value > 0
       )
-
       .sort(
         (
           a,
@@ -1291,7 +1375,7 @@ function renderStudentSummary() {
   typeEntries
     .slice(
       0,
-      detailSlots.length
+      slots.length
     )
     .forEach(
       (
@@ -1303,7 +1387,7 @@ function renderStudentSummary() {
       ) => {
 
         const id =
-          detailSlots[
+          slots[
             index
           ];
 
@@ -1317,7 +1401,6 @@ function renderStudentSummary() {
         if (
           $(id)
         ) {
-
           $(id)
             .textContent =
             value
@@ -1334,8 +1417,16 @@ function renderStudentSummary() {
 
 
 /* =========================================================
-   GROUP DATA
+   CHART DATA
    ========================================================= */
+
+function rowAmount(row) {
+
+  return row.events > 0
+    ? row.events
+    : 1;
+}
+
 
 function group(key) {
 
@@ -1358,17 +1449,14 @@ function group(key) {
         return;
       }
 
-      const amount =
-        row.events > 0
-          ? row.events
-          : 1;
-
       result[label] =
         (
           result[label] ||
           0
         ) +
-        amount;
+        rowAmount(
+          row
+        );
     }
   );
 
@@ -1388,10 +1476,6 @@ function group(key) {
 }
 
 
-/* =========================================================
-   DESTROY CHART
-   ========================================================= */
-
 function destroyChart(id) {
 
   if (
@@ -1405,10 +1489,6 @@ function destroyChart(id) {
   }
 }
 
-
-/* =========================================================
-   WRAP LABEL
-   ========================================================= */
 
 function wrapLabel(
   text,
@@ -1437,7 +1517,7 @@ function wrapLabel(
 
       if (
         next.length >
-          max &&
+        max &&
         line
       ) {
 
@@ -1459,7 +1539,6 @@ function wrapLabel(
   if (
     line
   ) {
-
     lines.push(
       line
     );
@@ -1507,7 +1586,6 @@ function barChart(
     wrapper &&
     $(wrapper)
   ) {
-
     $(wrapper)
       .style
       .height =
@@ -1534,7 +1612,6 @@ function barChart(
           datasets: [
 
             {
-
               data:
                 values,
 
@@ -1545,7 +1622,6 @@ function barChart(
                     _,
                     index
                   ) =>
-
                     [
                       "#0b6b3a",
                       "#1556c0",
@@ -1604,7 +1680,6 @@ function barChart(
           plugins: {
 
             legend: {
-
               display:
                 false
             }
@@ -1618,7 +1693,6 @@ function barChart(
                 true,
 
               ticks: {
-
                 precision:
                   0
               }
@@ -1646,14 +1720,12 @@ function barChart(
                   },
 
                 font: {
-
                   size:
                     9
                 }
               },
 
               grid: {
-
                 display:
                   false
               }
@@ -1666,7 +1738,7 @@ function barChart(
 
 
 /* =========================================================
-   ACTIVITY DISTRIBUTION CHART
+   ACTIVITY DISTRIBUTION
    ========================================================= */
 
 function activityChart() {
@@ -1735,41 +1807,25 @@ function activityChart() {
         value
     );
 
-  const palette = [
-
-    "#0b6b3a",
-
-    "#1556c0",
-
-    "#7f2db4",
-
-    "#ef7d17",
-
-    "#0b7f90",
-
-    "#14206d",
-
-    "#e04b5a",
-
-    "#d4a017",
-
-    "#166534",
-
-    "#2563eb",
-
-    "#9333ea",
-
-    "#ea580c",
-
-    "#0e7490",
-
-    "#4338ca",
-
-    "#be123c",
-
-    "#4f46e5"
-
-  ];
+  const palette =
+    [
+      "#0b6b3a",
+      "#1556c0",
+      "#7f2db4",
+      "#ef7d17",
+      "#0b7f90",
+      "#14206d",
+      "#e04b5a",
+      "#d4a017",
+      "#166534",
+      "#2563eb",
+      "#9333ea",
+      "#ea580c",
+      "#0e7490",
+      "#4338ca",
+      "#be123c",
+      "#4f46e5"
+    ];
 
   const colors =
     labels.map(
@@ -1777,7 +1833,6 @@ function activityChart() {
         _,
         index
       ) =>
-
         palette[
           index %
           palette.length
@@ -1800,7 +1855,6 @@ function activityChart() {
           datasets: [
 
             {
-
               data:
                 values,
 
@@ -1854,63 +1908,8 @@ function activityChart() {
           plugins: {
 
             legend: {
-
               display:
                 false
-            },
-
-            tooltip: {
-
-              callbacks: {
-
-                label(
-                  context
-                ) {
-
-                  const value =
-                    Number(
-                      context.raw ||
-                      0
-                    );
-
-                  const total =
-                    context
-                      .dataset
-                      .data
-                      .reduce(
-                        (
-                          sum,
-                          item
-                        ) =>
-                          sum +
-                          Number(
-                            item ||
-                            0
-                          ),
-                        0
-                      );
-
-                  const percent =
-                    total > 0
-                      ? (
-                          (
-                            value /
-                            total
-                          ) *
-                          100
-                        )
-                          .toFixed(
-                            1
-                          )
-                      : "0.0";
-
-                  return (
-                    `${context.label}: ` +
-                    `${value.toLocaleString()} ` +
-                    `(${percent}%)`
-                  );
-                }
-              }
             }
           }
         }
@@ -1924,10 +1923,6 @@ function activityChart() {
   );
 }
 
-
-/* =========================================================
-   ACTIVITY LEGEND
-   ========================================================= */
 
 function renderActivityLegend(
   labels,
@@ -1944,78 +1939,34 @@ function renderActivityLegend(
     return;
   }
 
-  const total =
-    values.reduce(
-      (
-        sum,
-        value
-      ) =>
-        sum +
-        Number(
-          value ||
-          0
-        ),
-      0
-    );
-
   legend.innerHTML =
-
     labels.map(
       (
         label,
         index
-      ) => {
+      ) => `
 
-        const value =
-          Number(
-            values[index] ||
-            0
-          );
+        <button
+          type="button"
+          class="activity-legend-item"
+          data-index="${index}"
+        >
 
-        const percent =
-          total > 0
-            ? (
-                (
-                  value /
-                  total
-                ) *
-                100
-              )
-                .toFixed(
-                  1
-                )
-            : "0.0";
+          <span
+            class="activity-legend-dot"
+            style="background:${colors[index]}"
+          ></span>
 
-        return `
+          <span class="activity-legend-name">
+            ${esc(label)}
+          </span>
 
-          <button
-            type="button"
-            class="activity-legend-item"
-            data-index="${index}"
-            title="${esc(label)}: ${value.toLocaleString()} (${percent}%)"
-          >
+          <strong class="activity-legend-value">
+            ${Number(values[index] || 0).toLocaleString()}
+          </strong>
 
-            <span
-              class="activity-legend-dot"
-              style="background:${colors[index]}"
-            ></span>
-
-            <span
-              class="activity-legend-name"
-            >
-              ${esc(label)}
-            </span>
-
-            <strong
-              class="activity-legend-value"
-            >
-              ${value.toLocaleString()}
-            </strong>
-
-          </button>
-
-        `;
-      }
+        </button>
+      `
     )
       .join(
         ""
@@ -2039,12 +1990,8 @@ function renderActivityLegend(
               );
 
             if (
-              Number.isInteger(
-                index
-              ) &&
               labels[index]
             ) {
-
               openPopup(
                 "type",
                 labels[index]
@@ -2058,7 +2005,7 @@ function renderActivityLegend(
 
 
 /* =========================================================
-   MONTH HELPER
+   MONTHLY TREND
    ========================================================= */
 
 function monthKey(value) {
@@ -2078,7 +2025,6 @@ function monthKey(value) {
         text
       )
   ) {
-
     return text.slice(
       0,
       7
@@ -2091,7 +2037,6 @@ function monthKey(value) {
         text
       )
   ) {
-
     return text;
   }
 
@@ -2105,7 +2050,6 @@ function monthKey(value) {
       date
     )
   ) {
-
     return date
       .toISOString()
       .slice(
@@ -2117,10 +2061,6 @@ function monthKey(value) {
   return text;
 }
 
-
-/* =========================================================
-   MONTHLY TREND
-   ========================================================= */
 
 function monthlyChart() {
 
@@ -2157,17 +2097,14 @@ function monthlyChart() {
         return;
       }
 
-      const amount =
-        row.events > 0
-          ? row.events
-          : 1;
-
       result[month] =
         (
           result[month] ||
           0
         ) +
-        amount;
+        rowAmount(
+          row
+        );
     }
   );
 
@@ -2193,9 +2130,7 @@ function monthlyChart() {
           datasets: [
 
             {
-
               data:
-
                 labels.map(
                   month =>
                     result[
@@ -2232,7 +2167,6 @@ function monthlyChart() {
           plugins: {
 
             legend: {
-
               display:
                 false
             }
@@ -2246,7 +2180,6 @@ function monthlyChart() {
                 true,
 
               ticks: {
-
                 precision:
                   0
               }
@@ -2255,7 +2188,6 @@ function monthlyChart() {
             x: {
 
               grid: {
-
                 display:
                   false
               }
@@ -2280,10 +2212,8 @@ function render() {
         row
       ) =>
         sum +
-        (
-          row.events > 0
-            ? row.events
-            : 1
+        rowAmount(
+          row
         ),
       0
     );
@@ -2302,10 +2232,8 @@ function render() {
           row
         ) =>
           sum +
-          (
-            row.events > 0
-              ? row.events
-              : 1
+          rowAmount(
+            row
           ),
         0
       );
@@ -2324,10 +2252,8 @@ function render() {
           row
         ) =>
           sum +
-          (
-            row.events > 0
-              ? row.events
-              : 1
+          rowAmount(
+            row
           ),
         0
       );
@@ -2377,125 +2303,94 @@ function render() {
         )
     );
 
-  if (
-    $("kRecords")
-  ) {
+  const setText =
+    (
+      id,
+      value
+    ) => {
 
-    $("kRecords")
-      .textContent =
-      filteredRows
-        .length
-        .toLocaleString();
-  }
+      if (
+        $(id)
+      ) {
+        $(id)
+          .textContent =
+          value;
+      }
+    };
 
-  if (
-    $("kActivities")
-  ) {
+  setText(
+    "kRecords",
+    filteredRows
+      .length
+      .toLocaleString()
+  );
 
-    $("kActivities")
-      .textContent =
-      totalActivities
-        .toLocaleString();
-  }
+  setText(
+    "kActivities",
+    totalActivities
+      .toLocaleString()
+  );
 
-  if (
-    $("kScheduled")
-  ) {
+  setText(
+    "kScheduled",
+    scheduled
+      .toLocaleString()
+  );
 
-    $("kScheduled")
-      .textContent =
-      scheduled
-        .toLocaleString();
-  }
+  setText(
+    "kFaculties",
+    faculties
+      .size
+      .toLocaleString()
+  );
 
-  if (
-    $("kFaculties")
-  ) {
+  setText(
+    "kDepartments",
+    departments
+      .size
+      .toLocaleString()
+  );
 
-    $("kFaculties")
-      .textContent =
-      faculties
-        .size
-        .toLocaleString();
-  }
+  setText(
+    "kTypes",
+    types
+      .size
+      .toLocaleString()
+  );
 
-  if (
-    $("kDepartments")
-  ) {
+  setText(
+    "sideActivities",
+    totalActivities
+      .toLocaleString()
+  );
 
-    $("kDepartments")
-      .textContent =
-      departments
-        .size
-        .toLocaleString();
-  }
+  setText(
+    "sideRecords",
+    filteredRows
+      .length
+      .toLocaleString()
+  );
 
-  if (
-    $("kTypes")
-  ) {
+  setText(
+    "flowReported",
+    totalActivities
+      .toLocaleString()
+  );
 
-    $("kTypes")
-      .textContent =
-      types
-        .size
-        .toLocaleString();
-  }
+  setText(
+    "flowPlanned",
+    planned
+      .toLocaleString()
+  );
 
-  if (
-    $("sideActivities")
-  ) {
+  setText(
+    "flowScheduled",
+    scheduled
+      .toLocaleString()
+  );
 
-    $("sideActivities")
-      .textContent =
-      totalActivities
-        .toLocaleString();
-  }
-
-  if (
-    $("sideRecords")
-  ) {
-
-    $("sideRecords")
-      .textContent =
-      filteredRows
-        .length
-        .toLocaleString();
-  }
-
-  if (
-    $("flowReported")
-  ) {
-
-    $("flowReported")
-      .textContent =
-      totalActivities
-        .toLocaleString();
-  }
-
-  if (
-    $("flowPlanned")
-  ) {
-
-    $("flowPlanned")
-      .textContent =
-      planned
-        .toLocaleString();
-  }
-
-  if (
-    $("flowScheduled")
-  ) {
-
-    $("flowScheduled")
-      .textContent =
-      scheduled
-        .toLocaleString();
-  }
-
-  /* Internship / Placement */
   renderStudentSummary();
 
-  /* Charts */
   barChart(
     "facultyChart",
     group(
@@ -2521,24 +2416,20 @@ function render() {
 
 
 /* =========================================================
-   FIND ACTIVITY SHEET
+   WORKBOOK LOAD
    ========================================================= */
 
 function findActivitySheet(
   workbook
 ) {
 
-  const preferredNames = [
-
-    "All Separated Activities",
-
-    "Separated Activities",
-
-    "Activities",
-
-    "All Activities"
-
-  ];
+  const preferredNames =
+    [
+      "All Separated Activities",
+      "Separated Activities",
+      "Activities",
+      "All Activities"
+    ];
 
   for (
     const preferredName
@@ -2559,7 +2450,6 @@ function findActivitySheet(
     if (
       found
     ) {
-
       return found;
     }
   }
@@ -2606,7 +2496,6 @@ function findActivitySheet(
         "department"
       )
     ) {
-
       return sheetName;
     }
   }
@@ -2614,10 +2503,6 @@ function findActivitySheet(
   return null;
 }
 
-
-/* =========================================================
-   FETCH WORKBOOK
-   ========================================================= */
 
 async function fetchWorkbook(
   paths
@@ -2645,7 +2530,6 @@ async function fetchWorkbook(
       if (
         !response.ok
       ) {
-
         throw new Error(
           `HTTP ${response.status}`
         );
@@ -2674,9 +2558,7 @@ async function fetchWorkbook(
           )
       };
 
-    }
-
-    catch(
+    } catch (
       error
     ) {
 
@@ -2700,23 +2582,15 @@ async function fetchWorkbook(
 }
 
 
-/* =========================================================
-   LOAD ACTIVITY WORKBOOK
-   ========================================================= */
-
 async function loadActivityWorkbook() {
 
-  const paths = [
-
-    "data/UOL_Separated_All_Activity_Data_Cleaned.xlsx",
-
-    "./data/UOL_Separated_All_Activity_Data_Cleaned.xlsx",
-
-    "UOL_Separated_All_Activity_Data_Cleaned.xlsx",
-
-    "./UOL_Separated_All_Activity_Data_Cleaned.xlsx"
-
-  ];
+  const paths =
+    [
+      "data/UOL_Separated_All_Activity_Data_Cleaned.xlsx",
+      "./data/UOL_Separated_All_Activity_Data_Cleaned.xlsx",
+      "UOL_Separated_All_Activity_Data_Cleaned.xlsx",
+      "./UOL_Separated_All_Activity_Data_Cleaned.xlsx"
+    ];
 
   const result =
     await fetchWorkbook(
@@ -2734,7 +2608,6 @@ async function loadActivityWorkbook() {
   if (
     !activitySheet
   ) {
-
     throw new Error(
       "All Separated Activities sheet not found"
     );
@@ -2763,55 +2636,37 @@ async function loadActivityWorkbook() {
   filteredRows =
     [...allRows];
 
-  /* Build IP breakdown from same Excel */
   buildIpBreakdownFromActivities();
 
   console.log(
-    "Activity workbook:",
+    "Workbook:",
     result.path
   );
 
   console.log(
-    "Activity sheet:",
+    "Sheet:",
     activitySheet
   );
 
   console.log(
-    "Activity records:",
+    "Records:",
     allRows.length
   );
-
-  return result.path;
 }
 
-
-/* =========================================================
-   MASTER LOAD
-   ========================================================= */
 
 async function loadExcel() {
 
   if (
     $("connection")
   ) {
-
     $("connection")
-      .innerHTML = `
-
-        <span
-          style="color:#f59e0b"
-        >
-          ●
-        </span>
-
-        Loading workbook…
-
-      `;
+      .innerHTML =
+      `<span style="color:#f59e0b">●</span> Loading workbook…`;
   }
 
   try {
 
-    /* Only ONE Excel file */
     await loadActivityWorkbook();
 
     populateFilters();
@@ -2825,42 +2680,26 @@ async function loadExcel() {
           row
         ) =>
           sum +
-          (
-            row.events > 0
-              ? row.events
-              : 1
+          rowAmount(
+            row
           ),
         0
       );
 
     const faculties =
       new Set(
-        allRows
-          .map(
-            row =>
-              row.faculty
-          )
-          .filter(
-            value =>
-              !isInvalidLabel(
-                value
-              )
-          )
+        allRows.map(
+          row =>
+            row.faculty
+        )
       );
 
     const departments =
       new Set(
-        allRows
-          .map(
-            row =>
-              row.department
-          )
-          .filter(
-            value =>
-              !isInvalidLabel(
-                value
-              )
-          )
+        allRows.map(
+          row =>
+            row.department
+        )
       );
 
     const ipSummary =
@@ -2871,50 +2710,20 @@ async function loadExcel() {
     if (
       $("connection")
     ) {
-
       $("connection")
         .innerHTML = `
-
-          <span
-            style="color:#16a34a"
-          >
-            ●
-          </span>
-
+          <span style="color:#16a34a">●</span>
           Connected
-
-          •
-
-          ${allRows.length.toLocaleString()}
-          records
-
-          •
-
-          ${totalActivities.toLocaleString()}
-          activities
-
+          • ${allRows.length.toLocaleString()} records
+          • ${totalActivities.toLocaleString()} activities
           <br>
-
-          ${faculties.size.toLocaleString()}
-          faculties
-
-          •
-
-          ${departments.size.toLocaleString()}
-          departments
-
-          •
-
-          <strong>
-            ${ipSummary.total.toLocaleString()}
-            Internship / Placement students
-          </strong>
-
+          ${faculties.size.toLocaleString()} faculties
+          • ${departments.size.toLocaleString()} departments
+          • <strong>${ipSummary.total.toLocaleString()} Internship / Placement students</strong>
         `;
     }
-  }
 
-  catch(
+  } catch (
     error
   ) {
 
@@ -2926,26 +2735,16 @@ async function loadExcel() {
     if (
       $("connection")
     ) {
-
       $("connection")
-        .innerHTML = `
-
-          <span
-            style="color:#dc2626"
-          >
-            ●
-          </span>
-
-          Excel workbook failed
-
-        `;
+        .innerHTML =
+        `<span style="color:#dc2626">●</span> Excel workbook failed`;
     }
   }
 }
 
 
 /* =========================================================
-   POPUP DISPLAY VALUE
+   POPUP
    ========================================================= */
 
 function displayValue(value) {
@@ -2959,10 +2758,6 @@ function displayValue(value) {
       );
 }
 
-
-/* =========================================================
-   DETAIL POPUP
-   ========================================================= */
 
 function openPopup(
   key,
@@ -2994,7 +2789,6 @@ function openPopup(
   if (
     $("detailModalTitle")
   ) {
-
     $("detailModalTitle")
       .textContent =
       label;
@@ -3006,165 +2800,83 @@ function openPopup(
 
     $("detailModalBody")
       .innerHTML =
-
       rows.map(
         (
           row,
           index
         ) => `
 
-          <div
-            class="detail-record"
-          >
+          <div class="detail-record">
 
             <strong>
               Record ${index + 1}
             </strong>
 
-            <div
-              class="detail-grid"
-            >
+            <div class="detail-grid">
 
               <div class="detail-field">
-                <small>
-                  Faculty
-                </small>
-                <strong>
-                  ${displayValue(
-                    row.faculty
-                  )}
-                </strong>
+                <small>Faculty</small>
+                <strong>${displayValue(row.faculty)}</strong>
               </div>
 
               <div class="detail-field">
-                <small>
-                  Department
-                </small>
-                <strong>
-                  ${displayValue(
-                    row.department
-                  )}
-                </strong>
+                <small>Department</small>
+                <strong>${displayValue(row.department)}</strong>
               </div>
 
               <div class="detail-field">
-                <small>
-                  Activity Type
-                </small>
-                <strong>
-                  ${displayValue(
-                    row.type
-                  )}
-                </strong>
+                <small>Activity Type</small>
+                <strong>${displayValue(row.type)}</strong>
               </div>
 
               <div class="detail-field">
-                <small>
-                  Original Activity Type
-                </small>
-                <strong>
-                  ${displayValue(
-                    row.originalType
-                  )}
-                </strong>
+                <small>Original Activity Type</small>
+                <strong>${displayValue(row.originalType)}</strong>
               </div>
 
               <div class="detail-field">
-                <small>
-                  How Many
-                </small>
-                <strong>
-                  ${
-                    Number(
-                      row.events ||
-                      0
-                    )
-                      .toLocaleString()
-                  }
-                </strong>
+                <small>How Many</small>
+                <strong>${Number(row.events || 0).toLocaleString()}</strong>
               </div>
 
               <div class="detail-field">
-                <small>
-                  Reporting Month
-                </small>
-                <strong>
-                  ${displayValue(
-                    row.month
-                  )}
-                </strong>
+                <small>Reporting Month</small>
+                <strong>${displayValue(row.month)}</strong>
               </div>
 
               <div class="detail-field">
-                <small>
-                  Person
-                </small>
-                <strong>
-                  ${displayValue(
-                    row.person
-                  )}
-                </strong>
+                <small>Person</small>
+                <strong>${displayValue(row.person)}</strong>
               </div>
 
               <div class="detail-field">
-                <small>
-                  Designation
-                </small>
-                <strong>
-                  ${displayValue(
-                    row.designation
-                  )}
-                </strong>
+                <small>Designation</small>
+                <strong>${displayValue(row.designation)}</strong>
               </div>
 
               <div class="detail-field">
-                <small>
-                  Organization
-                </small>
-                <strong>
-                  ${displayValue(
-                    row.organization
-                  )}
-                </strong>
+                <small>Organization</small>
+                <strong>${displayValue(row.organization)}</strong>
               </div>
 
               <div class="detail-field">
-                <small>
-                  Planned
-                </small>
-                <strong>
-                  ${displayValue(
-                    row.planned
-                  )}
-                </strong>
+                <small>Planned</small>
+                <strong>${displayValue(row.planned)}</strong>
               </div>
 
               <div class="detail-field">
-                <small>
-                  Scheduled
-                </small>
-                <strong>
-                  ${displayValue(
-                    row.scheduled
-                  )}
-                </strong>
+                <small>Scheduled</small>
+                <strong>${displayValue(row.scheduled)}</strong>
               </div>
 
               <div class="detail-field">
-                <small>
-                  Remarks / Result
-                </small>
-                <strong>
-                  ${displayValue(
-                    row.remarks
-                  )}
-                </strong>
+                <small>Remarks / Result</small>
+                <strong>${displayValue(row.remarks)}</strong>
               </div>
 
             </div>
 
           </div>
-
         `
       )
         .join(
@@ -3179,10 +2891,6 @@ function openPopup(
     );
 }
 
-
-/* =========================================================
-   CLOSE POPUP
-   ========================================================= */
 
 function closePopup() {
 
@@ -3251,19 +2959,13 @@ function exportReport() {
 
   XLSX.utils
     .book_append_sheet(
-
       workbook,
-
       XLSX.utils
         .json_to_sheet(
           activityExport
         ),
-
       "Filtered Activities"
     );
-
-
-  /* Internship / Placement export */
 
   const ipRows =
     getFilteredIpRows();
@@ -3288,74 +2990,12 @@ function exportReport() {
 
   XLSX.utils
     .book_append_sheet(
-
       workbook,
-
       XLSX.utils
         .json_to_sheet(
           ipExport
         ),
-
       "Internship Placement"
-    );
-
-
-  const ipSummary =
-    summarizeIpRows(
-      ipRows
-    );
-
-  const summaryExport =
-    Object.entries(
-      ipSummary.byType
-    )
-      .filter(
-        (
-          [
-            ,
-            students
-          ]
-        ) =>
-          students > 0
-      )
-      .map(
-        (
-          [
-            type,
-            students
-          ]
-        ) => ({
-
-          Category:
-            type,
-
-          Students:
-            students
-        })
-      );
-
-  summaryExport.push(
-    {
-
-      Category:
-        "Combined Total",
-
-      Students:
-        ipSummary.total
-    }
-  );
-
-  XLSX.utils
-    .book_append_sheet(
-
-      workbook,
-
-      XLSX.utils
-        .json_to_sheet(
-          summaryExport
-        ),
-
-      "IP Summary"
     );
 
   XLSX.writeFile(
@@ -3393,6 +3033,12 @@ function bindEvents() {
     ?.addEventListener(
       "change",
       handleMonthChange
+    );
+
+  $("organizationFilter")
+    ?.addEventListener(
+      "change",
+      handleOrganizationChange
     );
 
   $("searchFilter")
@@ -3447,7 +3093,6 @@ function bindEvents() {
           event.target ===
           $("detailModal")
         ) {
-
           closePopup();
         }
       }
@@ -3462,7 +3107,6 @@ function bindEvents() {
           event.key ===
           "Escape"
         ) {
-
           closePopup();
         }
       }
@@ -3471,16 +3115,15 @@ function bindEvents() {
 
 
 /* =========================================================
-   START DASHBOARD
+   START
    ========================================================= */
 
-document
-  .addEventListener(
-    "DOMContentLoaded",
-    () => {
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
 
-      bindEvents();
+    bindEvents();
 
-      loadExcel();
-    }
-  );
+    loadExcel();
+  }
+);

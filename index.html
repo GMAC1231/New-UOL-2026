@@ -1,3572 +1,471 @@
 <!DOCTYPE html>
-
-
-
 <html lang="en">
-
-
-
-
-
-
-
 <head>
-
-
-
   <meta charset="UTF-8">
-
-
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-
-
-
-
-
   <title>UOL Analytics | Tentative Dashboard</title>
 
-
-
-
-
-
-
   <script src="https://cdn.tailwindcss.com"></script>
-
-
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-
-
-
-
-
-
   <link rel="stylesheet" href="style.css">
-
-<style>
-/* =========================================================
-   ANALYTICS DASHBOARD ALIGNMENT FIX
-   ========================================================= */
-
-.analytics-grid.aligned-grid{
-  display:grid !important;
-  grid-template-columns:repeat(12,minmax(0,1fr)) !important;
-  gap:10px !important;
-  align-items:stretch !important;
-}
-
-/* Row 1 */
-.panel-faculty{
-  grid-column:span 8 !important;
-}
-
-.panel-activity{
-  grid-column:span 4 !important;
-}
-
-/* Row 2 */
-.panel-monthly{
-  grid-column:span 4 !important;
-}
-
-.panel-department{
-  grid-column:span 8 !important;
-}
-
-/* Row 3 */
-.panel-internship{
-  grid-column:span 6 !important;
-}
-
-.panel-status{
-  grid-column:span 6 !important;
-}
-
-/* Make cards line up vertically */
-.analytics-grid.aligned-grid > .panel{
-  display:flex;
-  flex-direction:column;
-  min-width:0;
-  height:100%;
-}
-
-.analytics-grid.aligned-grid .panel-head{
-  flex:0 0 auto;
-}
-
-.analytics-grid.aligned-grid .chart-wrap,
-.analytics-grid.aligned-grid .activity-chart-layout,
-.analytics-grid.aligned-grid .impact-box,
-.analytics-grid.aligned-grid .status-flow{
-  flex:1 1 auto;
-}
-
-/* Keep the first two chart rows visually consistent */
-.panel-faculty,
-.panel-activity,
-.panel-monthly,
-.panel-department{
-  min-height:340px !important;
-}
-
-/* Bottom row same height */
-.panel-internship,
-.panel-status{
-  min-height:330px !important;
-}
-
-/* Activity distribution */
-.panel-activity .activity-chart-layout{
-  min-height:285px;
-  height:100%;
-}
-
-.panel-activity .activity-canvas-wrap{
-  min-width:0;
-}
-
-/* Monthly chart */
-.panel-monthly .chart-wrap{
-  min-height:285px;
-  height:100%;
-}
-
-/* Faculty + Department */
-.panel-faculty .chart-wrap,
-.panel-department .chart-wrap{
-  min-height:285px;
-}
-
-/* Internship summary */
-.panel-internship .impact-box{
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-}
-
-/* Status box */
-.panel-status .status-flow{
-  min-height:250px;
-}
-
-/* Prevent text/legend from forcing cards wider than their grid column */
-.analytics-grid.aligned-grid .panel,
-.analytics-grid.aligned-grid .activity-chart-layout,
-.analytics-grid.aligned-grid .activity-legend{
-  min-width:0;
-}
-
-/* Tablet */
-@media(max-width:1200px){
-  .analytics-grid.aligned-grid{
-    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-  }
-
-  .panel-faculty,
-  .panel-department{
-    grid-column:1 / -1 !important;
-  }
-
-  .panel-activity,
-  .panel-monthly,
-  .panel-internship,
-  .panel-status{
-    grid-column:span 1 !important;
-  }
-}
-
-/* Mobile */
-@media(max-width:850px){
-  .analytics-grid.aligned-grid{
-    grid-template-columns:1fr !important;
-  }
-
-  .panel-faculty,
-  .panel-activity,
-  .panel-monthly,
-  .panel-department,
-  .panel-internship,
-  .panel-status{
-    grid-column:1 / -1 !important;
-    min-height:auto !important;
-  }
-
-  .panel-activity .activity-chart-layout{
-    min-height:430px;
-  }
-
-  .panel-status .status-flow{
-    min-height:220px;
-  }
-}
-</style>
-
-
-
-
 </head>
-
-
-
-
-
-
 
 <body>
 
+  <aside class="side" id="sidebar">
 
-
-
-
-
-
-<!-- ===================================================== -->
-
-
-
-<!-- SIDEBAR -->
-
-
-
-<!-- ===================================================== -->
-
-
-
-
-
-
-
-<aside class="side" id="sidebar">
-
-
-
-
-
-
-
-  <div class="brand-wrap">
-
-
-
-
-
-
-
-    <div class="brand-mark">
-
-
-
-      UOL
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div>
-
-
-
-      <div class="brand-title">
-
-
-
-        UOL Analytics
-
-
-
-      </div>
-
-
-
-
-
-
-
-      <div class="brand-sub">
-
-
-
-        External Linkages Intelligence
-
-
-
-      </div>
-
-
-
-    </div>
-
-
-
-
-
-
-
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-  <button class="mobile-nav-toggle" id="mobileNavToggle">
-
-
-
-
-
-
-
-    <span>
-
-
-
-      📊 Tentative Dashboard
-
-
-
-    </span>
-
-
-
-
-
-
-
-    <span>
-
-
-
-      ▼
-
-
-
-    </span>
-
-
-
-
-
-
-
-  </button>
-
-
-
-
-
-
-
-
-
-
-
-  <div class="mobile-nav-menu" id="navMenu">
-
-
-
-
-
-
-
-    <a class="nav-link active" href="index.html">
-
-
-
-      📊 Tentative Dashboard
-
-
-
-    </a>
-
-
-
-
-
-
-
-    <a class="nav-link" href="dashboards/workshop.html">
-
-
-
-      🛠 Workshop Dashboard
-
-
-
-    </a>
-
-
-
-
-
-
-
-    <a class="nav-link" href="dashboards/seminar.html">
-
-
-
-      🎤 Seminar Dashboard
-
-
-
-    </a>
-
-
-
-
-
-
-
-    <a class="nav-link" href="dashboards/conference.html">
-
-
-
-      🎓 Conference Dashboard
-
-
-
-    </a>
-
-
-
-
-
-
-
-    <a class="nav-link" href="dashboards/guest.html">
-
-
-
-      👨‍🏫 Guest Lecture / GLIT
-
-
-
-    </a>
-
-
-
-
-
-
-
-    <a class="nav-link" href="dashboards/internship-placement.html">
-
-
-
-      💼 Internship / Placement
-
-
-
-    </a>
-
-
-
-
-
-
-
-    <a class="nav-link" href="dashboards/mou.html">
-
-
-
-      🤝 MoU / MoU Signing
-
-
-
-    </a>
-
-
-
-
-
-
-
-    <a class="nav-link" href="dashboards/iv.html">
-
-
-
-      🏭 Industrial Visit / IV
-
-
-
-    </a>
-
-
-
-
-
-
-
-    <a class="nav-link" href="dashboards/others.html">
-
-
-
-      📌 Others
-
-
-
-    </a>
-
-
-
-
-
-
-
-    <a class="nav-link" href="dashboards/iab.html">
-
-
-
-      🤝 IAB / Industry Consultation
-
-
-
-    </a>
-
-
-
-
-
-
-
-    <a class="nav-link" href="dashboards/research-collaboration.html">
-
-
-
-      🔬 Research Collaboration
-
-
-
-    </a>
-
-
-
-
-
-
-
-    <a class="nav-link" href="dashboards/community.html">
-
-
-
-      🌍 Community Engagement
-
-
-
-    </a>
-
-
-
-
-
-
-
-    <a class="nav-link" href="dashboards/alumni.html">
-
-
-
-      🎓 Alumni Talk / Mentoring
-
-
-
-    </a>
-
-
-
-
-
-
-
-    <a class="nav-link" href="dashboards/curriculum-feedback.html">
-
-
-
-      📝 Curriculum Feedback
-
-
-
-    </a>
-
-
-
-
-
-
-
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-  <div class="side-overview">
-
-
-
-
-
-
-
-    <div class="side-overview-title">
-
-
-
-      Tentative Overview
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div
-
-
-
-      class="side-overview-value"
-
-
-
-      id="sideActivities"
-
-
-
-    >
-
-
-
-      0
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="side-overview-label">
-
-
-
-      Total Activities
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="side-mini-row">
-
-
-
-      <span>Records</span>
-
-
-
-      <strong id="sideRecords">0</strong>
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="side-mini-row">
-
-
-
-      <span>IP Students</span>
-
-
-
-      <strong id="sideStudents">—</strong>
-
-
-
-    </div>
-
-
-
-
-
-
-
-  </div>
-
-
-
-
-
-
-
-</aside>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- ===================================================== -->
-
-
-
-<!-- MAIN -->
-
-
-
-<!-- ===================================================== -->
-
-
-
-
-
-
-
-<main class="main">
-
-
-
-
-
-
-
-
-
-
-
-<!-- ===================================================== -->
-
-
-
-<!-- HEADER -->
-
-
-
-<!-- ===================================================== -->
-
-
-
-
-
-
-
-<header class="topbar">
-
-
-
-
-
-
-
-  <div class="top-logo">
-
-
-
-
-
-
-
-    <div class="uol-badge">
-
-
-
-      UOL
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div>
-
-
-
-
-
-
-
-      <div class="university-name">
-
-
-
-        THE UNIVERSITY OF LAHORE
-
-
-
-      </div>
-
-
-
-
-
-
-
-      <div class="office-name">
-
-
-
-        Office of External Linkages
-
-
-
-      </div>
-
-
-
-
-
-
-
-    </div>
-
-
-
-
-
-
-
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-  <div class="title-block">
-
-
-
-
-
-
-
-    <div class="page-number">
-
-
-
-      TENTATIVE
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <h1>
-
-
-
-      EXTERNAL LINKAGES DASHBOARD
-
-
-
-    </h1>
-
-
-
-
-
-
-
-    <div class="title-sub">
-
-
-
-      OEL Activity Intelligence
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="title-ribbon">
-
-
-
-      Connect • Collaborate • Create Impact
-
-
-
-    </div>
-
-
-
-
-
-
-
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-  <div class="status-box">
-
-
-
-
-
-
-
-    <div class="status-label">
-
-
-
-      Excel Connection
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div
-
-
-
-      id="connection"
-
-
-
-      class="status-value"
-
-
-
-    >
-
-
-
-      Loading Excel…
-
-
-
-    </div>
-
-
-
-
-
-
-
-  </div>
-
-
-
-
-
-
-
-</header>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- ===================================================== -->
-
-
-
-<!-- FILTERS -->
-
-
-
-<!-- ===================================================== -->
-
-
-
-
-
-
-
-<section class="filter-strip">
-
-
-
-
-
-
-
-  <div class="filter-label">
-
-
-
-    View By
-
-
-
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-  <select id="facultyFilter" class="filter">
-
-
-
-    <option value="All">
-
-
-
-      All Faculties
-
-
-
-    </option>
-
-
-
-  </select>
-
-
-
-
-
-
-
-
-
-
-
-  <select id="departmentFilter" class="filter">
-
-
-
-    <option value="All">
-
-
-
-      All Departments
-
-
-
-    </option>
-
-
-
-  </select>
-
-
-
-
-
-
-
-
-
-
-
-  <select id="activityFilter" class="filter">
-
-
-
-    <option value="All">
-
-
-
-      All Activity Types
-
-
-
-    </option>
-
-
-
-  </select>
-
-
-
-
-
-
-
-
-
-
-
-  <select id="monthFilter" class="filter">
-
-
-
-    <option value="All">
-
-
-
-      All Reporting Months
-
-
-
-    </option>
-
-
-
-  </select>
-
-
-
-
-
-
-
-
-
-
-
-  <input
-
-
-
-    id="searchFilter"
-
-
-
-    class="filter search-box"
-
-
-
-    placeholder="Search faculty, department, activity, person or organization"
-
-
-
-  >
-
-
-
-
-
-
-
-
-
-
-
-  <button class="btn subtle" id="resetBtn">
-
-
-
-    ↺ Reset
-
-
-
-  </button>
-
-
-
-
-
-
-
-
-
-
-
-  <button class="btn" id="exportBtn">
-
-
-
-    ⇩ Export Report
-
-
-
-  </button>
-
-
-
-
-
-
-
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="tentative-alert">
-
-
-
-
-
-
-
-  <strong>
-
-
-
-    Tentative Dashboard:
-
-
-
-  </strong>
-
-
-
-
-
-
-
-  activity figures are calculated from the separated activity workbook.
-
-
-
-  Internship/Placement student totals are calculated separately from
-
-
-
-  the cleaned Internship/Placement workbook.
-
-
-
-
-
-
-
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- ===================================================== -->
-
-
-
-<!-- KPI CARDS -->
-
-
-
-<!-- ===================================================== -->
-
-
-
-
-
-
-
-<section class="kpi-grid">
-
-
-
-
-
-
-
-
-
-
-
-  <div class="kpi-card">
-
-
-
-
-
-
-
-    <div class="kpi-icon green">
-
-
-
-      ◎
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="kpi-label">
-
-
-
-      Activity Records
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div id="kRecords" class="kpi-value">
-
-
-
-      0
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="kpi-foot">
-
-
-
-      Rows in current view
-
-
-
-    </div>
-
-
-
-
-
-
-
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <div class="kpi-card">
-
-
-
-
-
-
-
-    <div class="kpi-icon blue">
-
-
-
-      ▤
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="kpi-label">
-
-
-
-      Total Activities
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div id="kActivities" class="kpi-value">
-
-
-
-      0
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="kpi-foot">
-
-
-
-      Sum of activity How Many
-
-
-
-    </div>
-
-
-
-
-
-
-
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <div class="kpi-card emphasized">
-
-
-
-
-
-
-
-    <div class="kpi-icon purple">
-
-
-
-      ◉
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="kpi-label">
-
-
-
-      Internship / Placement Students
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div
-
-
-
-      id="kInternshipStudents"
-
-
-
-      class="kpi-value"
-
-
-
-    >
-
-
-
-      —
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="kpi-foot">
-
-
-
-      Internship + Placement + Planned
-
-
-
-    </div>
-
-
-
-
-
-
-
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <div class="kpi-card">
-
-
-
-
-
-
-
-    <div class="kpi-icon orange">
-
-
-
-      ⌛
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="kpi-label">
-
-
-
-      Scheduled Activities
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div id="kScheduled" class="kpi-value">
-
-
-
-      0
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="kpi-foot">
-
-
-
-      Scheduled = Yes
-
-
-
-    </div>
-
-
-
-
-
-
-
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <div class="kpi-card">
-
-
-
-
-
-
-
-    <div class="kpi-icon teal">
-
-
-
-      ◫
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="kpi-label">
-
-
-
-      Faculties
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div id="kFaculties" class="kpi-value">
-
-
-
-      0
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="kpi-foot">
-
-
-
-      Participating faculties
-
-
-
-    </div>
-
-
-
-
-
-
-
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <div class="kpi-card">
-
-
-
-
-
-
-
-    <div class="kpi-icon navy">
-
-
-
-      ♙
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="kpi-label">
-
-
-
-      Departments
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div id="kDepartments" class="kpi-value">
-
-
-
-      0
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="kpi-foot">
-
-
-
-      Participating departments
-
-
-
-    </div>
-
-
-
-
-
-
-
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <div class="kpi-card">
-
-
-
-
-
-
-
-    <div class="kpi-icon green">
-
-
-
-      ◌
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="kpi-label">
-
-
-
-      Activity Types
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div id="kTypes" class="kpi-value">
-
-
-
-      0
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <div class="kpi-foot">
-
-
-
-      Combined categories
-
-
-
-    </div>
-
-
-
-
-
-
-
-  </div>
-
-
-
-
-
-
-
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- ===================================================== -->
-
-
-
-<!-- ANALYTICS -->
-
-
-
-<!-- ===================================================== -->
-
-
-
-
-
-
-
-<section class="analytics-grid aligned-grid">
-
-
-
-
-
-
-
-
-
-
-
-  <!-- Faculty -->
-
-
-
-
-
-
-
-  <div class="panel panel-faculty">
-
-
-
-
-
-
-
-    <div class="panel-head">
-
-
-
-
-
-
+    <div class="brand-wrap">
+      <div class="brand-mark">UOL</div>
 
       <div>
-
-
-
-
-
-
-
-        <h3>
-
-
-
-          FACULTY-WISE ACTIVITIES
-
-
-
-        </h3>
-
-
-
-
-
-
-
-        <p>
-
-
-
-          Total activity volume by faculty
-
-
-
-        </p>
-
-
-
-
-
-
-
+        <div class="brand-title">UOL Analytics</div>
+        <div class="brand-sub">External Linkages Intelligence</div>
       </div>
+    </div>
 
+    <button class="mobile-nav-toggle" id="mobileNavToggle">
+      <span>📊 Tentative Dashboard</span>
+      <span>▼</span>
+    </button>
 
+    <div class="mobile-nav-menu" id="navMenu">
 
+      <a class="nav-link active" href="index.html">
+        📊 Tentative Dashboard
+      </a>
 
+      <a class="nav-link" href="dashboards/workshop.html">
+        🛠 Workshop Dashboard
+      </a>
 
+      <a class="nav-link" href="dashboards/seminar.html">
+        🎤 Seminar Dashboard
+      </a>
 
+      <a class="nav-link" href="dashboards/conference.html">
+        🎓 Conference Dashboard
+      </a>
 
-      <span class="click-note">
+      <a class="nav-link" href="dashboards/guest.html">
+        👨‍🏫 Guest Lecture / GLIT
+      </a>
 
+      <a class="nav-link" href="dashboards/internship-placement.html">
+        💼 Internship / Placement
+      </a>
 
+      <a class="nav-link" href="dashboards/mou.html">
+        🤝 MoU / MoU Signing
+      </a>
 
-        Click bar for details
+      <a class="nav-link" href="dashboards/iv.html">
+        🏭 Industrial Visit / IV
+      </a>
 
+      <a class="nav-link" href="dashboards/others.html">
+        📌 Others
+      </a>
 
+      <a class="nav-link" href="dashboards/iab.html">
+        🤝 IAB / Industry Consultation
+      </a>
 
-      </span>
+      <a class="nav-link" href="dashboards/research-collaboration.html">
+        🔬 Research Collaboration
+      </a>
 
+      <a class="nav-link" href="dashboards/community.html">
+        🌍 Community Engagement
+      </a>
 
+      <a class="nav-link" href="dashboards/alumni.html">
+        🎓 Alumni Talk / Mentoring
+      </a>
 
-
-
-
+      <a class="nav-link" href="dashboards/curriculum-feedback.html">
+        📝 Curriculum Feedback
+      </a>
 
     </div>
 
+    <div class="side-overview">
+      <div class="side-overview-title">Tentative Overview</div>
 
+      <div class="side-overview-value" id="sideActivities">0</div>
+      <div class="side-overview-label">Total Activities</div>
 
+      <div class="side-mini-row">
+        <span>Records</span>
+        <strong id="sideRecords">0</strong>
+      </div>
 
-
-
-
-
-
-
-
-    <div
-
-
-
-      id="facultyWrap"
-
-
-
-      class="chart-wrap tall"
-
-
-
-    >
-
-
-
-
-
-
-
-      <canvas id="facultyChart"></canvas>
-
-
-
-
-
-
-
+      <div class="side-mini-row">
+        <span>IP Students</span>
+        <strong id="sideStudents">—</strong>
+      </div>
     </div>
 
+  </aside>
 
 
+  <main class="main">
 
+    <header class="topbar">
 
+      <div class="top-logo">
+        <div class="uol-badge">UOL</div>
 
+        <div>
+          <div class="university-name">
+            THE UNIVERSITY OF LAHORE
+          </div>
 
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <!-- Activity Types -->
-
-
-
-
-
-
-
-  <div class="panel panel-activity">
-
-
-
-
-
-
-
-    <div class="panel-head">
-
-
-
-
-
-
-
-      <div>
-
-
-
-
-
-
-
-        <h3>
-
-
-
-          ACTIVITY TYPE DISTRIBUTION
-
-
-
-        </h3>
-
-
-
-
-
-
-
-        <p>
-
-
-
-          Combined activity categories
-
-
-
-        </p>
-
-
-
-
-
-
-
-      </div>
-
-
-
-
-
-
-
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-    <div class="activity-chart-layout">
-
-
-
-      <div class="activity-canvas-wrap">
-
-        <canvas id="activityChart"></canvas>
-
-      </div>
-
-
-
-      <div id="activityLegend" class="activity-legend"></div>
-
-
-
-    </div>
-
-
-
-
-
-
-
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <!-- Monthly -->
-
-
-
-
-
-
-
-  <div class="panel panel-monthly">
-
-
-
-
-
-
-
-    <div class="panel-head">
-
-
-
-
-
-
-
-      <div>
-
-
-
-
-
-
-
-        <h3>
-
-
-
-          MONTHLY TREND
-
-
-
-        </h3>
-
-
-
-
-
-
-
-        <p>
-
-
-
-          Activities by reporting month
-
-
-
-        </p>
-
-
-
-
-
-
-
-      </div>
-
-
-
-
-
-
-
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-    <div class="chart-wrap">
-
-
-
-
-
-
-
-      <canvas id="monthChart"></canvas>
-
-
-
-
-
-
-
-    </div>
-
-
-
-
-
-
-
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <!-- Department -->
-
-
-
-
-
-
-
-  <div class="panel panel-department">
-
-
-
-
-
-
-
-    <div class="panel-head">
-
-
-
-
-
-
-
-      <div>
-
-
-
-
-
-
-
-        <h3>
-
-
-
-          DEPARTMENT-WISE ACTIVITIES
-
-
-
-        </h3>
-
-
-
-
-
-
-
-        <p>
-
-
-
-          Total activity volume by department
-
-
-
-        </p>
-
-
-
-
-
-
-
-      </div>
-
-
-
-
-
-
-
-      <span class="click-note">
-
-
-
-        Click bar for details
-
-
-
-      </span>
-
-
-
-
-
-
-
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-    <div
-
-
-
-      id="departmentWrap"
-
-
-
-      class="chart-wrap tall"
-
-
-
-    >
-
-
-
-
-
-
-
-      <canvas id="departmentChart"></canvas>
-
-
-
-
-
-
-
-    </div>
-
-
-
-
-
-
-
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <!-- Internship -->
-
-
-
-
-
-
-
-  <div class="panel panel-internship">
-
-
-
-
-
-
-
-    <div class="panel-head">
-
-
-
-
-
-
-
-      <div>
-
-
-
-
-
-
-
-        <h3>
-
-
-
-          INTERNSHIP / PLACEMENT SUMMARY
-
-
-
-        </h3>
-
-
-
-
-
-
-
-        <p>
-
-
-
-          Student totals from the cleaned Excel dataset
-
-
-
-        </p>
-
-
-
-
-
-
-
-      </div>
-
-
-
-
-
-
-
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-    <div class="impact-box">
-
-
-
-
-
-
-
-
-
-
-
-      <div
-
-
-
-        class="impact-main"
-
-
-
-        id="impactStudents"
-
-
-
-      >
-
-
-
-        —
-
-
-
-      </div>
-
-
-
-
-
-
-
-
-
-
-
-      <div class="impact-label">
-
-
-
-        TOTAL STUDENTS
-
-
-
-      </div>
-
-
-
-
-
-
-
-
-
-
-
-      <div class="impact-row">
-
-
-
-
-
-
-
-        <span>
-
-
-
-          Internship Students
-
-
-
-        </span>
-
-
-
-
-
-
-
-        <strong id="impactInternship">
-
-
-
-          —
-
-
-
-        </strong>
-
-
-
-
-
-
-
-      </div>
-
-
-
-
-
-
-
-
-
-
-
-      <div class="impact-row">
-
-
-
-
-
-
-
-        <span>
-
-
-
-          Placement Students
-
-
-
-        </span>
-
-
-
-
-
-
-
-        <strong id="impactPlacement">
-
-
-
-          —
-
-
-
-        </strong>
-
-
-
-
-
-
-
-      </div>
-
-
-
-
-
-
-
-
-
-
-
-      <div class="impact-row">
-
-
-
-
-
-
-
-        <span>
-
-
-
-          Planned Students
-
-
-
-        </span>
-
-
-
-
-
-
-
-        <strong id="impactPlanned">
-
-
-
-          —
-
-
-
-        </strong>
-
-
-
-
-
-
-
-      </div>
-
-
-
-
-
-
-
-
-
-
-
-      <div class="impact-row">
-
-
-
-
-
-
-
-        <span>
-
-
-
-          Student Data Records
-
-
-
-        </span>
-
-
-
-
-
-
-
-        <strong id="impactIpRecords">
-
-
-
-          —
-
-
-
-        </strong>
-
-
-
-
-
-
-
-      </div>
-
-
-
-
-
-
-
-
-
-
-
-      <div class="impact-row">
-
-
-
-
-
-
-
-        <span>
-
-
-
-          Departments Involved
-
-
-
-        </span>
-
-
-
-
-
-
-
-        <strong id="impactIpDepartments">
-
-
-
-          —
-
-
-
-        </strong>
-
-
-
-
-
-
-
-      </div>
-
-
-
-
-
-
-
-
-
-
-
-      <div class="impact-row total-row">
-
-
-
-
-
-
-
-        <span>
-
-
-
-          Combined Total
-
-
-
-        </span>
-
-
-
-
-
-
-
-        <strong id="impactCombined">
-
-
-
-          —
-
-
-
-        </strong>
-
-
-
-
-
-
-
-      </div>
-
-
-
-
-
-
-
-
-
-
-
-    </div>
-
-
-
-
-
-
-
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <!-- Status -->
-
-
-
-
-
-
-
-  <div class="panel panel-status">
-
-
-
-
-
-
-
-    <div class="panel-head">
-
-
-
-
-
-
-
-      <div>
-
-
-
-
-
-
-
-        <h3>
-
-
-
-          TENTATIVE STATUS OVERVIEW
-
-
-
-        </h3>
-
-
-
-
-
-
-
-        <p>
-
-
-
-          Current activity readiness
-
-
-
-        </p>
-
-
-
-
-
-
-
-      </div>
-
-
-
-
-
-
-
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-    <div class="status-flow">
-
-
-
-
-
-
-
-
-
-
-
-      <div>
-
-
-
-
-
-
-
-        <span>
-
-
-
-          1
-
-
-
-        </span>
-
-
-
-
-
-
-
-        <strong>
-
-
-
-          Reported
-
-
-
-        </strong>
-
-
-
-
-
-
-
-        <small id="flowReported">
-
-
-
-          0
-
-
-
-        </small>
-
-
-
-
-
-
-
-      </div>
-
-
-
-
-
-
-
-
-
-
-
-      <b>→</b>
-
-
-
-
-
-
-
-
-
-
-
-      <div>
-
-
-
-
-
-
-
-        <span>
-
-
-
-          2
-
-
-
-        </span>
-
-
-
-
-
-
-
-        <strong>
-
-
-
-          Planned
-
-
-
-        </strong>
-
-
-
-
-
-
-
-        <small id="flowPlanned">
-
-
-
-          0
-
-
-
-        </small>
-
-
-
-
-
-
-
-      </div>
-
-
-
-
-
-
-
-
-
-
-
-      <b>→</b>
-
-
-
-
-
-
-
-
-
-
-
-      <div>
-
-
-
-
-
-
-
-        <span>
-
-
-
-          3
-
-
-
-        </span>
-
-
-
-
-
-
-
-        <strong>
-
-
-
-          Scheduled
-
-
-
-        </strong>
-
-
-
-
-
-
-
-        <small id="flowScheduled">
-
-
-
-          0
-
-
-
-        </small>
-
-
-
-
-
-
-
-      </div>
-
-
-
-
-
-
-
-
-
-
-
-    </div>
-
-
-
-
-
-
-
-  </div>
-
-
-
-
-
-
-
-
-
-
-
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<footer class="dashboard-footer">
-
-
-
-
-
-
-
-  Tentative analytics
-
-
-
-  •
-
-
-
-  Activity totals and student totals use separate Excel datasets
-
-
-
-
-
-
-
-</footer>
-
-
-
-
-
-
-
-
-
-
-
-</main>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- ===================================================== -->
-
-
-
-<!-- MODAL -->
-
-
-
-<!-- ===================================================== -->
-
-
-
-
-
-
-
-<div
-
-
-
-  class="detail-modal"
-
-
-
-  id="detailModal"
-
-
-
->
-
-
-
-
-
-
-
-  <div class="detail-dialog">
-
-
-
-
-
-
-
-    <div class="detail-head">
-
-
-
-
-
-
-
-      <div>
-
-
-
-
-
-
-
-        <div class="detail-kicker">
-
-
-
-          Activity Details
+          <div class="office-name">
+            Office of External Linkages
+          </div>
         </div>
-        <h2 id="detailModalTitle">
-          Details
-        </h2>
       </div>
-      <button
-        class="detail-close"
-        id="detailClose"
+
+      <div class="title-block">
+        <div class="page-number">TENTATIVE</div>
+
+        <h1>EXTERNAL LINKAGES DASHBOARD</h1>
+
+        <div class="title-sub">
+          OEL Activity Intelligence
+        </div>
+
+        <div class="title-ribbon">
+          Connect • Collaborate • Create Impact
+        </div>
+      </div>
+
+      <div class="status-box">
+        <div class="status-label">
+          Excel Connection
+        </div>
+
+        <div id="connection" class="status-value">
+          Loading Excel…
+        </div>
+      </div>
+
+    </header>
+
+
+    <section class="filter-strip">
+
+      <div class="filter-label">View By</div>
+
+      <select id="facultyFilter" class="filter">
+        <option value="All">All Faculties</option>
+      </select>
+
+      <select id="departmentFilter" class="filter">
+        <option value="All">All Departments</option>
+      </select>
+
+      <select id="activityFilter" class="filter">
+        <option value="All">All Activity Types</option>
+      </select>
+
+      <select id="monthFilter" class="filter">
+        <option value="All">All Reporting Months</option>
+      </select>
+
+      <select id="organizationFilter" class="filter">
+        <option value="All">All Organizations</option>
+      </select>
+
+      <input
+        id="searchFilter"
+        class="filter search-box"
+        placeholder="Search faculty, department, activity, person or organization"
       >
+
+      <button class="btn subtle" id="resetBtn">
+        ↺ Reset
       </button>
+
+      <button class="btn" id="exportBtn">
+        ⇩ Export Report
+      </button>
+
+    </section>
+
+
+    <div class="tentative-alert">
+      <strong>Tentative Dashboard:</strong>
+      activity figures and Internship/Placement student totals are calculated
+      from the same cleaned Excel workbook.
     </div>
-    <div
-      class="detail-body"
-      id="detailModalBody"
-    ></div>
+
+
+    <section class="kpi-grid">
+
+      <div class="kpi-card">
+        <div class="kpi-icon green">◎</div>
+        <div class="kpi-label">Activity Records</div>
+        <div id="kRecords" class="kpi-value">0</div>
+        <div class="kpi-foot">Rows in current view</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon blue">▤</div>
+        <div class="kpi-label">Total Activities</div>
+        <div id="kActivities" class="kpi-value">0</div>
+        <div class="kpi-foot">Sum of activity How Many</div>
+      </div>
+
+      <div class="kpi-card emphasized">
+        <div class="kpi-icon purple">◉</div>
+        <div class="kpi-label">Internship / Placement Students</div>
+        <div id="kInternshipStudents" class="kpi-value">—</div>
+        <div class="kpi-foot">IP + Internship/Placement</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon orange">⌛</div>
+        <div class="kpi-label">Scheduled Activities</div>
+        <div id="kScheduled" class="kpi-value">0</div>
+        <div class="kpi-foot">Scheduled = Yes</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon teal">◫</div>
+        <div class="kpi-label">Faculties</div>
+        <div id="kFaculties" class="kpi-value">0</div>
+        <div class="kpi-foot">Participating faculties</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon navy">♙</div>
+        <div class="kpi-label">Departments</div>
+        <div id="kDepartments" class="kpi-value">0</div>
+        <div class="kpi-foot">Participating departments</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon green">◌</div>
+        <div class="kpi-label">Activity Types</div>
+        <div id="kTypes" class="kpi-value">0</div>
+        <div class="kpi-foot">Combined categories</div>
+      </div>
+
+    </section>
+
+
+    <section class="analytics-grid">
+
+      <div class="panel panel-faculty">
+
+        <div class="panel-head">
+          <div>
+            <h3>FACULTY-WISE ACTIVITIES</h3>
+            <p>Total activity volume by faculty</p>
+          </div>
+
+          <span class="click-note">
+            Click bar for details
+          </span>
+        </div>
+
+        <div id="facultyWrap" class="chart-wrap tall">
+          <canvas id="facultyChart"></canvas>
+        </div>
+
+      </div>
+
+
+      <div class="panel panel-activity">
+
+        <div class="panel-head">
+          <div>
+            <h3>ACTIVITY TYPE DISTRIBUTION</h3>
+            <p>Combined activity categories</p>
+          </div>
+        </div>
+
+        <div class="activity-chart-layout">
+
+          <div class="activity-canvas-wrap">
+            <canvas id="activityChart"></canvas>
+          </div>
+
+          <div id="activityLegend" class="activity-legend"></div>
+
+        </div>
+
+      </div>
+
+
+      <div class="panel panel-monthly">
+
+        <div class="panel-head">
+          <div>
+            <h3>MONTHLY TREND</h3>
+            <p>Activities by reporting month</p>
+          </div>
+        </div>
+
+        <div class="chart-wrap">
+          <canvas id="monthChart"></canvas>
+        </div>
+
+      </div>
+
+
+      <div class="panel panel-department">
+
+        <div class="panel-head">
+          <div>
+            <h3>DEPARTMENT-WISE ACTIVITIES</h3>
+            <p>Total activity volume by department</p>
+          </div>
+
+          <span class="click-note">
+            Click bar for details
+          </span>
+        </div>
+
+        <div id="departmentWrap" class="chart-wrap tall">
+          <canvas id="departmentChart"></canvas>
+        </div>
+
+      </div>
+
+
+      <div class="panel panel-internship">
+
+        <div class="panel-head">
+          <div>
+            <h3>INTERNSHIP / PLACEMENT SUMMARY</h3>
+            <p>Student totals from the cleaned Excel dataset</p>
+          </div>
+        </div>
+
+        <div class="impact-box">
+
+          <div class="impact-main" id="impactStudents">—</div>
+
+          <div class="impact-label">
+            TOTAL STUDENTS
+          </div>
+
+          <div class="impact-row">
+            <span>IP Students</span>
+            <strong id="impactInternship">—</strong>
+          </div>
+
+          <div class="impact-row">
+            <span>Internship/Placement Students</span>
+            <strong id="impactPlacement">—</strong>
+          </div>
+
+          <div class="impact-row">
+            <span>Additional Category</span>
+            <strong id="impactPlanned">—</strong>
+          </div>
+
+          <div class="impact-row">
+            <span>Student Data Records</span>
+            <strong id="impactIpRecords">—</strong>
+          </div>
+
+          <div class="impact-row">
+            <span>Departments Involved</span>
+            <strong id="impactIpDepartments">—</strong>
+          </div>
+
+          <div class="impact-row total-row">
+            <span>Combined Total</span>
+            <strong id="impactCombined">—</strong>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="panel panel-status">
+
+        <div class="panel-head">
+          <div>
+            <h3>TENTATIVE STATUS OVERVIEW</h3>
+            <p>Current activity readiness</p>
+          </div>
+        </div>
+
+        <div class="status-flow">
+
+          <div>
+            <span>1</span>
+            <strong>Reported</strong>
+            <small id="flowReported">0</small>
+          </div>
+
+          <b>→</b>
+
+          <div>
+            <span>2</span>
+            <strong>Planned</strong>
+            <small id="flowPlanned">0</small>
+          </div>
+
+          <b>→</b>
+
+          <div>
+            <span>3</span>
+            <strong>Scheduled</strong>
+            <small id="flowScheduled">0</small>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <footer class="dashboard-footer">
+      Tentative analytics • Activity totals and student totals use the same cleaned Excel dataset
+    </footer>
+
+  </main>
+
+
+  <div class="detail-modal" id="detailModal">
+
+    <div class="detail-dialog">
+
+      <div class="detail-head">
+
+        <div>
+          <div class="detail-kicker">
+            Activity Details
+          </div>
+
+          <h2 id="detailModalTitle">
+            Details
+          </h2>
+        </div>
+
+        <button class="detail-close" id="detailClose">
+          ×
+        </button>
+
+      </div>
+
+      <div class="detail-body" id="detailModalBody"></div>
+
+    </div>
+
   </div>
-</div>
-<script src="app.js"></script>
+
+
+  <script src="app.js"></script>
+
 </body>
 </html>
