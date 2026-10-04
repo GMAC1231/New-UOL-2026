@@ -1,512 +1,1312 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
 
-<meta charset="UTF-8">
+  <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-<title>UOL Analytics | Internship / Placement</title>
+  <title>
+    UOL Analytics | Internship / Placement
+  </title>
 
+  <script src="https://cdn.tailwindcss.com"></script>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
 
+    :root{
 
+      --side:292px;
 
-<style>
+      --ink:#0f172a;
 
-  :root{
+      --muted:#64748b;
 
-    --side:292px;
+      --line:#dbe4f0;
 
-    --ink:#0f172a;
+      --bg:#f3f7fd;
 
-    --muted:#64748b;
+      --blue:#2563eb;
 
-    --line:#dbe4f0;
+      --purple:#7c3aed;
+    }
 
-    --bg:#f3f7fd;
 
-    --blue:#2563eb;
+    *{
 
-    --purple:#7c3aed;
+      box-sizing:border-box;
+    }
 
-  }
 
-  *{box-sizing:border-box}
+    html,
+    body{
 
-  html,body{margin:0;min-height:100%;overflow-x:hidden}
+      margin:0;
 
-  body{
+      min-height:100%;
 
-    color:var(--ink);
+      overflow-x:hidden;
+    }
 
-    font-family:Inter,"Segoe UI",Arial,sans-serif;
 
-    background:
+    body{
 
-      radial-gradient(circle at 7% 3%,rgba(37,99,235,.12),transparent 25%),
+      color:var(--ink);
 
-      radial-gradient(circle at 98% 95%,rgba(124,58,237,.08),transparent 28%),
+      font-family:
+        Inter,
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-      var(--bg);
+      background:
 
-  }
+        radial-gradient(
+          circle at 7% 3%,
+          rgba(37,99,235,.12),
+          transparent 25%
+        ),
 
+        radial-gradient(
+          circle at 98% 95%,
+          rgba(124,58,237,.08),
+          transparent 28%
+        ),
 
+        var(--bg);
+    }
 
-  /* ===== Sidebar ===== */
 
-  .side{
+    /* =====================================================
+       SIDEBAR
+       ===================================================== */
 
-    position:fixed;inset:0 auto 0 0;width:var(--side);height:100vh;
+    .side{
 
-    padding:20px 14px;overflow-y:auto;z-index:1000;
+      position:fixed;
 
-    background:linear-gradient(180deg,#061326 0%,#102a5d 48%,#5b21b6 100%);
+      inset:0 auto 0 0;
 
-    box-shadow:10px 0 34px rgba(15,23,42,.16);
+      width:var(--side);
 
-  }
+      height:100vh;
 
-  .brand-wrap{
+      padding:20px 14px;
 
-    padding:12px 13px 18px;margin-bottom:13px;
+      overflow-y:auto;
 
-    border-bottom:1px solid rgba(255,255,255,.12);
+      z-index:1000;
 
-  }
+      background:
 
-  .brand-title{font-size:22px;font-weight:900;color:#fff}
+        linear-gradient(
+          180deg,
+          #061326 0%,
+          #102a5d 48%,
+          #5b21b6 100%
+        );
 
-  .brand-sub{
+      box-shadow:
 
-    margin-top:4px;font-size:10px;font-weight:800;
+        10px 0 34px
+        rgba(15,23,42,.16);
+    }
 
-    letter-spacing:.18em;text-transform:uppercase;color:#bfdbfe;
 
-  }
+    .brand-wrap{
 
-  .nav-link{
+      padding:
+        12px 13px 18px;
 
-    display:flex;align-items:center;width:100%;
+      margin-bottom:
+        13px;
 
-    padding:11px 13px;margin:5px 0;border-radius:11px;
+      border-bottom:
 
-    color:#e5efff;text-decoration:none;font-size:13px;font-weight:700;
+        1px solid
+        rgba(255,255,255,.12);
+    }
 
-    transition:.2s;
 
-  }
+    .brand-title{
 
-  .nav-link:hover{background:rgba(255,255,255,.10)}
+      font-size:22px;
 
-  .nav-link.active{
+      font-weight:900;
 
-    background:linear-gradient(135deg,#1769ff,#8438f5);
+      color:#fff;
+    }
 
-    color:#fff;box-shadow:0 10px 24px rgba(37,99,235,.28);
 
-  }
+    .brand-sub{
 
+      margin-top:4px;
 
+      font-size:10px;
 
-  /* ===== Layout ===== */
+      font-weight:800;
 
-  .main{
+      letter-spacing:.18em;
 
-    margin-left:var(--side);width:calc(100% - var(--side));
+      text-transform:uppercase;
 
-    padding:18px 24px 32px;
+      color:#bfdbfe;
+    }
 
-  }
 
-  .hero{
+    .nav-link{
 
-    position:relative;overflow:hidden;
+      display:flex;
 
-    min-height:145px;padding:27px 29px;border-radius:25px;color:#fff;
+      align-items:center;
 
-    background:linear-gradient(115deg,#1647c8 0%,#5b21b6 56%,#0697b5 100%);
+      width:100%;
 
-    box-shadow:0 18px 42px rgba(37,99,235,.18);
+      padding:
+        11px 13px;
 
-  }
+      margin:
+        5px 0;
 
-  .hero:after{
+      border-radius:11px;
 
-    content:"";position:absolute;width:310px;height:310px;border-radius:50%;
+      color:#e5efff;
 
-    right:-80px;top:-160px;background:rgba(255,255,255,.10);
+      text-decoration:none;
 
-  }
+      font-size:13px;
 
-  .card{
+      font-weight:700;
 
-    background:#fff;border:1px solid #dfe7f2;border-radius:20px;
+      transition:.2s;
+    }
 
-    box-shadow:0 10px 28px rgba(15,23,42,.055);
 
-  }
+    .nav-link:hover{
 
-  .filter{
+      background:
+        rgba(255,255,255,.10);
+    }
 
-    width:100%;height:43px;padding:0 13px;border:1px solid #cbd7e6;
 
-    border-radius:11px;background:#fff;outline:none;font-size:12px;
+    .nav-link.active{
 
-  }
+      background:
 
-  .filter:focus{border-color:#6366f1;box-shadow:0 0 0 4px rgba(99,102,241,.1)}
+        linear-gradient(
+          135deg,
+          #1769ff,
+          #8438f5
+        );
 
-  .btn{
+      color:#fff;
 
-    min-height:42px;border:0;border-radius:11px;padding:10px 16px;
+      box-shadow:
 
-    color:#fff;font-size:12px;font-weight:900;cursor:pointer;
+        0 10px 24px
+        rgba(37,99,235,.28);
+    }
 
-    background:linear-gradient(135deg,#2563eb,#7c3aed);
 
-    box-shadow:0 8px 20px rgba(79,70,229,.20);
+    /* =====================================================
+       MAIN
+       ===================================================== */
 
-  }
+    .main{
 
-  .btn:hover{filter:brightness(1.05)}
+      margin-left:
+        var(--side);
 
-  .muted{color:var(--muted)}
+      width:
 
+        calc(
+          100% - var(--side)
+        );
 
+      padding:
+        18px 24px 32px;
+    }
 
-  /* ===== KPIs ===== */
 
-  .kpi-card{min-height:90px;padding:18px;position:relative;overflow:hidden}
+    /* =====================================================
+       HERO
+       ===================================================== */
 
-  .kpi-card:after{
+    .hero{
 
-    content:"";position:absolute;width:95px;height:95px;border-radius:50%;
+      position:relative;
 
-    right:-38px;top:-38px;
+      overflow:hidden;
 
-    background:linear-gradient(135deg,rgba(37,99,235,.07),rgba(124,58,237,.12));
+      min-height:145px;
 
-  }
+      padding:
+        27px 29px;
 
-  .kpi-label{
+      border-radius:25px;
 
-    font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+      color:#fff;
 
-    color:#60718a;font-weight:800;
+      background:
 
-  }
+        linear-gradient(
+          115deg,
+          #1647c8 0%,
+          #5b21b6 56%,
+          #0697b5 100%
+        );
 
-  .kpi{font-size:30px;line-height:1.1;margin-top:7px;color:#2563eb;font-weight:900}
+      box-shadow:
 
+        0 18px 42px
+        rgba(37,99,235,.18);
+    }
 
 
-  .section-title{display:flex;align-items:center;gap:10px}
+    .hero:after{
 
-  .section-title:before{
+      content:"";
 
-    content:"";width:5px;height:24px;border-radius:8px;
+      position:absolute;
 
-    background:linear-gradient(180deg,#2563eb,#7c3aed);
+      width:310px;
 
-  }
+      height:310px;
 
+      border-radius:50%;
 
+      right:-80px;
 
-  .chart-box{position:relative;height:350px}
+      top:-160px;
 
-  .chart-dynamic{position:relative;min-height:420px;height:420px}
+      background:
+        rgba(255,255,255,.10);
+    }
 
-  .small-chart{position:relative;height:310px}
 
-  .click-hint{font-size:11px;color:#64748b;margin-top:6px;margin-bottom:8px;font-weight:700}
+    /* =====================================================
+       CARD
+       ===================================================== */
 
+    .card{
 
+      background:#fff;
 
-  .mobile-nav-toggle{display:none}
+      border:
+        1px solid #dfe7f2;
 
+      border-radius:20px;
 
+      box-shadow:
 
-  /* ===== Detail popup ===== */
+        0 10px 28px
+        rgba(15,23,42,.055);
+    }
 
-  .detail-modal{
 
-    position:fixed;inset:0;z-index:99999;display:none;
+    /* =====================================================
+       FILTERS
+       ===================================================== */
 
-    align-items:center;justify-content:center;padding:6px;
+    .filter{
 
-    background:rgba(2,6,23,.60);backdrop-filter:blur(4px);
+      width:100%;
 
-  }
+      height:43px;
 
-  .detail-modal.open{display:flex}
+      padding:
+        0 13px;
 
-  .detail-dialog{
+      border:
+        1px solid #cbd7e6;
 
-    width:min(690px,98vw);max-height:92vh;overflow:auto;background:#fff;
+      border-radius:11px;
 
-    border:1px solid #dbe4f0;border-radius:0 0 22px 22px;
+      background:#fff;
 
-    box-shadow:0 30px 90px rgba(2,6,23,.30);
+      outline:none;
 
-    animation:popupIn .18s ease-out;
+      font-size:12px;
+    }
 
-  }
 
-  @keyframes popupIn{
+    .filter:focus{
 
-    from{opacity:0;transform:translateY(12px) scale(.98)}
+      border-color:#6366f1;
 
-    to{opacity:1;transform:translateY(0) scale(1)}
+      box-shadow:
 
-  }
+        0 0 0 4px
+        rgba(99,102,241,.1);
+    }
 
-  .detail-head{
 
-    position:sticky;top:0;z-index:3;display:flex;align-items:flex-start;
+    .btn{
 
-    justify-content:space-between;gap:18px;padding:13px 20px 16px;color:#fff;
+      min-height:42px;
 
-    background:linear-gradient(115deg,#2537d4,#6421c7 58%,#0697b5);
+      border:0;
 
-  }
+      border-radius:11px;
 
-  .detail-close{
+      padding:
+        10px 16px;
 
-    flex:0 0 auto;width:38px;height:38px;border:0;border-radius:50%;
+      color:#fff;
 
-    background:rgba(255,255,255,.18);color:#fff;font-size:22px;
+      font-size:12px;
 
-    cursor:pointer;font-weight:900;
+      font-weight:900;
 
-  }
+      cursor:pointer;
 
-  .detail-close:hover{background:rgba(255,255,255,.28)}
+      background:
 
-  .detail-body{padding:18px 20px 24px}
+        linear-gradient(
+          135deg,
+          #2563eb,
+          #7c3aed
+        );
 
-  .detail-summary{
+      box-shadow:
 
-    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+        0 8px 20px
+        rgba(79,70,229,.20);
+    }
 
-    gap:11px;margin-bottom:17px;
 
-  }
+    .btn:hover{
 
-  .detail-stat{
+      filter:
+        brightness(1.05);
+    }
 
-    padding:14px;border:1px solid #dbe4f0;border-radius:13px;background:#f8fafc;
 
-  }
+    .muted{
 
-  .detail-stat-label{
+      color:
+        var(--muted);
+    }
 
-    font-size:10px;text-transform:uppercase;letter-spacing:.10em;
 
-    color:#64748b;font-weight:900;
+    /* =====================================================
+       KPI
+       ===================================================== */
 
-  }
+    .kpi-card{
 
-  .detail-stat-value{margin-top:5px;font-size:20px;font-weight:900;color:#2563eb}
+      min-height:90px;
 
-  .detail-record{padding:14px 0 17px;border-bottom:1px solid #dbe4f0}
+      padding:18px;
 
-  .detail-record:last-child{border-bottom:0}
+      position:relative;
 
-  .detail-record-title{font-size:14px;font-weight:900;color:#1d4ed8;margin-bottom:11px}
+      overflow:hidden;
+    }
 
-  .detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 24px}
 
-  .detail-field small{
+    .kpi-card:after{
 
-    display:block;color:#64748b;font-size:9px;text-transform:uppercase;
+      content:"";
 
-    letter-spacing:.09em;font-weight:900;margin-bottom:3px;
+      position:absolute;
 
-  }
+      width:95px;
 
-  .detail-field strong{display:block;font-size:12px;color:#0f172a;word-break:break-word}
+      height:95px;
 
-  .detail-field.full{grid-column:1/-1}
+      border-radius:50%;
 
+      right:-38px;
 
+      top:-38px;
 
-  /* ===== Responsive ===== */
+      background:
 
-  @media(min-width:1200px){
+        linear-gradient(
+          135deg,
+          rgba(37,99,235,.07),
+          rgba(124,58,237,.12)
+        );
+    }
 
-    .kpi-grid{grid-template-columns:repeat(6,minmax(0,1fr))!important}
 
-  }
+    .kpi-label{
 
-  @media(max-width:1050px) and (min-width:769px){
+      font-size:10px;
 
-    :root{--side:245px}
+      letter-spacing:.13em;
 
-    .main{padding:18px}
+      text-transform:uppercase;
 
-  }
+      color:#60718a;
 
-  @media(max-width:768px){
+      font-weight:800;
+    }
 
-    .side{position:sticky;top:0;width:100%;height:auto;padding:10px 12px;overflow:visible}
 
-    .main{margin-left:0;width:100%;padding:12px}
+    .kpi{
 
-    .brand-wrap{padding:5px 5px 9px;margin-bottom:8px;border-bottom:0}
+      font-size:30px;
 
-    .brand-title{font-size:19px}
+      line-height:1.1;
+
+      margin-top:7px;
+
+      color:#2563eb;
+
+      font-weight:900;
+    }
+
+
+    /* =====================================================
+       CHARTS
+       ===================================================== */
+
+    .section-title{
+
+      display:flex;
+
+      align-items:center;
+
+      gap:10px;
+    }
+
+
+    .section-title:before{
+
+      content:"";
+
+      width:5px;
+
+      height:24px;
+
+      border-radius:8px;
+
+      background:
+
+        linear-gradient(
+          180deg,
+          #2563eb,
+          #7c3aed
+        );
+    }
+
+
+    .chart-box{
+
+      position:relative;
+
+      height:350px;
+    }
+
+
+    .chart-dynamic{
+
+      position:relative;
+
+      min-height:420px;
+
+      height:420px;
+    }
+
+
+    .small-chart{
+
+      position:relative;
+
+      height:310px;
+    }
+
+
+    .click-hint{
+
+      font-size:11px;
+
+      color:#64748b;
+
+      margin-top:6px;
+
+      margin-bottom:8px;
+
+      font-weight:700;
+    }
+
+
+    /* =====================================================
+       DETAIL POPUP
+       ===================================================== */
+
+    .detail-modal{
+
+      position:fixed;
+
+      inset:0;
+
+      z-index:99999;
+
+      display:none;
+
+      align-items:center;
+
+      justify-content:center;
+
+      padding:20px;
+
+      background:
+        rgba(2,6,23,.62);
+
+      backdrop-filter:
+        blur(5px);
+    }
+
+
+    .detail-modal.open{
+
+      display:flex;
+    }
+
+
+    .detail-dialog{
+
+      width:
+        min(760px,96vw);
+
+      max-height:
+        90vh;
+
+      overflow:auto;
+
+      background:#fff;
+
+      border:
+        1px solid #dbe4f0;
+
+      border-radius:24px;
+
+      box-shadow:
+
+        0 30px 90px
+        rgba(2,6,23,.30);
+    }
+
+
+    .detail-head{
+
+      position:sticky;
+
+      top:0;
+
+      z-index:3;
+
+      display:flex;
+
+      align-items:flex-start;
+
+      justify-content:
+        space-between;
+
+      gap:18px;
+
+      padding:
+        18px 22px;
+
+      color:#fff;
+
+      background:
+
+        linear-gradient(
+          115deg,
+          #1647c8,
+          #5b21b6 58%,
+          #0697b5
+        );
+
+      border-radius:
+        23px 23px 0 0;
+    }
+
+
+    .detail-close{
+
+      width:38px;
+
+      height:38px;
+
+      border:0;
+
+      border-radius:50%;
+
+      background:
+        rgba(255,255,255,.18);
+
+      color:#fff;
+
+      font-size:22px;
+
+      cursor:pointer;
+
+      font-weight:900;
+    }
+
+
+    .detail-close:hover{
+
+      background:
+        rgba(255,255,255,.28);
+    }
+
+
+    .detail-body{
+
+      padding:
+        20px 22px 24px;
+    }
+
+
+    .detail-summary{
+
+      display:grid;
+
+      grid-template-columns:
+
+        repeat(
+          3,
+          minmax(0,1fr)
+        );
+
+      gap:12px;
+
+      margin-bottom:18px;
+    }
+
+
+    .detail-stat{
+
+      padding:14px;
+
+      border:
+        1px solid #e2e8f0;
+
+      border-radius:15px;
+
+      background:#f8fafc;
+    }
+
+
+    .detail-stat-label{
+
+      font-size:10px;
+
+      text-transform:uppercase;
+
+      letter-spacing:.11em;
+
+      color:#64748b;
+
+      font-weight:900;
+    }
+
+
+    .detail-stat-value{
+
+      margin-top:5px;
+
+      font-size:20px;
+
+      font-weight:900;
+
+      color:#2563eb;
+    }
+
+
+    .detail-record{
+
+      padding:
+        16px 0;
+
+      border-bottom:
+        1px solid #e2e8f0;
+    }
+
+
+    .detail-record:last-child{
+
+      border-bottom:0;
+    }
+
+
+    .detail-record-title{
+
+      font-size:14px;
+
+      font-weight:900;
+
+      color:#1d4ed8;
+
+      margin-bottom:11px;
+    }
+
+
+    .detail-grid{
+
+      display:grid;
+
+      grid-template-columns:
+
+        repeat(
+          2,
+          minmax(0,1fr)
+        );
+
+      gap:
+        10px 20px;
+    }
+
+
+    .detail-field small{
+
+      display:block;
+
+      color:#64748b;
+
+      font-size:9px;
+
+      text-transform:uppercase;
+
+      letter-spacing:.09em;
+
+      font-weight:900;
+
+      margin-bottom:3px;
+    }
+
+
+    .detail-field strong{
+
+      display:block;
+
+      font-size:12px;
+
+      color:#0f172a;
+
+      word-break:
+        break-word;
+    }
+
+
+    .detail-field.full{
+
+      grid-column:
+        1/-1;
+    }
+
 
     .mobile-nav-toggle{
 
-      display:flex;width:100%;align-items:center;justify-content:space-between;
-
-      padding:12px 14px;border:1px solid rgba(255,255,255,.15);
-
-      border-radius:14px;background:rgba(255,255,255,.10);
-
-      color:#fff;font-weight:800;cursor:pointer;
-
+      display:none;
     }
 
-    .mobile-nav-menu{
 
-      display:none;margin-top:8px;padding:8px;max-height:65vh;overflow-y:auto;
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
 
-      border:1px solid rgba(255,255,255,.12);border-radius:16px;
+    @media(min-width:1200px){
 
-      background:rgba(2,6,23,.98);
+      .kpi-grid{
 
+        grid-template-columns:
+
+          repeat(
+            6,
+            minmax(0,1fr)
+          )!important;
+      }
     }
 
-    .side.mobile-open .mobile-nav-menu{display:block}
 
-    .mobile-nav-menu .nav-link{margin:3px 0}
+    @media(max-width:1050px)
+    and (min-width:769px){
 
-    .data-source{display:none}
+      :root{
 
-    .hero{min-height:auto;padding:20px;border-radius:18px}
+        --side:
+          245px;
+      }
 
-    .hero h1{font-size:30px!important}
 
-    .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+      .main{
 
-    .chart-box{height:300px}
+        padding:
+          18px;
+      }
+    }
 
-    .small-chart{height:270px}
 
-  }
+    @media(max-width:768px){
 
-  @media(max-width:600px){
+      .side{
 
-    .detail-summary,.detail-grid{grid-template-columns:1fr}
+        position:sticky;
 
-    .detail-dialog{width:100%;max-height:95vh}
+        top:0;
 
-  }
+        width:100%;
 
-  @media(max-width:480px){
+        height:auto;
 
-    .main{padding:10px}
+        padding:
+          10px 12px;
 
-    .kpi-grid{grid-template-columns:1fr!important}
+        overflow:visible;
+      }
 
-    .card{border-radius:16px}
 
-  }
+      .main{
 
-</style>
+        margin-left:0;
+
+        width:100%;
+
+        padding:12px;
+      }
+
+
+      .brand-wrap{
+
+        padding:
+          5px 5px 9px;
+
+        margin-bottom:
+          8px;
+
+        border-bottom:0;
+      }
+
+
+      .brand-title{
+
+        font-size:19px;
+      }
+
+
+      .mobile-nav-toggle{
+
+        display:flex;
+
+        width:100%;
+
+        align-items:center;
+
+        justify-content:
+          space-between;
+
+        padding:
+          12px 14px;
+
+        border:
+          1px solid rgba(255,255,255,.15);
+
+        border-radius:14px;
+
+        background:
+          rgba(255,255,255,.10);
+
+        color:#fff;
+
+        font-weight:800;
+
+        cursor:pointer;
+      }
+
+
+      .mobile-nav-menu{
+
+        display:none;
+
+        margin-top:8px;
+
+        padding:8px;
+
+        max-height:65vh;
+
+        overflow-y:auto;
+
+        border:
+          1px solid rgba(255,255,255,.12);
+
+        border-radius:16px;
+
+        background:
+          rgba(2,6,23,.98);
+      }
+
+
+      .side.mobile-open
+      .mobile-nav-menu{
+
+        display:block;
+      }
+
+
+      .mobile-nav-menu
+      .nav-link{
+
+        margin:
+          3px 0;
+      }
+
+
+      .hero{
+
+        min-height:auto;
+
+        padding:20px;
+
+        border-radius:18px;
+      }
+
+
+      .hero h1{
+
+        font-size:
+          30px!important;
+      }
+
+
+      .kpi-grid{
+
+        grid-template-columns:
+
+          repeat(
+            2,
+            minmax(0,1fr)
+          )!important;
+      }
+
+
+      .chart-box{
+
+        height:300px;
+      }
+
+
+      .small-chart{
+
+        height:270px;
+      }
+    }
+
+
+    @media(max-width:600px){
+
+      .detail-summary,
+      .detail-grid{
+
+        grid-template-columns:
+          1fr;
+      }
+
+
+      .detail-dialog{
+
+        width:100%;
+
+        max-height:95vh;
+      }
+    }
+
+
+    @media(max-width:480px){
+
+      .main{
+
+        padding:10px;
+      }
+
+
+      .kpi-grid{
+
+        grid-template-columns:
+          1fr!important;
+      }
+
+
+      .card{
+
+        border-radius:16px;
+      }
+    }
+
+  </style>
 
 </head>
 
 
-
 <body>
 
-<aside class="side" id="sidebar">
+
+<!-- =====================================================
+     SIDEBAR
+     ===================================================== -->
+
+<aside
+  class="side"
+  id="sidebar"
+>
 
   <div class="brand-wrap">
 
-    <div class="brand-title">🏛 UOL Analytics</div>
+    <div class="brand-title">
+      🏛 UOL Analytics
+    </div>
 
-    <div class="brand-sub">Performance Intelligence</div>
+    <div class="brand-sub">
+      Performance Intelligence
+    </div>
 
   </div>
 
 
+  <button
+    class="mobile-nav-toggle"
+    id="mobileNavToggle"
+    type="button"
+  >
 
-  <button class="mobile-nav-toggle" id="mobileNavToggle" type="button">
+    <span>
+      💼 Internship / Placement
+    </span>
 
-    <span>💼 Internship / Placement</span><span>▼</span>
+    <span>
+      ▼
+    </span>
 
   </button>
 
 
+  <div
+    class="mobile-nav-menu"
+    id="navMenu"
+  >
 
-  <div class="mobile-nav-menu" id="navMenu">
-
-<a class="nav-link" href="../index.html">📊 Executive Dashboard</a>
-    <a class="nav-link" href="workshop.html">🛠 Workshop Dashboard </a>
-    <a class="nav-link" href="seminar.html">🎤 Seminar Dashboard</a>
-    <a class="nav-link" href="conference.html">🎓 Conference Dashboard</a>
-    <a class="nav-link" href="guest.html">👨‍🏫 Guest Lecture</a>
-    <a class="nav-link" href="internship-placement.html">💼 Internship / Placement</a>
-    <a class="nav-link" href="mou.html">🤝 MoU and MoU Signing</a>
-    <a class="nav-link" href="iv.html">🏭 Industrial Visit</a>
-    <a class="nav-link" href="others.html">📌 Others</a>
-    <a class="nav-link" href="iab.html">🤝 IAB Meeting / Industry Consultation</a>
-    <a class="nav-link" href="research-collaboration.html">🔬 Research Collaboration</a>
-    <a class="nav-link" href="community.html">🌍 Community Engagement</a>
-    <a class="nav-link" href="alumni.html">🎓 Alumni Talk / Mentoring</a>
-    <a class="nav-link" href="curriculum-feedback.html">📝 Curriculum Feedback Session</a>
-  </div>
+    <a
+      class="nav-link"
+      href="../index.html"
+    >
+      📊 Tentative Dashboard
+    </a>
 
 
+    <a
+      class="nav-link"
+      href="workshop.html"
+    >
+      🛠 Workshop Dashboard
+    </a>
 
-  <div class="data-source text-blue-100" style="margin:18px 5px 4px;padding:13px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.07)">
 
-    <div class="text-xs uppercase tracking-widest font-black">Data source</div>
+    <a
+      class="nav-link"
+      href="seminar.html"
+    >
+      🎤 Seminar Dashboard
+    </a>
 
-    <div class="text-sm font-bold mt-1 break-words">UOL_Internship_Placement_Planned_All_Entries_With_Summary.xlsx</div>
 
-    <div class="text-xs mt-2 text-blue-200">Live Excel analytics</div>
+    <a
+      class="nav-link"
+      href="conference.html"
+    >
+      🎓 Conference Dashboard
+    </a>
+
+
+    <a
+      class="nav-link"
+      href="guest.html"
+    >
+      👨‍🏫 Guest Lecture
+    </a>
+
+
+    <a
+      class="nav-link active"
+      href="internship-placement.html"
+    >
+      💼 Internship / Placement
+    </a>
+
+
+    <a
+      class="nav-link"
+      href="mou.html"
+    >
+      🤝 MoU and MoU Signing
+    </a>
+
+
+    <a
+      class="nav-link"
+      href="iv.html"
+    >
+      🏭 Industrial Visit
+    </a>
+
+
+    <a
+      class="nav-link"
+      href="others.html"
+    >
+      📌 Others
+    </a>
+
+
+    <a
+      class="nav-link"
+      href="iab.html"
+    >
+      🤝 IAB Meeting / Industry Consultation
+    </a>
+
+
+    <a
+      class="nav-link"
+      href="research-collaboration.html"
+    >
+      🔬 Research Collaboration
+    </a>
+
+
+    <a
+      class="nav-link"
+      href="community.html"
+    >
+      🌍 Community Engagement
+    </a>
+
+
+    <a
+      class="nav-link"
+      href="alumni.html"
+    >
+      🎓 Alumni Talk / Mentoring
+    </a>
+
+
+    <a
+      class="nav-link"
+      href="curriculum-feedback.html"
+    >
+      📝 Curriculum Feedback Session
+    </a>
 
   </div>
 
 </aside>
 
 
+<!-- =====================================================
+     MAIN
+     ===================================================== -->
 
 <main class="main">
 
+
+  <!-- HERO -->
+
   <section class="hero mb-7">
 
-    <div class="relative z-10 flex flex-wrap items-end justify-between gap-5">
+    <div
+      class="
+        relative
+        z-10
+        flex
+        flex-wrap
+        items-end
+        justify-between
+        gap-5
+      "
+    >
 
       <div>
 
-        <div class="text-blue-100 text-xs uppercase tracking-[.22em] font-black">University of Lahore</div>
+        <div
+          class="
+            text-blue-100
+            text-xs
+            uppercase
+            tracking-[.22em]
+            font-black
+          "
+        >
+          University of Lahore
+        </div>
 
-        <h1 class="text-4xl md:text-5xl font-black mt-2">Internship / Placement</h1>
 
-        <p class="text-blue-100 mt-3">Live analytics from <strong>UOL_Internship_Placement_Planned_All_Entries_With_Summary.xlsx</strong>.</p>
+        <h1
+          class="
+            text-4xl
+            md:text-5xl
+            font-black
+            mt-2
+          "
+        >
+          Internship / Placement Analytics
+        </h1>
+
+
+        <p
+          class="
+            text-blue-100
+            mt-3
+            max-w-3xl
+          "
+        >
+          IP and Internship / Placement records are combined into one activity category.
+        </p>
 
       </div>
 
-      <div class="bg-white/15 backdrop-blur px-5 py-4 rounded-2xl">
 
-        <div class="text-xs text-blue-100 uppercase font-bold">Excel connection</div>
+      <div
+        class="
+          bg-white/15
+          backdrop-blur
+          px-5
+          py-4
+          rounded-2xl
+        "
+      >
 
-        <div id="connection" class="font-black mt-1">Loading Excel…</div>
+        <div
+          class="
+            text-xs
+            text-blue-100
+            uppercase
+            font-bold
+          "
+        >
+          Excel connection
+        </div>
+
+
+        <div
+          id="connection"
+          class="font-black mt-1"
+        >
+          Loading Excel…
+        </div>
 
       </div>
 
@@ -515,119 +1315,512 @@
   </section>
 
 
+  <!-- =====================================================
+       FILTERS
+       ===================================================== -->
 
-  <section class="card p-5 mb-7">
-  <div class="mb-4">
-    <h2 class="text-xl font-black">Internship / Placement Filters</h2>
-    <p class="muted text-sm mt-1">Filter the source entries by category, company, sector and mode.</p>
-  </div>
-  <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-3">
-    <select id="categoryFilter" class="filter"><option value="All">All Categories</option></select>
-    <select id="companyFilter" class="filter"><option value="All">All Companies</option></select>
-    <select id="sectorFilter" class="filter"><option value="All">All Sectors</option></select>
-    <select id="modeFilter" class="filter"><option value="All">All Modes</option></select>
-  </div>
-  <div class="grid md:grid-cols-[1fr_auto_auto] gap-3 mt-3">
-    <input id="searchFilter" class="filter" placeholder="Search company, sector, duration or category">
-    <button class="btn" id="resetBtn" type="button">↺ Reset</button>
-    <button class="btn" id="exportBtn" type="button">📥 Export Analytics Excel</button>
-  </div>
-</section>
-
-
-
-  <section class="grid kpi-grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-  <div class="card kpi-card"><div class="kpi-label">Valid Entries</div><div id="kRecords" class="kpi">0</div></div>
-  <div class="card kpi-card"><div class="kpi-label">Total Students</div><div id="kTotal" class="kpi">0</div></div>
-  <div class="card kpi-card"><div class="kpi-label">Internship Students</div><div id="kInternship" class="kpi">0</div></div>
-  <div class="card kpi-card"><div class="kpi-label">Placement Students</div><div id="kPlacement" class="kpi">0</div></div>
-  <div class="card kpi-card"><div class="kpi-label">Planned Students</div><div id="kPlanned" class="kpi">0</div></div>
-  <div class="card kpi-card"><div class="kpi-label">Companies</div><div id="kCompanies" class="kpi">0</div></div>
-</section>
-
-
-
-  <section class="mb-8">
+  <section
+    class="card p-5 mb-7"
+  >
 
     <div class="mb-4">
 
-      <h2 class="text-3xl font-black section-title">Internship / Placement Analytics</h2>
+      <h2 class="text-xl font-black">
+        Internship / Placement Filters
+      </h2>
 
-      <p class="muted mt-1">Click any bar to see the matching records in a popup.</p>
+
+      <p class="muted text-sm mt-1">
+        Faculty → Department → Person → Organization
+      </p>
 
     </div>
 
 
+    <div
+      class="
+        grid
+        md:grid-cols-2
+        xl:grid-cols-6
+        gap-3
+      "
+    >
 
-    <div class="grid xl:grid-cols-2 gap-6">
+      <select
+        id="facultyFilter"
+        class="filter"
+      >
 
-      <div class="card p-6 xl:col-span-2">
+        <option value="All">
+          All Faculties
+        </option>
 
-        <h3 class="font-black text-lg mb-1">Students by Company</h3>
+      </select>
 
-        <p class="muted text-sm">Companies and their total internship, placement or planned students.</p>
 
-        <div class="click-hint">Click a bar to view full details.</div>
+      <select
+        id="departmentFilter"
+        class="filter"
+      >
 
-        <div id="peopleWrap" class="chart-dynamic"><canvas id="peopleChart"></canvas></div>
+        <option value="All">
+          All Departments
+        </option>
+
+      </select>
+
+
+      <select
+        id="personFilter"
+        class="filter"
+      >
+
+        <option value="All">
+          All People
+        </option>
+
+      </select>
+
+
+      <select
+        id="organizationFilter"
+        class="filter"
+      >
+
+        <option value="All">
+          All Organizations
+        </option>
+
+      </select>
+
+
+      <select
+        id="plannedFilter"
+        class="filter"
+      >
+
+        <option value="All">
+          All Planned Status
+        </option>
+
+        <option value="Yes">
+          Planned: Yes
+        </option>
+
+        <option value="No">
+          Planned: No
+        </option>
+
+      </select>
+
+
+      <select
+        id="scheduledFilter"
+        class="filter"
+      >
+
+        <option value="All">
+          All Scheduled Status
+        </option>
+
+        <option value="Yes">
+          Scheduled: Yes
+        </option>
+
+        <option value="No">
+          Scheduled: No
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div
+      class="
+        grid
+        md:grid-cols-[1fr_auto_auto]
+        gap-3
+        mt-3
+      "
+    >
+
+      <input
+        id="searchFilter"
+        class="filter"
+        placeholder="Search organization, person, faculty, department, month or remarks"
+      >
+
+
+      <button
+        class="btn"
+        id="resetBtn"
+        type="button"
+      >
+        ↺ Reset
+      </button>
+
+
+      <button
+        class="btn"
+        id="exportBtn"
+        type="button"
+      >
+        📥 Export Internship / Placement Excel
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       KPIs
+       ===================================================== -->
+
+  <section
+    class="
+      grid
+      kpi-grid
+      sm:grid-cols-2
+      lg:grid-cols-3
+      gap-4
+      mb-8
+    "
+  >
+
+
+    <div class="card kpi-card">
+
+      <div class="kpi-label">
+        Internship / Placement Records
+      </div>
+
+      <div
+        id="kRecords"
+        class="kpi"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div class="card kpi-card">
+
+      <div class="kpi-label">
+        How Many
+      </div>
+
+      <div
+        id="kHowMany"
+        class="kpi"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div class="card kpi-card">
+
+      <div class="kpi-label">
+        People Involved
+      </div>
+
+      <div
+        id="kPeople"
+        class="kpi"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div class="card kpi-card">
+
+      <div class="kpi-label">
+        Faculties
+      </div>
+
+      <div
+        id="kFaculties"
+        class="kpi"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div class="card kpi-card">
+
+      <div class="kpi-label">
+        Planned
+      </div>
+
+      <div
+        id="kPlanned"
+        class="kpi"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div class="card kpi-card">
+
+      <div class="kpi-label">
+        Scheduled
+      </div>
+
+      <div
+        id="kScheduled"
+        class="kpi"
+      >
+        0
+      </div>
+
+    </div>
+
+
+  </section>
+
+
+  <!-- =====================================================
+       ANALYTICS
+       ===================================================== -->
+
+  <section class="mb-8">
+
+
+    <div class="mb-4">
+
+      <h2
+        class="
+          text-3xl
+          font-black
+          section-title
+        "
+      >
+        Internship / Placement Analytics
+      </h2>
+
+
+      <p class="muted mt-1">
+        All IP and Internship / Placement values are combined.
+      </p>
+
+    </div>
+
+
+    <div
+      class="
+        grid
+        xl:grid-cols-2
+        gap-6
+      "
+    >
+
+
+      <!-- PERSON -->
+
+      <div
+        class="
+          card
+          p-6
+          xl:col-span-2
+        "
+      >
+
+        <h3 class="font-black text-lg mb-1">
+
+          Internship / Placement by Person & Designation
+
+        </h3>
+
+
+        <p class="muted text-sm">
+
+          Combined How Many values grouped by focal person.
+
+        </p>
+
+
+        <div class="click-hint">
+
+          Click a bar to view details.
+
+        </div>
+
+
+        <div
+          id="peopleWrap"
+          class="chart-dynamic"
+        >
+
+          <canvas
+            id="peopleChart"
+          ></canvas>
+
+        </div>
 
       </div>
 
 
+      <!-- ORGANIZATION -->
 
-      <div class="card p-6 xl:col-span-2">
+      <div
+        class="
+          card
+          p-6
+          xl:col-span-2
+        "
+      >
 
-        <h3 class="font-black text-lg mb-1">Students by Sector</h3>
+        <h3 class="font-black text-lg mb-1">
 
-        <p class="muted text-sm">Student totals grouped by sector.</p>
+          Internship / Placement by Organization
 
-        <div class="click-hint">Click a bar to view full details.</div>
+        </h3>
 
-        <div id="orgWrap" class="chart-dynamic"><canvas id="orgChart"></canvas></div>
+
+        <p class="muted text-sm">
+
+          Combined IP and Internship / Placement values by organization.
+
+        </p>
+
+
+        <div class="click-hint">
+
+          Click a bar to view details.
+
+        </div>
+
+
+        <div
+          id="organizationWrap"
+          class="chart-dynamic"
+        >
+
+          <canvas
+            id="organizationChart"
+          ></canvas>
+
+        </div>
 
       </div>
 
 
+      <!-- FACULTY -->
 
       <div class="card p-6">
 
-        <h3 class="font-black text-lg mb-1">Students by Category</h3>
+        <h3 class="font-black text-lg mb-1">
 
-        <p class="muted text-sm">Internship, Placement and Planned student totals.</p>
+          Internship / Placement by Faculty
 
-        <div class="click-hint">Click a bar to view full details.</div>
+        </h3>
 
-        <div class="chart-box"><canvas id="facultyChart"></canvas></div>
+
+        <p class="muted text-sm">
+
+          Combined How Many values grouped by faculty.
+
+        </p>
+
+
+        <div class="click-hint">
+
+          Click a bar to view details.
+
+        </div>
+
+
+        <div class="chart-box">
+
+          <canvas
+            id="facultyChart"
+          ></canvas>
+
+        </div>
 
       </div>
 
 
+      <!-- DEPARTMENT -->
 
       <div class="card p-6">
 
-        <h3 class="font-black text-lg mb-1">Students by Mode</h3>
+        <h3 class="font-black text-lg mb-1">
 
-        <p class="muted text-sm">Student totals grouped by Physical / Remote mode.</p>
+          Internship / Placement by Department
 
-        <div class="click-hint">Click a bar to view full details.</div>
+        </h3>
 
-        <div class="chart-box"><canvas id="departmentChart"></canvas></div>
+
+        <p class="muted text-sm">
+
+          Combined How Many values grouped by department.
+
+        </p>
+
+
+        <div class="click-hint">
+
+          Click a bar to view details.
+
+        </div>
+
+
+        <div class="chart-box">
+
+          <canvas
+            id="departmentChart"
+          ></canvas>
+
+        </div>
 
       </div>
 
 
+      <!-- STATUS -->
 
-      <div class="card p-6 xl:col-span-2">
+      <div
+        class="
+          card
+          p-6
+          xl:col-span-2
+        "
+      >
 
-        <h3 class="font-black text-lg mb-1">Internship / Placement / Planned</h3>
+        <h3 class="font-black text-lg mb-1">
 
-        <p class="muted text-sm">Correct source totals by category.</p>
+          Planned vs Scheduled
 
-        <div class="click-hint">Click a bar to view full details.</div>
+        </h3>
 
-        <div class="small-chart"><canvas id="typeChart"></canvas></div>
+
+        <p class="muted text-sm">
+
+          Planned and Scheduled status for combined Internship / Placement records.
+
+        </p>
+
+
+        <div class="small-chart">
+
+          <canvas
+            id="statusChart"
+          ></canvas>
+
+        </div>
 
       </div>
+
 
     </div>
 
@@ -636,42 +1829,143 @@
 </main>
 
 
+<!-- =====================================================
+     DETAIL POPUP
+     ===================================================== -->
 
-<!-- Detail popup -->
+<div
+  class="detail-modal"
+  id="detailModal"
+  aria-hidden="true"
+>
 
-<div class="detail-modal" id="detailModal" aria-hidden="true">
+  <div
+    class="detail-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="detailTitle"
+  >
 
-  <div class="detail-dialog" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
 
     <div class="detail-head">
 
       <div>
 
-        <div style="font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#dbeafe">Internship / Placement Details</div>
+        <div
+          style="
+            font-size:10px;
+            font-weight:900;
+            letter-spacing:.14em;
+            text-transform:uppercase;
+            color:#dbeafe;
+          "
+        >
+          Internship / Placement Details
+        </div>
 
-        <h3 id="detailTitle" style="margin:5px 0 0;font-size:21px;font-weight:900">Details</h3>
 
-        <div id="detailSubtitle" style="margin-top:5px;font-size:12px;color:#dbeafe"></div>
+        <h3
+          id="detailTitle"
+          style="
+            margin:5px 0 0;
+            font-size:21px;
+            font-weight:900;
+          "
+        >
+          Details
+        </h3>
+
+
+        <div
+          id="detailSubtitle"
+          style="
+            margin-top:5px;
+            font-size:12px;
+            color:#dbeafe;
+          "
+        ></div>
 
       </div>
 
-      <button class="detail-close" id="detailClose" type="button" aria-label="Close">×</button>
+
+      <button
+        class="detail-close"
+        id="detailClose"
+        type="button"
+        aria-label="Close"
+      >
+        ×
+      </button>
 
     </div>
 
+
     <div class="detail-body">
+
 
       <div class="detail-summary">
 
-        <div class="detail-stat"><div class="detail-stat-label">Matching Records</div><div class="detail-stat-value" id="detailRecordCount">0</div></div>
 
-        <div class="detail-stat"><div class="detail-stat-label">Total Students</div><div class="detail-stat-value" id="detailTotalCount">0</div></div>
+        <div class="detail-stat">
 
-        <div class="detail-stat"><div class="detail-stat-label">Categories</div><div class="detail-stat-value" id="detailStatusCount">0</div></div>
+          <div class="detail-stat-label">
+
+            Matching Records
+
+          </div>
+
+          <div
+            class="detail-stat-value"
+            id="detailRecordCount"
+          >
+            0
+          </div>
+
+        </div>
+
+
+        <div class="detail-stat">
+
+          <div class="detail-stat-label">
+
+            How Many
+
+          </div>
+
+          <div
+            class="detail-stat-value"
+            id="detailHowMany"
+          >
+            0
+          </div>
+
+        </div>
+
+
+        <div class="detail-stat">
+
+          <div class="detail-stat-label">
+
+            Organizations
+
+          </div>
+
+          <div
+            class="detail-stat-value"
+            id="detailOrganizationCount"
+          >
+            0
+          </div>
+
+        </div>
+
 
       </div>
 
-      <div id="detailRecords"></div>
+
+      <div
+        id="detailRecords"
+      ></div>
 
     </div>
 
@@ -680,98 +1974,2940 @@
 </div>
 
 
-
 <script>
+
 "use strict";
-const NA="Not Available";
-const FILE="UOL_Internship_Placement_Planned_All_Entries_With_Summary.xlsx";
-const $=id=>document.getElementById(id);
-const PALETTE=["#2563eb","#7c3aed","#06b6d4","#16a34a","#f59e0b","#ef4444","#ec4899","#14b8a6"];
-let rows=[],filtered=[],charts={};
 
-function clean(v){if(v===undefined||v===null)return"";const x=String(v).trim();return(!x||["null","undefined","nan"].includes(x.toLowerCase()))?"":x}
-function num(v){const m=clean(v).replace(/,/g,"").match(/-?\d+(?:\.\d+)?/);return m?Number(m[0]):0}
-function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")}
-function sum(list){return list.reduce((a,r)=>a+r.students,0)}
-function unique(key){return new Set(filtered.map(r=>r[key]).filter(v=>v&&v!==NA)).size}
-function fill(id,vals,label){const e=$(id);e.innerHTML="";e.add(new Option(label,"All"));[...new Set(vals.filter(Boolean))].sort((a,b)=>a.localeCompare(b)).forEach(v=>e.add(new Option(v,v)))}
-function group(key){const o={};filtered.forEach(r=>{const k=r[key]||NA;o[k]=(o[k]||0)+r.students});return o}
 
-function draw(id,data,horizontal=false){
- if(charts[id])charts[id].destroy();
- const labels=Object.keys(data),values=Object.values(data);
- charts[id]=new Chart($(id),{type:"bar",data:{labels,datasets:[{data:values,backgroundColor:labels.map((_,i)=>PALETTE[i%PALETTE.length]),borderRadius:8}]},
- options:{responsive:true,maintainAspectRatio:false,indexAxis:horizontal?"y":"x",plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.raw} students`}}},
- scales:horizontal?{x:{beginAtZero:true},y:{grid:{display:false}}}:{y:{beginAtZero:true},x:{grid:{display:false}}},
- onClick:(e,els)=>{if(!els.length)return;const label=labels[els[0].index];const map={peopleChart:"company",orgChart:"sector",facultyChart:"category",departmentChart:"mode",typeChart:"category"};openDetail(label,filtered.filter(r=>r[map[id]]===label));}}});
+/* =========================================================
+   GLOBALS
+   ========================================================= */
+
+const NA =
+  "Not Available";
+
+
+const $ =
+  id =>
+    document.getElementById(id);
+
+
+const PALETTE =
+[
+  "#2563eb",
+  "#7c3aed",
+  "#06b6d4",
+  "#16a34a",
+  "#f59e0b",
+  "#ef4444",
+  "#ec4899",
+  "#14b8a6"
+];
+
+
+let rows = [];
+
+let filtered = [];
+
+let charts = {};
+
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+function clean(value){
+
+  if(
+    value === undefined ||
+    value === null
+  ){
+    return "";
+  }
+
+
+  const text =
+    String(value)
+      .trim();
+
+
+  if(
+    !text ||
+    [
+      "null",
+      "undefined",
+      "nan"
+    ].includes(
+      text.toLowerCase()
+    )
+  ){
+    return "";
+  }
+
+
+  return text;
 }
-function openDetail(label,matched){
- $("detailTitle").textContent=label;
- $("detailSubtitle").textContent="Matching source entries";
- $("detailRecordCount").textContent=matched.length;
- $("detailTotalCount").textContent=sum(matched).toLocaleString();
- $("detailStatusCount").textContent=matched.map(r=>r.category).filter((v,i,a)=>a.indexOf(v)===i).join(", ")||NA;
- $("detailRecords").innerHTML=matched.map((r,i)=>`<div class="detail-record"><div class="detail-record-title">Entry ${i+1}</div><div class="detail-grid">
- <div class="detail-field"><small>Category</small><strong>${esc(r.category)}</strong></div>
- <div class="detail-field"><small>Students</small><strong>${r.students.toLocaleString()}</strong></div>
- <div class="detail-field full"><small>Company</small><strong>${esc(r.company)}</strong></div>
- <div class="detail-field"><small>Sector</small><strong>${esc(r.sector||NA)}</strong></div>
- <div class="detail-field"><small>Duration</small><strong>${esc(r.duration||NA)}</strong></div>
- <div class="detail-field"><small>Mode</small><strong>${esc(r.mode||NA)}</strong></div>
- <div class="detail-field full"><small>Evidence</small><strong>${esc(r.evidence||NA)}</strong></div>
- </div></div>`).join("");
- $("detailModal").classList.add("open");document.body.style.overflow="hidden";
+
+
+function norm(value){
+
+  return clean(value)
+    .toLowerCase()
+    .replace(
+      /[^a-z0-9]+/g,
+      " "
+    )
+    .trim();
 }
-function closeDetail(){$("detailModal").classList.remove("open");document.body.style.overflow=""}
+
+
+function numberFrom(value){
+
+  const match =
+    clean(value)
+      .replace(
+        /,/g,
+        ""
+      )
+      .match(
+        /-?\d+(?:\.\d+)?/
+      );
+
+
+  return match
+    ? Number(
+        match[0]
+      )
+    : 0;
+}
+
+
+function escapeHtml(value){
+
+  return String(
+    value ?? ""
+  )
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#39;"
+    );
+}
+
+
+function getRowValue(
+  row,
+  names
+){
+
+  const keys =
+    Object.keys(row);
+
+
+  for(
+    const name
+    of names
+  ){
+
+    const wanted =
+      norm(name);
+
+
+    const found =
+      keys.find(
+        key =>
+          norm(key) ===
+          wanted
+      );
+
+
+    if(
+      found !== undefined
+      &&
+      clean(
+        row[found]
+      )
+    ){
+
+      return clean(
+        row[found]
+      );
+    }
+  }
+
+
+  return "";
+}
+
+
+function normalizeYesNo(value){
+
+  const text =
+    norm(value);
+
+
+  if(
+    [
+      "yes",
+      "y",
+      "true",
+      "1"
+    ].includes(
+      text
+    )
+  ){
+    return "Yes";
+  }
+
+
+  if(
+    [
+      "no",
+      "n",
+      "false",
+      "0"
+    ].includes(
+      text
+    )
+  ){
+    return "No";
+  }
+
+
+  return clean(value)
+    ||
+    NA;
+}
+
+
+function invalid(value){
+
+  return [
+    "",
+    "not available",
+    "unclassified",
+    "undefined",
+    "null",
+    "na",
+    "n a"
+  ].includes(
+    norm(value)
+  );
+}
+
+
+function sumHowMany(list){
+
+  return list.reduce(
+    (
+      total,
+      row
+    ) =>
+      total
+      +
+      Number(
+        row.howMany ||
+        0
+      ),
+    0
+  );
+}
+
+
+function uniqueCount(
+  list,
+  key
+){
+
+  return new Set(
+
+    list
+      .map(
+        row =>
+          row[key]
+      )
+      .filter(
+        value =>
+          !invalid(value)
+      )
+
+  ).size;
+}
+
+
+/* =========================================================
+   PARSER
+
+   IMPORTANT:
+   ALL THESE VALUES BECOME ONE CATEGORY:
+
+   IP
+   Internship
+   Placement
+   Internship/Placement
+   Internship / Placement
+
+   Final category:
+   Internship / Placement
+   ========================================================= */
+
+function parseInternshipPlacementRows(
+  sourceRows,
+  sheetName = ""
+){
+
+  const sheetNorm =
+    norm(
+      sheetName
+    );
+
+
+  const dedicatedSheet =
+    (
+      sheetNorm.includes(
+        "internship"
+      )
+      ||
+      sheetNorm.includes(
+        "placement"
+      )
+      ||
+      sheetNorm ===
+        "ip"
+    );
+
+
+  return sourceRows
+
+    .map(
+      row => {
+
+
+        const separatedType =
+          getRowValue(
+            row,
+            [
+              "Separated Activity Type",
+              "Activity Type"
+            ]
+          );
+
+
+        const originalType =
+          getRowValue(
+            row,
+            [
+              "Original Activity Type"
+            ]
+          );
+
+
+        const separatedNorm =
+          norm(
+            separatedType
+          );
+
+
+        const originalNorm =
+          norm(
+            originalType
+          );
+
+
+        const typeText =
+          `${separatedNorm} ${originalNorm}`
+            .trim();
+
+
+        const isInternshipPlacement =
+          (
+
+            separatedNorm ===
+              "ip"
+
+            ||
+
+            originalNorm ===
+              "ip"
+
+            ||
+
+            typeText.includes(
+              "internship"
+            )
+
+            ||
+
+            typeText.includes(
+              "placement"
+            )
+
+            ||
+
+            (
+              dedicatedSheet
+              &&
+              !typeText
+            )
+
+          );
+
+
+        const rawHowMany =
+          getRowValue(
+            row,
+            [
+              "How Many",
+              "Number of Students",
+              "No. of Students",
+              "No of Students",
+              "Student Count"
+            ]
+          );
+
+
+        return {
+
+
+          /* ALL RECORDS USE SAME CATEGORY */
+
+          activityType:
+            "Internship / Placement",
+
+
+          person:
+            getRowValue(
+              row,
+              [
+                "Focal Person",
+                "Person",
+                "Name",
+                "Submitted By"
+              ]
+            )
+            ||
+            NA,
+
+
+          designation:
+            getRowValue(
+              row,
+              [
+                "Designation",
+                "Position"
+              ]
+            )
+            ||
+            NA,
+
+
+          faculty:
+            getRowValue(
+              row,
+              [
+                "Faculty",
+                "Faculty Name"
+              ]
+            )
+            ||
+            NA,
+
+
+          department:
+            getRowValue(
+              row,
+              [
+                "Department",
+                "Department Name"
+              ]
+            )
+            ||
+            NA,
+
+
+          organization:
+            getRowValue(
+              row,
+              [
+                "Organization / Activity Title",
+                "Organization / Activity",
+                "Organization",
+                "Organization Name",
+                "Activity Title",
+                "Company",
+                "Company / Organization",
+                "Name Of Organization Planned with",
+                "Name of Organization Planned with",
+                "Planned Partner / Organization",
+                "Internship Organization",
+                "Placement Organization"
+              ]
+            )
+            ||
+            NA,
+
+
+          howMany:
+
+            rawHowMany === ""
+
+              ? 1
+
+              : numberFrom(
+                  rawHowMany
+                ),
+
+
+          planned:
+            normalizeYesNo(
+              getRowValue(
+                row,
+                [
+                  "Planned",
+                  "Is Planned",
+                  "Planned?",
+                  "Planned Status"
+                ]
+              )
+            ),
+
+
+          scheduled:
+            normalizeYesNo(
+              getRowValue(
+                row,
+                [
+                  "Scheduled",
+                  "Is Scheduled",
+                  "Scheduled?",
+                  "Scheduled Status"
+                ]
+              )
+            ),
+
+
+          reportingMonth:
+            getRowValue(
+              row,
+              [
+                "Reporting Month",
+                "Month"
+              ]
+            )
+            ||
+            NA,
+
+
+          campus:
+            getRowValue(
+              row,
+              [
+                "Campus"
+              ]
+            )
+            ||
+            NA,
+
+
+          ref:
+            getRowValue(
+              row,
+              [
+                "Ref #",
+                "Reference",
+                "Reference Number"
+              ]
+            )
+            ||
+            NA,
+
+
+          submissionDate:
+            getRowValue(
+              row,
+              [
+                "Submission Date"
+              ]
+            )
+            ||
+            NA,
+
+
+          remarks:
+            getRowValue(
+              row,
+              [
+                "Remarks / Result",
+                "Remarks/Result",
+                "Actual Outcome",
+                "Remarks",
+                "Evidence",
+                "Result"
+              ]
+            )
+            ||
+            NA,
+
+
+          isInternshipPlacement:
+            isInternshipPlacement
+
+        };
+      }
+    )
+
+
+    .filter(
+      row =>
+        row.isInternshipPlacement
+    )
+
+
+    .filter(
+      row =>
+        Number(
+          row.howMany
+        ) >
+        0
+    );
+}
+
+
+/* =========================================================
+   FILTER HELPERS
+   ========================================================= */
+
+function uniqueSorted(values){
+
+  return [
+    ...new Set(
+
+      values
+        .map(
+          clean
+        )
+        .filter(
+          value =>
+            !invalid(value)
+        )
+    )
+  ]
+    .sort(
+      (
+        a,
+        b
+      ) =>
+        a.localeCompare(
+          b
+        )
+    );
+}
+
+
+function refillSelect(
+  id,
+  values,
+  label
+){
+
+  const element =
+    $(id);
+
+
+  if(
+    !element
+  ){
+    return;
+  }
+
+
+  const previous =
+    element.value;
+
+
+  const items =
+    uniqueSorted(
+      values
+    );
+
+
+  element.innerHTML =
+    "";
+
+
+  element.add(
+    new Option(
+      label,
+      "All"
+    )
+  );
+
+
+  items.forEach(
+    item => {
+
+      element.add(
+        new Option(
+          item,
+          item
+        )
+      );
+    }
+  );
+
+
+  element.value =
+    (
+      previous !==
+        "All"
+      &&
+      items.includes(
+        previous
+      )
+    )
+      ? previous
+      : "All";
+}
+
+
+/* =========================================================
+   CASCADING FILTERS
+   ========================================================= */
+
+function updateFacultyFilter(){
+
+  refillSelect(
+
+    "facultyFilter",
+
+    rows.map(
+      row =>
+        row.faculty
+    ),
+
+    "All Faculties"
+
+  );
+}
+
+
+function updateDepartmentFilter(){
+
+  const faculty =
+    $("facultyFilter")
+      .value;
+
+
+  let available =
+    [...rows];
+
+
+  if(
+    faculty !==
+    "All"
+  ){
+
+    available =
+      available.filter(
+        row =>
+          row.faculty ===
+          faculty
+      );
+  }
+
+
+  refillSelect(
+
+    "departmentFilter",
+
+    available.map(
+      row =>
+        row.department
+    ),
+
+    "All Departments"
+
+  );
+}
+
+
+function updatePersonFilter(){
+
+  const faculty =
+    $("facultyFilter")
+      .value;
+
+
+  const department =
+    $("departmentFilter")
+      .value;
+
+
+  let available =
+    [...rows];
+
+
+  if(
+    faculty !==
+    "All"
+  ){
+
+    available =
+      available.filter(
+        row =>
+          row.faculty ===
+          faculty
+      );
+  }
+
+
+  if(
+    department !==
+    "All"
+  ){
+
+    available =
+      available.filter(
+        row =>
+          row.department ===
+          department
+      );
+  }
+
+
+  refillSelect(
+
+    "personFilter",
+
+    available.map(
+      row =>
+        row.person
+    ),
+
+    "All People"
+
+  );
+}
+
+
+function updateOrganizationFilter(){
+
+  const faculty =
+    $("facultyFilter")
+      .value;
+
+
+  const department =
+    $("departmentFilter")
+      .value;
+
+
+  const person =
+    $("personFilter")
+      .value;
+
+
+  let available =
+    [...rows];
+
+
+  if(
+    faculty !==
+    "All"
+  ){
+
+    available =
+      available.filter(
+        row =>
+          row.faculty ===
+          faculty
+      );
+  }
+
+
+  if(
+    department !==
+    "All"
+  ){
+
+    available =
+      available.filter(
+        row =>
+          row.department ===
+          department
+      );
+  }
+
+
+  if(
+    person !==
+    "All"
+  ){
+
+    available =
+      available.filter(
+        row =>
+          row.person ===
+          person
+      );
+  }
+
+
+  refillSelect(
+
+    "organizationFilter",
+
+    available.map(
+      row =>
+        row.organization
+    ),
+
+    "All Organizations"
+
+  );
+}
+
+
+function populateFilters(){
+
+  updateFacultyFilter();
+
+
+  $("facultyFilter")
+    .value =
+    "All";
+
+
+  updateDepartmentFilter();
+
+
+  $("departmentFilter")
+    .value =
+    "All";
+
+
+  updatePersonFilter();
+
+
+  $("personFilter")
+    .value =
+    "All";
+
+
+  updateOrganizationFilter();
+
+
+  $("organizationFilter")
+    .value =
+    "All";
+}
+
+
+/* =========================================================
+   APPLY FILTERS
+   ========================================================= */
+
+function applyFilters(){
+
+  const faculty =
+    $("facultyFilter")
+      .value;
+
+
+  const department =
+    $("departmentFilter")
+      .value;
+
+
+  const person =
+    $("personFilter")
+      .value;
+
+
+  const organization =
+    $("organizationFilter")
+      .value;
+
+
+  const planned =
+    $("plannedFilter")
+      .value;
+
+
+  const scheduled =
+    $("scheduledFilter")
+      .value;
+
+
+  const query =
+    $("searchFilter")
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  filtered =
+    rows.filter(
+      row => {
+
+
+        const searchMatch =
+          (
+            !query
+
+            ||
+
+            [
+              row.person,
+              row.designation,
+              row.organization,
+              row.faculty,
+              row.department,
+              row.reportingMonth,
+              row.campus,
+              row.remarks
+            ]
+              .some(
+                value =>
+                  String(
+                    value ||
+                    ""
+                  )
+                    .toLowerCase()
+                    .includes(
+                      query
+                    )
+              )
+          );
+
+
+        return (
+
+          (
+            faculty ===
+            "All"
+
+            ||
+
+            row.faculty ===
+            faculty
+          )
+
+          &&
+
+          (
+            department ===
+            "All"
+
+            ||
+
+            row.department ===
+            department
+          )
+
+          &&
+
+          (
+            person ===
+            "All"
+
+            ||
+
+            row.person ===
+            person
+          )
+
+          &&
+
+          (
+            organization ===
+            "All"
+
+            ||
+
+            row.organization ===
+            organization
+          )
+
+          &&
+
+          (
+            planned ===
+            "All"
+
+            ||
+
+            row.planned ===
+            planned
+          )
+
+          &&
+
+          (
+            scheduled ===
+            "All"
+
+            ||
+
+            row.scheduled ===
+            scheduled
+          )
+
+          &&
+
+          searchMatch
+        );
+      }
+    );
+
+
+  render();
+}
+
+
+/* =========================================================
+   CASCADING HANDLERS
+   ========================================================= */
+
+function handleFacultyChange(){
+
+  updateDepartmentFilter();
+
+
+  $("departmentFilter")
+    .value =
+    "All";
+
+
+  updatePersonFilter();
+
+
+  $("personFilter")
+    .value =
+    "All";
+
+
+  updateOrganizationFilter();
+
+
+  $("organizationFilter")
+    .value =
+    "All";
+
+
+  applyFilters();
+}
+
+
+function handleDepartmentChange(){
+
+  updatePersonFilter();
+
+
+  $("personFilter")
+    .value =
+    "All";
+
+
+  updateOrganizationFilter();
+
+
+  $("organizationFilter")
+    .value =
+    "All";
+
+
+  applyFilters();
+}
+
+
+function handlePersonChange(){
+
+  updateOrganizationFilter();
+
+
+  $("organizationFilter")
+    .value =
+    "All";
+
+
+  applyFilters();
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+function resetFilters(){
+
+  $("facultyFilter")
+    .value =
+    "All";
+
+
+  updateDepartmentFilter();
+
+
+  $("departmentFilter")
+    .value =
+    "All";
+
+
+  updatePersonFilter();
+
+
+  $("personFilter")
+    .value =
+    "All";
+
+
+  updateOrganizationFilter();
+
+
+  $("organizationFilter")
+    .value =
+    "All";
+
+
+  $("plannedFilter")
+    .value =
+    "All";
+
+
+  $("scheduledFilter")
+    .value =
+    "All";
+
+
+  $("searchFilter")
+    .value =
+    "";
+
+
+  filtered =
+    rows.slice();
+
+
+  render();
+}
+
+
+/* =========================================================
+   GROUP
+   ========================================================= */
+
+function group(key){
+
+  const output =
+    {};
+
+
+  filtered.forEach(
+    row => {
+
+
+      const label =
+        clean(
+          row[key]
+        );
+
+
+      if(
+        invalid(
+          label
+        )
+      ){
+        return;
+      }
+
+
+      output[label] =
+        (
+          output[label]
+          ||
+          0
+        )
+
+        +
+
+        Number(
+          row.howMany
+          ||
+          0
+        );
+    }
+  );
+
+
+  return Object.fromEntries(
+
+    Object.entries(
+      output
+    )
+      .sort(
+        (
+          a,
+          b
+        ) =>
+          b[1]
+          -
+          a[1]
+      )
+  );
+}
+
+
+/* =========================================================
+   PERSON GROUP
+   ========================================================= */
+
+function personGroup(){
+
+  const output =
+    {};
+
+
+  filtered.forEach(
+    row => {
+
+
+      if(
+        invalid(
+          row.person
+        )
+      ){
+        return;
+      }
+
+
+      const label =
+        row.designation !==
+        NA
+
+          ? `${row.person} — ${row.designation}`
+
+          : row.person;
+
+
+      output[label] =
+        (
+          output[label]
+          ||
+          0
+        )
+
+        +
+
+        Number(
+          row.howMany
+          ||
+          0
+        );
+    }
+  );
+
+
+  return Object.fromEntries(
+
+    Object.entries(
+      output
+    )
+      .sort(
+        (
+          a,
+          b
+        ) =>
+          b[1]
+          -
+          a[1]
+      )
+  );
+}
+
+
+/* =========================================================
+   LABEL WRAP
+   ========================================================= */
+
+function wrapLabel(
+  text,
+  max = 42
+){
+
+  const words =
+    String(
+      text
+    )
+      .split(
+        /\s+/
+      );
+
+
+  const lines =
+    [];
+
+
+  let line =
+    "";
+
+
+  words.forEach(
+    word => {
+
+
+      const next =
+        line
+          ? `${line} ${word}`
+          : word;
+
+
+      if(
+        next.length >
+        max
+        &&
+        line
+      ){
+
+        lines.push(
+          line
+        );
+
+
+        line =
+          word;
+
+      }else{
+
+        line =
+          next;
+      }
+    }
+  );
+
+
+  if(
+    line
+  ){
+
+    lines.push(
+      line
+    );
+  }
+
+
+  return lines;
+}
+
+
+/* =========================================================
+   MATCH POPUP ROWS
+   ========================================================= */
+
+function matchingRows(
+  chartId,
+  label
+){
+
+  if(
+    chartId ===
+    "peopleChart"
+  ){
+
+    return filtered.filter(
+      row => {
+
+
+        const personLabel =
+          row.designation !==
+          NA
+
+            ? `${row.person} — ${row.designation}`
+
+            : row.person;
+
+
+        return personLabel ===
+          label;
+      }
+    );
+  }
+
+
+  if(
+    chartId ===
+    "organizationChart"
+  ){
+
+    return filtered.filter(
+      row =>
+        row.organization ===
+        label
+    );
+  }
+
+
+  if(
+    chartId ===
+    "facultyChart"
+  ){
+
+    return filtered.filter(
+      row =>
+        row.faculty ===
+        label
+    );
+  }
+
+
+  if(
+    chartId ===
+    "departmentChart"
+  ){
+
+    return filtered.filter(
+      row =>
+        row.department ===
+        label
+    );
+  }
+
+
+  return [];
+}
+
+
+/* =========================================================
+   POPUP
+   ========================================================= */
+
+function openDetail(
+  chartId,
+  label
+){
+
+  const matched =
+    matchingRows(
+      chartId,
+      label
+    );
+
+
+  if(
+    !matched.length
+  ){
+    return;
+  }
+
+
+  $("detailTitle")
+    .textContent =
+    label;
+
+
+  $("detailSubtitle")
+    .textContent =
+    "Combined Internship / Placement records";
+
+
+  $("detailRecordCount")
+    .textContent =
+    matched
+      .length
+      .toLocaleString();
+
+
+  $("detailHowMany")
+    .textContent =
+    sumHowMany(
+      matched
+    )
+      .toLocaleString();
+
+
+  $("detailOrganizationCount")
+    .textContent =
+    uniqueCount(
+      matched,
+      "organization"
+    )
+      .toLocaleString();
+
+
+  $("detailRecords")
+    .innerHTML =
+
+    matched.map(
+      (
+        row,
+        index
+      ) => `
+
+
+        <div class="detail-record">
+
+
+          <div class="detail-record-title">
+
+            Internship / Placement ${index + 1}
+
+          </div>
+
+
+          <div class="detail-grid">
+
+
+            <div class="detail-field">
+
+              <small>
+                Activity Type
+              </small>
+
+              <strong>
+                Internship / Placement
+              </strong>
+
+            </div>
+
+
+            <div class="detail-field">
+
+              <small>
+                How Many
+              </small>
+
+              <strong>
+                ${Number(row.howMany).toLocaleString()}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-field">
+
+              <small>
+                Person
+              </small>
+
+              <strong>
+                ${escapeHtml(row.person)}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-field">
+
+              <small>
+                Designation
+              </small>
+
+              <strong>
+                ${escapeHtml(row.designation)}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-field">
+
+              <small>
+                Faculty
+              </small>
+
+              <strong>
+                ${escapeHtml(row.faculty)}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-field">
+
+              <small>
+                Department
+              </small>
+
+              <strong>
+                ${escapeHtml(row.department)}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-field full">
+
+              <small>
+                Organization / Activity
+              </small>
+
+              <strong>
+                ${escapeHtml(row.organization)}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-field">
+
+              <small>
+                Reporting Month
+              </small>
+
+              <strong>
+                ${escapeHtml(row.reportingMonth)}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-field">
+
+              <small>
+                Campus
+              </small>
+
+              <strong>
+                ${escapeHtml(row.campus)}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-field">
+
+              <small>
+                Planned
+              </small>
+
+              <strong>
+                ${escapeHtml(row.planned)}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-field">
+
+              <small>
+                Scheduled
+              </small>
+
+              <strong>
+                ${escapeHtml(row.scheduled)}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-field">
+
+              <small>
+                Reference
+              </small>
+
+              <strong>
+                ${escapeHtml(row.ref)}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-field">
+
+              <small>
+                Submission Date
+              </small>
+
+              <strong>
+                ${escapeHtml(row.submissionDate)}
+              </strong>
+
+            </div>
+
+
+            <div class="detail-field full">
+
+              <small>
+                Remarks / Result
+              </small>
+
+              <strong>
+                ${escapeHtml(row.remarks)}
+              </strong>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+      `
+    )
+      .join("");
+
+
+  $("detailModal")
+    .classList
+    .add(
+      "open"
+    );
+
+
+  document.body
+    .style
+    .overflow =
+    "hidden";
+}
+
+
+/* =========================================================
+   CLOSE POPUP
+   ========================================================= */
+
+function closeDetail(){
+
+  $("detailModal")
+    .classList
+    .remove(
+      "open"
+    );
+
+
+  document.body
+    .style
+    .overflow =
+    "";
+}
+
+
+/* =========================================================
+   CHART
+   ========================================================= */
+
+function drawChart(
+  id,
+  data,
+  horizontal = false,
+  wrapId = null
+){
+
+  if(
+    charts[id]
+  ){
+
+    charts[id]
+      .destroy();
+  }
+
+
+  const labels =
+    Object.keys(
+      data
+    );
+
+
+  const values =
+    Object.values(
+      data
+    );
+
+
+  if(
+    wrapId
+    &&
+    $(wrapId)
+  ){
+
+    $(wrapId)
+      .style
+      .height =
+
+      Math.max(
+        420,
+        labels.length * 58
+      )
+
+      +
+
+      "px";
+  }
+
+
+  charts[id] =
+    new Chart(
+      $(id),
+      {
+
+        type:
+          "bar",
+
+
+        data:{
+
+          labels:
+            labels,
+
+
+          datasets:[
+            {
+
+              label:
+                "How Many",
+
+
+              data:
+                values,
+
+
+              backgroundColor:
+
+                labels.map(
+                  (
+                    _,
+                    index
+                  ) =>
+                    PALETTE[
+                      index
+                      %
+                      PALETTE.length
+                    ]
+                ),
+
+
+              borderRadius:
+                8,
+
+
+              maxBarThickness:
+                30
+            }
+          ]
+        },
+
+
+        options:{
+
+          responsive:
+            true,
+
+
+          maintainAspectRatio:
+            false,
+
+
+          indexAxis:
+            horizontal
+              ? "y"
+              : "x",
+
+
+          onClick:
+            (
+              event,
+              elements
+            ) => {
+
+
+              if(
+                !elements.length
+              ){
+                return;
+              }
+
+
+              const label =
+                labels[
+                  elements[0]
+                    .index
+                ];
+
+
+              openDetail(
+                id,
+                label
+              );
+            },
+
+
+          plugins:{
+
+            legend:{
+
+              display:
+                false
+            },
+
+
+            tooltip:{
+
+              callbacks:{
+
+                label:
+                  context =>
+                    `How Many: ${context.raw}`
+              }
+            }
+          },
+
+
+          scales:
+
+            horizontal
+
+              ?
+
+              {
+
+                x:{
+
+                  beginAtZero:
+                    true,
+
+                  ticks:{
+
+                    precision:
+                      0
+                  }
+                },
+
+
+                y:{
+
+                  grid:{
+
+                    display:
+                      false
+                  },
+
+
+                  ticks:{
+
+                    autoSkip:
+                      false,
+
+
+                    callback:
+                      function(
+                        value
+                      ){
+
+                        return wrapLabel(
+
+                          this
+                            .getLabelForValue(
+                              value
+                            ),
+
+                          45
+                        );
+                      }
+                  }
+                }
+              }
+
+              :
+
+              {
+
+                y:{
+
+                  beginAtZero:
+                    true,
+
+                  ticks:{
+
+                    precision:
+                      0
+                  }
+                },
+
+
+                x:{
+
+                  grid:{
+
+                    display:
+                      false
+                  }
+                }
+              }
+        }
+      }
+    );
+}
+
+
+/* =========================================================
+   STATUS CHART
+   ========================================================= */
+
+function drawStatusChart(){
+
+  if(
+    charts.statusChart
+  ){
+
+    charts.statusChart
+      .destroy();
+  }
+
+
+  const planned =
+    filtered.filter(
+      row =>
+        row.planned ===
+        "Yes"
+    ).length;
+
+
+  const scheduled =
+    filtered.filter(
+      row =>
+        row.scheduled ===
+        "Yes"
+    ).length;
+
+
+  charts.statusChart =
+    new Chart(
+      $("statusChart"),
+      {
+
+        type:
+          "doughnut",
+
+
+        data:{
+
+          labels:[
+            "Planned",
+            "Scheduled"
+          ],
+
+
+          datasets:[
+            {
+
+              data:[
+                planned,
+                scheduled
+              ],
+
+
+              backgroundColor:[
+                "#2563eb",
+                "#7c3aed"
+              ],
+
+
+              borderColor:
+                "#fff",
+
+
+              borderWidth:
+                3
+            }
+          ]
+        },
+
+
+        options:{
+
+          responsive:
+            true,
+
+
+          maintainAspectRatio:
+            false,
+
+
+          plugins:{
+
+            legend:{
+
+              position:
+                "bottom"
+            }
+          }
+        }
+      }
+    );
+}
+
+
+/* =========================================================
+   RENDER
+   ========================================================= */
 
 function render(){
- $("kRecords").textContent=filtered.length.toLocaleString();
- $("kTotal").textContent=sum(filtered).toLocaleString();
- $("kInternship").textContent=sum(filtered.filter(r=>r.category==="Internship")).toLocaleString();
- $("kPlacement").textContent=sum(filtered.filter(r=>r.category==="Placement")).toLocaleString();
- $("kPlanned").textContent=sum(filtered.filter(r=>r.category==="Planned")).toLocaleString();
- $("kCompanies").textContent=unique("company");
- draw("peopleChart",group("company"),true);
- draw("orgChart",group("sector"),true);
- draw("facultyChart",group("category"));
- draw("departmentChart",group("mode"));
- draw("typeChart",group("category"));
-}
-function applyFilters(){
- const q=$("searchFilter").value.trim().toLowerCase(), ok=(id,val)=>$(id).value==="All"||$(id).value===val;
- filtered=rows.filter(r=>ok("categoryFilter",r.category)&&ok("companyFilter",r.company)&&ok("sectorFilter",r.sector)&&ok("modeFilter",r.mode)&&(!q||[r.category,r.company,r.sector,r.duration,r.mode].some(x=>String(x).toLowerCase().includes(q))));
- render();
-}
-function resetFilters(){["categoryFilter","companyFilter","sectorFilter","modeFilter"].forEach(id=>$(id).value="All");$("searchFilter").value="";filtered=rows.slice();render()}
-function exportData(){const ws=XLSX.utils.json_to_sheet(filtered.map(r=>({"Category":r.category,"Company":r.company,"Sector":r.sector,"Number of Students":r.students,"Duration":r.duration,"Mode":r.mode,"Evidence":r.evidence})));const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Entries");XLSX.writeFile(wb,"UOL_Internship_Placement_Filtered.xlsx")}
 
-function processWorkbook(buffer,source){
- const wb=XLSX.read(buffer,{type:"array"}), sheet=wb.Sheets["Entries"];
- if(!sheet)throw new Error('Worksheet "Entries" not found.');
- const data=XLSX.utils.sheet_to_json(sheet,{defval:"",raw:false});
- rows=data.map(r=>({category:clean(r["Category"])||NA,company:clean(r["Company"])||NA,sector:clean(r["Sector"])||NA,students:num(r["Number of Students"]),duration:clean(r["Duration"]),mode:clean(r["Mode"])||NA,evidence:clean(r["Evidence"])})).filter(r=>r.students>0);
- filtered=rows.slice();
- fill("categoryFilter",rows.map(r=>r.category),"All Categories");
- fill("companyFilter",rows.map(r=>r.company),"All Companies");
- fill("sectorFilter",rows.map(r=>r.sector),"All Sectors");
- fill("modeFilter",rows.map(r=>r.mode),"All Modes");
- render();
- $("connection").innerHTML=`<span style="color:#86efac">●</span> Connected • ${rows.length} entries • ${sum(rows)} students`;
+  $("kRecords")
+    .textContent =
+    filtered
+      .length
+      .toLocaleString();
+
+
+  $("kHowMany")
+    .textContent =
+    sumHowMany(
+      filtered
+    )
+      .toLocaleString();
+
+
+  $("kPeople")
+    .textContent =
+    uniqueCount(
+      filtered,
+      "person"
+    )
+      .toLocaleString();
+
+
+  $("kFaculties")
+    .textContent =
+    uniqueCount(
+      filtered,
+      "faculty"
+    )
+      .toLocaleString();
+
+
+  $("kPlanned")
+    .textContent =
+    filtered
+      .filter(
+        row =>
+          row.planned ===
+          "Yes"
+      )
+      .length
+      .toLocaleString();
+
+
+  $("kScheduled")
+    .textContent =
+    filtered
+      .filter(
+        row =>
+          row.scheduled ===
+          "Yes"
+      )
+      .length
+      .toLocaleString();
+
+
+  drawChart(
+
+    "peopleChart",
+
+    personGroup(),
+
+    true,
+
+    "peopleWrap"
+
+  );
+
+
+  drawChart(
+
+    "organizationChart",
+
+    group(
+      "organization"
+    ),
+
+    true,
+
+    "organizationWrap"
+
+  );
+
+
+  drawChart(
+
+    "facultyChart",
+
+    group(
+      "faculty"
+    ),
+
+    true
+
+  );
+
+
+  drawChart(
+
+    "departmentChart",
+
+    group(
+      "department"
+    ),
+
+    true
+
+  );
+
+
+  drawStatusChart();
 }
+
+
+/* =========================================================
+   EXPORT
+   ========================================================= */
+
+function exportData(){
+
+  if(
+    !filtered.length
+  ){
+
+    alert(
+      "There is no Internship / Placement data to export."
+    );
+
+    return;
+  }
+
+
+  const exportRows =
+
+    filtered.map(
+      row => ({
+
+        "Activity Type":
+          "Internship / Placement",
+
+
+        "Faculty":
+          row.faculty,
+
+
+        "Department":
+          row.department,
+
+
+        "Focal Person":
+          row.person,
+
+
+        "Designation":
+          row.designation,
+
+
+        "How Many":
+          row.howMany,
+
+
+        "Organization / Activity Title":
+          row.organization,
+
+
+        "Reporting Month":
+          row.reportingMonth,
+
+
+        "Campus":
+          row.campus,
+
+
+        "Planned":
+          row.planned,
+
+
+        "Scheduled":
+          row.scheduled,
+
+
+        "Reference":
+          row.ref,
+
+
+        "Submission Date":
+          row.submissionDate,
+
+
+        "Remarks / Result":
+          row.remarks
+
+      })
+    );
+
+
+  const worksheet =
+
+    XLSX.utils
+      .json_to_sheet(
+        exportRows
+      );
+
+
+  const workbook =
+
+    XLSX.utils
+      .book_new();
+
+
+  XLSX.utils
+    .book_append_sheet(
+      workbook,
+      worksheet,
+      "Internship Placement"
+    );
+
+
+  XLSX.writeFile(
+    workbook,
+    "UOL_Internship_Placement_Analytics.xlsx"
+  );
+}
+
+
+/* =========================================================
+   FIND DATA SHEET
+   ========================================================= */
+
+function findInternshipSheet(
+  workbook
+){
+
+  console.log(
+    "Available sheets:",
+    workbook.SheetNames
+  );
+
+
+  /* MASTER SHEET FIRST */
+
+  const allSheet =
+    workbook
+      .SheetNames
+      .find(
+        name =>
+          norm(name)
+          ===
+          norm(
+            "All Separated Activities"
+          )
+      );
+
+
+  if(
+    allSheet
+  ){
+    return allSheet;
+  }
+
+
+  /* COMBINED SHEET */
+
+  const combined =
+    workbook
+      .SheetNames
+      .find(
+        name => {
+
+          const value =
+            norm(
+              name
+            );
+
+
+          return (
+
+            value.includes(
+              "internship"
+            )
+
+            &&
+
+            value.includes(
+              "placement"
+            )
+
+          );
+        }
+      );
+
+
+  if(
+    combined
+  ){
+    return combined;
+  }
+
+
+  /* IP SHEET */
+
+  const ipSheet =
+    workbook
+      .SheetNames
+      .find(
+        name =>
+          norm(name)
+          ===
+          "ip"
+      );
+
+
+  if(
+    ipSheet
+  ){
+    return ipSheet;
+  }
+
+
+  /* SINGLE SHEET FALLBACK */
+
+  if(
+    workbook
+      .SheetNames
+      .length ===
+      1
+  ){
+
+    return workbook
+      .SheetNames[0];
+  }
+
+
+  return null;
+}
+
+
+/* =========================================================
+   PROCESS WORKBOOK
+   ========================================================= */
+
+function processWorkbook(
+  buffer,
+  source
+){
+
+  const workbook =
+
+    XLSX.read(
+      buffer,
+      {
+        type:
+          "array"
+      }
+    );
+
+
+  const sheetName =
+
+    findInternshipSheet(
+      workbook
+    );
+
+
+  if(
+    !sheetName
+  ){
+
+    throw new Error(
+      'No Internship / Placement or "All Separated Activities" sheet found.'
+    );
+  }
+
+
+  console.log(
+    "Using sheet:",
+    sheetName
+  );
+
+
+  const sheet =
+    workbook
+      .Sheets[
+        sheetName
+      ];
+
+
+  const data =
+
+    XLSX.utils
+      .sheet_to_json(
+        sheet,
+        {
+          defval:"",
+          raw:false
+        }
+      );
+
+
+  console.log(
+    "Raw Excel rows:",
+    data.length
+  );
+
+
+  rows =
+
+    parseInternshipPlacementRows(
+      data,
+      sheetName
+    );
+
+
+  console.log(
+    "Combined Internship / Placement records:",
+    rows.length
+  );
+
+
+  if(
+    !rows.length
+  ){
+
+    throw new Error(
+      "Workbook loaded, but no IP or Internship / Placement records were found."
+    );
+  }
+
+
+  filtered =
+    rows.slice();
+
+
+  populateFilters();
+
+
+  render();
+
+
+  const totalHowMany =
+    sumHowMany(
+      rows
+    );
+
+
+  $("connection")
+    .innerHTML =
+    `
+      <span
+        style="
+          color:#86efac
+        "
+      >
+        ●
+      </span>
+
+      Connected
+
+      • ${rows.length.toLocaleString()} records
+
+      • How Many: ${totalHowMany.toLocaleString()}
+    `;
+
+
+  console.log(
+    "Excel connected:",
+    source
+  );
+
+
+  console.log(
+    "Combined How Many:",
+    totalHowMany
+  );
+}
+
+
+/* =========================================================
+   LOAD EXCEL
+   ========================================================= */
+
 async function loadExcel(){
- $("connection").innerHTML='<span style="color:#fde68a">●</span> Connecting to Excel…';
- const paths=["../data/","./data/","data/","../","./"].map(p=>p+FILE);
- for(const url of paths){try{const res=await fetch(encodeURI(url),{cache:"no-store"});if(!res.ok)throw new Error(res.status);processWorkbook(await res.arrayBuffer(),url);return}catch(e){}}
- $("connection").innerHTML='<span style="color:#f87171">●</span> Excel connection failed';
+
+  const paths =
+    [
+
+      "../data/UOL_Separated_All_Activity_Data_Cleaned.xlsx",
+
+      "data/UOL_Separated_All_Activity_Data_Cleaned.xlsx",
+
+      "./data/UOL_Separated_All_Activity_Data_Cleaned.xlsx",
+
+      "UOL_Separated_All_Activity_Data_Cleaned.xlsx",
+
+      "./UOL_Separated_All_Activity_Data_Cleaned.xlsx"
+
+    ];
+
+
+  let lastError =
+    null;
+
+
+  $("connection")
+    .innerHTML =
+    `
+      <span
+        style="
+          color:#fde68a
+        "
+      >
+        ●
+      </span>
+
+      Connecting to Excel...
+    `;
+
+
+  for(
+    const path
+    of paths
+  ){
+
+    try{
+
+
+      console.log(
+        "Trying Excel:",
+        path
+      );
+
+
+      const response =
+
+        await fetch(
+          path,
+          {
+            cache:
+              "no-store"
+          }
+        );
+
+
+      if(
+        !response.ok
+      ){
+
+        throw new Error(
+          `${path}: HTTP ${response.status}`
+        );
+      }
+
+
+      const buffer =
+
+        await response
+          .arrayBuffer();
+
+
+      if(
+        !buffer
+        ||
+        buffer.byteLength ===
+        0
+      ){
+
+        throw new Error(
+          `${path}: Excel file is empty`
+        );
+      }
+
+
+      processWorkbook(
+        buffer,
+        path
+      );
+
+
+      return;
+
+
+    }catch(
+      error
+    ){
+
+
+      lastError =
+        error;
+
+
+      console.warn(
+        "Excel path failed:",
+        path,
+        error
+      );
+    }
+  }
+
+
+  $("connection")
+    .innerHTML =
+    `
+      <span
+        style="
+          color:#f87171
+        "
+      >
+        ●
+      </span>
+
+      Excel connection failed
+    `;
+
+
+  console.error(
+    "Excel could not be loaded.",
+    lastError
+  );
 }
-["categoryFilter","companyFilter","sectorFilter","modeFilter"].forEach(id=>$(id).addEventListener("change",applyFilters));
-$("searchFilter").addEventListener("input",applyFilters);$("resetBtn").addEventListener("click",resetFilters);$("exportBtn").addEventListener("click",exportData);
-$("detailClose").addEventListener("click",closeDetail);$("detailModal").addEventListener("click",e=>{if(e.target===$("detailModal"))closeDetail()});
-$("mobileNavToggle").addEventListener("click",()=>$("sidebar").classList.toggle("mobile-open"));
-document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDetail()});
+
+
+/* =========================================================
+   EVENTS
+   ========================================================= */
+
+$("facultyFilter")
+  .addEventListener(
+    "change",
+    handleFacultyChange
+  );
+
+
+$("departmentFilter")
+  .addEventListener(
+    "change",
+    handleDepartmentChange
+  );
+
+
+$("personFilter")
+  .addEventListener(
+    "change",
+    handlePersonChange
+  );
+
+
+$("organizationFilter")
+  .addEventListener(
+    "change",
+    applyFilters
+  );
+
+
+$("plannedFilter")
+  .addEventListener(
+    "change",
+    applyFilters
+  );
+
+
+$("scheduledFilter")
+  .addEventListener(
+    "change",
+    applyFilters
+  );
+
+
+$("searchFilter")
+  .addEventListener(
+    "input",
+    applyFilters
+  );
+
+
+$("resetBtn")
+  .addEventListener(
+    "click",
+    resetFilters
+  );
+
+
+$("exportBtn")
+  .addEventListener(
+    "click",
+    exportData
+  );
+
+
+$("detailClose")
+  .addEventListener(
+    "click",
+    closeDetail
+  );
+
+
+$("detailModal")
+  .addEventListener(
+    "click",
+    event => {
+
+      if(
+        event.target ===
+        $("detailModal")
+      ){
+
+        closeDetail();
+      }
+    }
+  );
+
+
+$("mobileNavToggle")
+  .addEventListener(
+    "click",
+    () => {
+
+      $("sidebar")
+        .classList
+        .toggle(
+          "mobile-open"
+        );
+    }
+  );
+
+
+document
+  .addEventListener(
+    "keydown",
+    event => {
+
+      if(
+        event.key ===
+        "Escape"
+      ){
+
+        closeDetail();
+      }
+    }
+  );
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
 loadExcel();
+
 </script>
 
-</body>
 
+</body>
 </html>

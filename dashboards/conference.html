@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>UOL Analytics | Conference Analytics</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -20,8 +21,17 @@
       --purple:#7c3aed;
     }
 
-    *{box-sizing:border-box}
-    html,body{margin:0;min-height:100%;overflow-x:hidden}
+    *{
+      box-sizing:border-box;
+    }
+
+    html,
+    body{
+      margin:0;
+      min-height:100%;
+      overflow-x:hidden;
+    }
+
     body{
       color:var(--ink);
       font-family:Inter,Segoe UI,Arial,sans-serif;
@@ -31,6 +41,10 @@
         var(--bg);
     }
 
+    /* =====================================================
+       SIDEBAR
+       ===================================================== */
+
     .side{
       position:fixed;
       inset:0 auto 0 0;
@@ -39,30 +53,67 @@
       padding:20px 14px;
       overflow-y:auto;
       z-index:1000;
-      background:linear-gradient(180deg,#061326 0%,#102a5d 48%,#5b21b6 100%);
+      background:linear-gradient(
+        180deg,
+        #061326 0%,
+        #102a5d 48%,
+        #5b21b6 100%
+      );
       box-shadow:10px 0 34px rgba(15,23,42,.16);
     }
+
     .brand-wrap{
       padding:12px 13px 18px;
       margin-bottom:13px;
       border-bottom:1px solid rgba(255,255,255,.12);
     }
-    .brand-title{font-size:22px;font-weight:900;color:#fff}
-    .brand-sub{
-      margin-top:4px;font-size:10px;font-weight:800;
-      letter-spacing:.18em;text-transform:uppercase;color:#bfdbfe;
+
+    .brand-title{
+      font-size:22px;
+      font-weight:900;
+      color:#fff;
     }
+
+    .brand-sub{
+      margin-top:4px;
+      font-size:10px;
+      font-weight:800;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:#bfdbfe;
+    }
+
     .nav-link{
-      display:flex;align-items:center;width:100%;
-      padding:11px 13px;margin:5px 0;border-radius:11px;
-      color:#e5efff;text-decoration:none;font-size:13px;font-weight:700;
+      display:flex;
+      align-items:center;
+      width:100%;
+      padding:11px 13px;
+      margin:5px 0;
+      border-radius:11px;
+      color:#e5efff;
+      text-decoration:none;
+      font-size:13px;
+      font-weight:700;
       transition:.2s;
     }
-    .nav-link:hover{background:rgba(255,255,255,.10)}
-    .nav-link.active{
-      background:linear-gradient(135deg,#1769ff,#8438f5);
-      color:#fff;box-shadow:0 10px 24px rgba(37,99,235,.28);
+
+    .nav-link:hover{
+      background:rgba(255,255,255,.10);
     }
+
+    .nav-link.active{
+      background:linear-gradient(
+        135deg,
+        #1769ff,
+        #8438f5
+      );
+      color:#fff;
+      box-shadow:0 10px 24px rgba(37,99,235,.28);
+    }
+
+    /* =====================================================
+       MAIN
+       ===================================================== */
 
     .main{
       margin-left:var(--side);
@@ -70,726 +121,3614 @@
       padding:18px 24px 32px;
     }
 
+    /* =====================================================
+       HERO
+       ===================================================== */
+
     .hero{
-      position:relative;overflow:hidden;
-      min-height:145px;padding:27px 29px;border-radius:25px;color:#fff;
-      background:linear-gradient(115deg,#1647c8 0%,#5b21b6 56%,#0697b5 100%);
+      position:relative;
+      overflow:hidden;
+      min-height:145px;
+      padding:27px 29px;
+      border-radius:25px;
+      color:#fff;
+      background:linear-gradient(
+        115deg,
+        #1647c8 0%,
+        #5b21b6 56%,
+        #0697b5 100%
+      );
       box-shadow:0 18px 42px rgba(37,99,235,.18);
     }
+
     .hero:after{
-      content:"";position:absolute;width:310px;height:310px;border-radius:50%;
-      right:-80px;top:-160px;background:rgba(255,255,255,.10);
+      content:"";
+      position:absolute;
+      width:310px;
+      height:310px;
+      border-radius:50%;
+      right:-80px;
+      top:-160px;
+      background:rgba(255,255,255,.10);
     }
+
+    /* =====================================================
+       CARD
+       ===================================================== */
 
     .card{
-      background:#fff;border:1px solid #dfe7f2;border-radius:20px;
+      background:#fff;
+      border:1px solid #dfe7f2;
+      border-radius:20px;
       box-shadow:0 10px 28px rgba(15,23,42,.055);
     }
+
+    /* =====================================================
+       FILTERS
+       ===================================================== */
+
     .filter{
-      width:100%;height:43px;padding:0 13px;border:1px solid #cbd7e6;
-      border-radius:11px;background:#fff;outline:none;font-size:12px;
+      width:100%;
+      height:43px;
+      padding:0 13px;
+      border:1px solid #cbd7e6;
+      border-radius:11px;
+      background:#fff;
+      outline:none;
+      font-size:12px;
     }
-    .filter:focus{border-color:#6366f1;box-shadow:0 0 0 4px rgba(99,102,241,.1)}
+
+    .filter:focus{
+      border-color:#6366f1;
+      box-shadow:0 0 0 4px rgba(99,102,241,.1);
+    }
+
     .btn{
-      min-height:42px;border:0;border-radius:11px;padding:10px 16px;
-      color:#fff;font-size:12px;font-weight:900;cursor:pointer;
-      background:linear-gradient(135deg,#2563eb,#7c3aed);
+      min-height:42px;
+      border:0;
+      border-radius:11px;
+      padding:10px 16px;
+      color:#fff;
+      font-size:12px;
+      font-weight:900;
+      cursor:pointer;
+      background:linear-gradient(
+        135deg,
+        #2563eb,
+        #7c3aed
+      );
       box-shadow:0 8px 20px rgba(79,70,229,.20);
     }
-    .btn:hover{filter:brightness(1.05)}
-    .muted{color:var(--muted)}
 
-    .kpi-card{min-height:90px;padding:18px;position:relative;overflow:hidden}
+    .btn:hover{
+      filter:brightness(1.05);
+    }
+
+    .muted{
+      color:var(--muted);
+    }
+
+    /* =====================================================
+       KPI
+       ===================================================== */
+
+    .kpi-card{
+      min-height:90px;
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+    }
+
     .kpi-card:after{
-      content:"";position:absolute;width:95px;height:95px;border-radius:50%;
-      right:-38px;top:-38px;
-      background:linear-gradient(135deg,rgba(37,99,235,.07),rgba(124,58,237,.12));
+      content:"";
+      position:absolute;
+      width:95px;
+      height:95px;
+      border-radius:50%;
+      right:-38px;
+      top:-38px;
+      background:linear-gradient(
+        135deg,
+        rgba(37,99,235,.07),
+        rgba(124,58,237,.12)
+      );
     }
+
     .kpi-label{
-      font-size:10px;letter-spacing:.13em;text-transform:uppercase;
-      color:#60718a;font-weight:800;
+      font-size:10px;
+      letter-spacing:.13em;
+      text-transform:uppercase;
+      color:#60718a;
+      font-weight:800;
     }
-    .kpi{font-size:30px;line-height:1.1;margin-top:7px;color:#2563eb;font-weight:900}
 
-    .section-title{display:flex;align-items:center;gap:10px}
+    .kpi{
+      font-size:30px;
+      line-height:1.1;
+      margin-top:7px;
+      color:#2563eb;
+      font-weight:900;
+    }
+
+    /* =====================================================
+       CHARTS
+       ===================================================== */
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
     .section-title:before{
-      content:"";width:5px;height:24px;border-radius:8px;
-      background:linear-gradient(180deg,#2563eb,#7c3aed);
+      content:"";
+      width:5px;
+      height:24px;
+      border-radius:8px;
+      background:linear-gradient(
+        180deg,
+        #2563eb,
+        #7c3aed
+      );
     }
 
-    .chart-box{height:350px}
-    .chart-dynamic{min-height:420px;height:420px}
-    .small-chart{height:310px}
+    .chart-box{
+      height:350px;
+    }
 
-    .mobile-nav-toggle{display:none}
+    .chart-dynamic{
+      min-height:420px;
+      height:420px;
+    }
+
+    .small-chart{
+      height:310px;
+    }
+
+    .click-hint{
+      font-size:11px;
+      color:#64748b;
+      margin-top:6px;
+      font-weight:700;
+    }
+
+    /* =====================================================
+       MODAL
+       ===================================================== */
+
+    .detail-modal{
+      position:fixed;
+      inset:0;
+      z-index:99999;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      background:rgba(2,6,23,.62);
+      backdrop-filter:blur(5px);
+    }
+
+    .detail-modal.open{
+      display:flex;
+    }
+
+    .detail-dialog{
+      width:min(760px,96vw);
+      max-height:88vh;
+      overflow:auto;
+      background:#fff;
+      border:1px solid #dbe4f0;
+      border-radius:24px;
+      box-shadow:0 30px 90px rgba(2,6,23,.30);
+    }
+
+    .detail-head{
+      position:sticky;
+      top:0;
+      z-index:2;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:18px;
+      padding:20px 22px;
+      color:#fff;
+      background:linear-gradient(
+        115deg,
+        #1647c8,
+        #5b21b6 58%,
+        #0697b5
+      );
+      border-radius:23px 23px 0 0;
+    }
+
+    .detail-close{
+      width:38px;
+      height:38px;
+      border:0;
+      border-radius:50%;
+      background:rgba(255,255,255,.16);
+      color:#fff;
+      font-size:22px;
+      cursor:pointer;
+      font-weight:900;
+    }
+
+    .detail-body{
+      padding:22px;
+    }
+
+    .detail-summary{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    .detail-stat{
+      padding:14px;
+      border:1px solid #e2e8f0;
+      border-radius:15px;
+      background:#f8fafc;
+    }
+
+    .detail-stat-label{
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:.11em;
+      color:#64748b;
+      font-weight:900;
+    }
+
+    .detail-stat-value{
+      margin-top:5px;
+      font-size:20px;
+      font-weight:900;
+      color:#2563eb;
+    }
+
+    .detail-record{
+      padding:16px 0;
+      border-bottom:1px solid #e2e8f0;
+    }
+
+    .detail-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px 18px;
+      margin-top:11px;
+    }
+
+    .detail-field small{
+      display:block;
+      color:#64748b;
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      font-weight:800;
+      margin-bottom:2px;
+    }
+
+    .detail-field strong{
+      font-size:12px;
+      color:#0f172a;
+      word-break:break-word;
+    }
+
+    .mobile-nav-toggle{
+      display:none;
+    }
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
 
     @media(min-width:1200px){
-      .kpi-grid{grid-template-columns:repeat(6,minmax(0,1fr))!important}
-    }
 
-    @media(max-width:1050px) and (min-width:769px){
-      :root{--side:245px}
-      .main{padding:18px}
+      .kpi-grid{
+        grid-template-columns:
+          repeat(6,minmax(0,1fr))!important;
+      }
     }
 
     @media(max-width:768px){
+
       .side{
-        position:sticky;top:0;width:100%;height:auto;
-        padding:10px 12px;overflow:visible;
+        position:sticky;
+        top:0;
+        width:100%;
+        height:auto;
+        padding:10px 12px;
+        overflow:visible;
       }
-      .main{margin-left:0;width:100%;padding:12px}
-      .brand-wrap{padding:5px 5px 9px;margin-bottom:8px;border-bottom:0}
-      .brand-title{font-size:19px}
+
+      .main{
+        margin-left:0;
+        width:100%;
+        padding:12px;
+      }
+
       .mobile-nav-toggle{
-        display:flex;width:100%;align-items:center;justify-content:space-between;
-        padding:12px 14px;border:1px solid rgba(255,255,255,.15);
-        border-radius:14px;background:rgba(255,255,255,.10);
-        color:#fff;font-weight:800;cursor:pointer;
+        display:flex;
+        width:100%;
+        align-items:center;
+        justify-content:space-between;
+        padding:12px 14px;
+        border:1px solid rgba(255,255,255,.15);
+        border-radius:14px;
+        background:rgba(255,255,255,.10);
+        color:#fff;
+        font-weight:800;
       }
+
       .mobile-nav-menu{
-        display:none;margin-top:8px;padding:8px;max-height:65vh;overflow-y:auto;
-        border:1px solid rgba(255,255,255,.12);border-radius:16px;
+        display:none;
+        margin-top:8px;
+        padding:8px;
+        max-height:65vh;
+        overflow-y:auto;
+        border:1px solid rgba(255,255,255,.12);
+        border-radius:16px;
         background:rgba(2,6,23,.98);
       }
-      .side.mobile-open .mobile-nav-menu{display:block}
-      .mobile-nav-menu .nav-link{margin:3px 0}
-      .hero{min-height:auto;padding:20px;border-radius:18px}
-      .hero h1{font-size:30px!important}
-      .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-      .chart-box{height:300px}
-      .small-chart{height:270px}
+
+      .side.mobile-open
+      .mobile-nav-menu{
+        display:block;
+      }
+
+      .hero{
+        min-height:auto;
+        padding:20px;
+        border-radius:18px;
+      }
+
+      .kpi-grid{
+        grid-template-columns:
+          repeat(2,minmax(0,1fr))!important;
+      }
+
+      .detail-summary,
+      .detail-grid{
+        grid-template-columns:1fr;
+      }
     }
 
     @media(max-width:480px){
-      .main{padding:10px}
-      .kpi-grid{grid-template-columns:1fr!important}
-      .card{border-radius:16px}
-    }
-  
-    /* ===== Chart Detail Popup ===== */
-    .detail-modal{
-      position:fixed;inset:0;z-index:99999;display:none;
-      align-items:center;justify-content:center;padding:20px;
-      background:rgba(2,6,23,.62);backdrop-filter:blur(5px);
-    }
-    .detail-modal.open{display:flex}
-    .detail-dialog{
-      width:min(760px,96vw);max-height:88vh;overflow:auto;
-      background:#fff;border:1px solid #dbe4f0;border-radius:24px;
-      box-shadow:0 30px 90px rgba(2,6,23,.30);
-      animation:popupIn .18s ease-out;
-    }
-    @keyframes popupIn{
-      from{opacity:0;transform:translateY(12px) scale(.98)}
-      to{opacity:1;transform:translateY(0) scale(1)}
-    }
-    .detail-head{
-      position:sticky;top:0;z-index:2;
-      display:flex;align-items:flex-start;justify-content:space-between;gap:18px;
-      padding:20px 22px;color:#fff;
-      background:linear-gradient(115deg,#1647c8,#5b21b6 58%,#0697b5);
-      border-radius:23px 23px 0 0;
-    }
-    .detail-close{
-      flex:0 0 auto;width:38px;height:38px;border:0;border-radius:50%;
-      background:rgba(255,255,255,.16);color:#fff;font-size:22px;
-      line-height:1;cursor:pointer;font-weight:900;
-    }
-    .detail-close:hover{background:rgba(255,255,255,.26)}
-    .detail-body{padding:22px}
-    .detail-summary{
-      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;
-      margin-bottom:18px;
-    }
-    .detail-stat{
-      padding:14px;border:1px solid #e2e8f0;border-radius:15px;background:#f8fafc;
-    }
-    .detail-stat-label{
-      font-size:10px;text-transform:uppercase;letter-spacing:.11em;
-      color:#64748b;font-weight:900;
-    }
-    .detail-stat-value{margin-top:5px;font-size:20px;font-weight:900;color:#2563eb}
-    .detail-record{
-      padding:16px 0;border-bottom:1px solid #e2e8f0;
-    }
-    .detail-record:last-child{border-bottom:0}
-    .detail-grid{
-      display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 18px;
-      margin-top:11px;
-    }
-    .detail-field small{
-      display:block;color:#64748b;font-size:10px;text-transform:uppercase;
-      letter-spacing:.08em;font-weight:800;margin-bottom:2px;
-    }
-    .detail-field strong{font-size:12px;color:#0f172a;word-break:break-word}
-    .click-hint{font-size:11px;color:#64748b;margin-top:6px;font-weight:700}
-    @media(max-width:600px){
-      .detail-summary,.detail-grid{grid-template-columns:1fr}
-      .detail-dialog{border-radius:18px}
-      .detail-head{border-radius:17px 17px 0 0}
-    }
 
+      .kpi-grid{
+        grid-template-columns:1fr!important;
+      }
+    }
   </style>
 </head>
 
 <body>
+
+<!-- =====================================================
+     SIDEBAR
+     ===================================================== -->
+
 <aside class="side" id="sidebar">
+
   <div class="brand-wrap">
-    <div class="brand-title">🏛 UOL Analytics</div>
-    <div class="brand-sub">Performance Intelligence</div>
+
+    <div class="brand-title">
+      🏛 UOL Analytics
+    </div>
+
+    <div class="brand-sub">
+      Performance Intelligence
+    </div>
+
   </div>
 
-  <button class="mobile-nav-toggle" id="mobileNavToggle">
-    <span>🎤 Conference Analytics</span><span>▼</span>
+
+  <button
+    class="mobile-nav-toggle"
+    id="mobileNavToggle"
+  >
+
+    <span>
+      🎓 Conference Analytics
+    </span>
+
+    <span>
+      ▼
+    </span>
+
   </button>
 
-  <div class="mobile-nav-menu" id="navMenu">
-<a class="nav-link" href="../index.html">📊 Executive Dashboard</a>
-    <a class="nav-link" href="workshop.html">🛠 Workshop Dashboard </a>
-    <a class="nav-link" href="seminar.html">🎤 Seminar Dashboard</a>
-    <a class="nav-link" href="conference.html">🎓 Conference Dashboard</a>
-    <a class="nav-link" href="guest.html">👨‍🏫 Guest Lecture</a>
-    <a class="nav-link" href="internship-placement.html">💼 Internship / Placement</a>
-    <a class="nav-link" href="mou.html">🤝 MoU and MoU Signing</a>
-    <a class="nav-link" href="iv.html">🏭 Industrial Visit</a>
-    <a class="nav-link" href="others.html">📌 Others</a>
-    <a class="nav-link" href="iab.html">🤝 IAB Meeting / Industry Consultation</a>
-    <a class="nav-link" href="research-collaboration.html">🔬 Research Collaboration</a>
-    <a class="nav-link" href="community.html">🌍 Community Engagement</a>
-    <a class="nav-link" href="alumni.html">🎓 Alumni Talk / Mentoring</a>
-    <a class="nav-link" href="curriculum-feedback.html">📝 Curriculum Feedback Session</a>
+
+  <div
+    class="mobile-nav-menu"
+    id="navMenu"
+  >
+
+    <a
+      class="nav-link"
+      href="../index.html"
+    >
+      📊 Tentative Dashboard
+    </a>
+
+    <a
+      class="nav-link"
+      href="workshop.html"
+    >
+      🛠 Workshop Dashboard
+    </a>
+
+    <a
+      class="nav-link"
+      href="seminar.html"
+    >
+      🎤 Seminar Dashboard
+    </a>
+
+    <a
+      class="nav-link active"
+      href="conference.html"
+    >
+      🎓 Conference Dashboard
+    </a>
+
+    <a
+      class="nav-link"
+      href="guest.html"
+    >
+      👨‍🏫 Guest Lecture / GLIT
+    </a>
+
+    <a
+      class="nav-link"
+      href="internship-placement.html"
+    >
+      💼 Internship / Placement
+    </a>
+
+    <a
+      class="nav-link"
+      href="mou.html"
+    >
+      🤝 MoU and MoU Signing
+    </a>
+
+    <a
+      class="nav-link"
+      href="iv.html"
+    >
+      🏭 Industrial Visit
+    </a>
+
+    <a
+      class="nav-link"
+      href="others.html"
+    >
+      📌 Others
+    </a>
+
+    <a
+      class="nav-link"
+      href="iab.html"
+    >
+      🤝 IAB Meeting / Industry Consultation
+    </a>
+
+    <a
+      class="nav-link"
+      href="research-collaboration.html"
+    >
+      🔬 Research Collaboration
+    </a>
+
+    <a
+      class="nav-link"
+      href="community.html"
+    >
+      🌍 Community Engagement
+    </a>
+
+    <a
+      class="nav-link"
+      href="alumni.html"
+    >
+      🎓 Alumni Talk / Mentoring
+    </a>
+
+    <a
+      class="nav-link"
+      href="curriculum-feedback.html"
+    >
+      📝 Curriculum Feedback Session
+    </a>
+
   </div>
+
 </aside>
 
+
+<!-- =====================================================
+     MAIN
+     ===================================================== -->
+
 <main class="main">
+
+
+  <!-- HERO -->
+
   <section class="hero mb-7">
-    <div class="relative z-10 flex flex-wrap items-end justify-between gap-5">
+
+    <div
+      class="
+        relative
+        z-10
+        flex
+        flex-wrap
+        items-end
+        justify-between
+        gap-5
+      "
+    >
+
       <div>
-        <div class="text-blue-100 text-xs uppercase tracking-[.22em] font-black">University of Lahore</div>
-        <h1 class="text-4xl md:text-5xl font-black mt-2">Conference Analytics</h1>
-        <p class="text-blue-100 mt-3 max-w-3xl">
-          Live analytics from <strong>UOL_Conference_Only_Separated.xlsx</strong>.
+
+        <div
+          class="
+            text-blue-100
+            text-xs
+            uppercase
+            tracking-[.22em]
+            font-black
+          "
+        >
+          University of Lahore
+        </div>
+
+        <h1
+          class="
+            text-4xl
+            md:text-5xl
+            font-black
+            mt-2
+          "
+        >
+          Conference Analytics
+        </h1>
+
+        <p
+          class="
+            text-blue-100
+            mt-3
+            max-w-3xl
+          "
+        >
+          Live analytics for Conference records from the cleaned activity workbook.
         </p>
+
       </div>
-      <div class="bg-white/15 backdrop-blur px-5 py-4 rounded-2xl">
-        <div class="text-xs text-blue-100 uppercase font-bold">Excel connection</div>
-        <div id="connection" class="font-black mt-1">Loading Excel…</div>
+
+
+      <div
+        class="
+          bg-white/15
+          backdrop-blur
+          px-5
+          py-4
+          rounded-2xl
+        "
+      >
+
+        <div
+          class="
+            text-xs
+            text-blue-100
+            uppercase
+            font-bold
+          "
+        >
+          Excel connection
+        </div>
+
+        <div
+          id="connection"
+          class="font-black mt-1"
+        >
+          Loading Excel…
+        </div>
+
       </div>
+
     </div>
+
   </section>
 
-  <section class="card p-5 mb-7">
+
+  <!-- =====================================================
+       FILTERS
+       ===================================================== -->
+
+  <section
+    class="card p-5 mb-7"
+  >
+
     <div class="mb-4">
-      <h2 class="text-xl font-black">Conference Filters</h2>
-      <p class="muted text-sm mt-1">Filter the separated conference data by faculty, department, person and status.</p>
+
+      <h2
+        class="text-xl font-black"
+      >
+        Conference Filters
+      </h2>
+
+      <p
+        class="muted text-sm mt-1"
+      >
+        Faculty → Department → Person → Organization
+      </p>
+
     </div>
 
-    <div class="grid md:grid-cols-2 xl:grid-cols-5 gap-3">
-      <select id="facultyFilter" class="filter"><option value="All">All Faculties</option></select>
-      <select id="departmentFilter" class="filter"><option value="All">All Departments</option></select>
-      <select id="personFilter" class="filter"><option value="All">All People</option></select>
-      <select id="plannedFilter" class="filter">
-        <option value="All">All Planned Status</option>
-        <option value="Yes">Planned: Yes</option>
-        <option value="No">Planned: No</option>
+
+    <div
+      class="
+        grid
+        md:grid-cols-2
+        xl:grid-cols-6
+        gap-3
+      "
+    >
+
+      <select
+        id="facultyFilter"
+        class="filter"
+      >
+        <option value="All">
+          All Faculties
+        </option>
       </select>
-      <select id="scheduledFilter" class="filter">
-        <option value="All">All Scheduled Status</option>
-        <option value="Yes">Scheduled: Yes</option>
-        <option value="No">Scheduled: No</option>
+
+
+      <select
+        id="departmentFilter"
+        class="filter"
+      >
+        <option value="All">
+          All Departments
+        </option>
       </select>
+
+
+      <select
+        id="personFilter"
+        class="filter"
+      >
+        <option value="All">
+          All People
+        </option>
+      </select>
+
+
+      <select
+        id="organizationFilter"
+        class="filter"
+      >
+        <option value="All">
+          All Organizations
+        </option>
+      </select>
+
+
+      <select
+        id="plannedFilter"
+        class="filter"
+      >
+
+        <option value="All">
+          All Planned Status
+        </option>
+
+        <option value="Yes">
+          Planned: Yes
+        </option>
+
+        <option value="No">
+          Planned: No
+        </option>
+
+      </select>
+
+
+      <select
+        id="scheduledFilter"
+        class="filter"
+      >
+
+        <option value="All">
+          All Scheduled Status
+        </option>
+
+        <option value="Yes">
+          Scheduled: Yes
+        </option>
+
+        <option value="No">
+          Scheduled: No
+        </option>
+
+      </select>
+
     </div>
 
-    <div class="grid md:grid-cols-[1fr_auto_auto] gap-3 mt-3">
-      <input id="searchFilter" class="filter" placeholder="Search title, organization, person or designation">
-      <button class="btn" id="resetBtn">↺ Reset</button>
-      <button class="btn" id="exportBtn">📥 Export Conference Excel</button>
+
+    <div
+      class="
+        grid
+        md:grid-cols-[1fr_auto_auto]
+        gap-3
+        mt-3
+      "
+    >
+
+      <input
+        id="searchFilter"
+        class="filter"
+        placeholder="Search title, organization, person, designation, faculty or department"
+      >
+
+      <button
+        class="btn"
+        id="resetBtn"
+      >
+        ↺ Reset
+      </button>
+
+      <button
+        class="btn"
+        id="exportBtn"
+      >
+        📥 Export Conference Excel
+      </button>
+
     </div>
+
   </section>
 
-  <section class="grid kpi-grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-    <div class="card kpi-card"><div class="kpi-label">Conference Records</div><div id="kConferenceRecords" class="kpi">0</div></div>
-    <div class="card kpi-card"><div class="kpi-label">Conference Events</div><div id="kConferenceEvents" class="kpi">0</div></div>
-    <div class="card kpi-card"><div class="kpi-label">People Involved</div><div id="kConferencePeople" class="kpi">0</div></div>
-    <div class="card kpi-card"><div class="kpi-label">Faculties</div><div id="kFaculties" class="kpi">0</div></div>
-    <div class="card kpi-card"><div class="kpi-label">Planned</div><div id="kPlanned" class="kpi">0</div></div>
-    <div class="card kpi-card"><div class="kpi-label">Scheduled</div><div id="kScheduled" class="kpi">0</div></div>
+
+  <!-- =====================================================
+       KPI
+       ===================================================== -->
+
+  <section
+    class="
+      grid
+      kpi-grid
+      sm:grid-cols-2
+      lg:grid-cols-3
+      gap-4
+      mb-8
+    "
+  >
+
+    <div
+      class="card kpi-card"
+    >
+
+      <div class="kpi-label">
+        Conference Records
+      </div>
+
+      <div
+        id="kConferenceRecords"
+        class="kpi"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div
+      class="card kpi-card"
+    >
+
+      <div class="kpi-label">
+        How Many
+      </div>
+
+      <div
+        id="kConferenceHowMany"
+        class="kpi"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div
+      class="card kpi-card"
+    >
+
+      <div class="kpi-label">
+        People Involved
+      </div>
+
+      <div
+        id="kConferencePeople"
+        class="kpi"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div
+      class="card kpi-card"
+    >
+
+      <div class="kpi-label">
+        Faculties
+      </div>
+
+      <div
+        id="kFaculties"
+        class="kpi"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div
+      class="card kpi-card"
+    >
+
+      <div class="kpi-label">
+        Planned
+      </div>
+
+      <div
+        id="kPlanned"
+        class="kpi"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div
+      class="card kpi-card"
+    >
+
+      <div class="kpi-label">
+        Scheduled
+      </div>
+
+      <div
+        id="kScheduled"
+        class="kpi"
+      >
+        0
+      </div>
+
+    </div>
+
   </section>
+
+
+  <!-- =====================================================
+       CHARTS
+       ===================================================== -->
 
   <section class="mb-8">
+
     <div class="mb-4">
-      <h2 class="text-3xl font-black section-title">Conference Analytics</h2>
-      <p class="muted mt-1">Charts use only the records from the Conference worksheet.</p>
+
+      <h2
+        class="
+          text-3xl
+          font-black
+          section-title
+        "
+      >
+        Conference Analytics
+      </h2>
+
+      <p class="muted mt-1">
+        Charts update according to the active filters.
+      </p>
+
     </div>
 
-    <div class="grid xl:grid-cols-2 gap-6">
-      <div class="card p-6 xl:col-span-2">
-        <h3 class="font-black text-lg mb-1">Conferences by Person &amp; Designation</h3>
-        <p class="muted text-sm mb-1">Person name, designation and total conference events.</p><div class="click-hint">Click a bar to view full conference details.</div>
-        <div id="peopleChartWrap" class="chart-dynamic"><canvas id="conferencePeopleChart"></canvas></div>
+
+    <div
+      class="
+        grid
+        xl:grid-cols-2
+        gap-6
+      "
+    >
+
+
+      <!-- PEOPLE -->
+
+      <div
+        class="
+          card
+          p-6
+          xl:col-span-2
+        "
+      >
+
+        <h3
+          class="
+            font-black
+            text-lg
+            mb-1
+          "
+        >
+          Conferences by Person & Designation
+        </h3>
+
+        <div class="click-hint">
+          Click a bar to view details.
+        </div>
+
+        <div
+          id="peopleChartWrap"
+          class="chart-dynamic"
+        >
+
+          <canvas
+            id="conferencePeopleChart"
+          ></canvas>
+
+        </div>
+
       </div>
 
-      <div class="card p-6 xl:col-span-2">
-        <h3 class="font-black text-lg mb-1">Conference Titles / Organizations</h3>
-        <p class="muted text-sm mb-1">Conference titles and organizations from the Excel file.</p><div class="click-hint">Click a bar to view full conference details.</div>
-        <div id="titleChartWrap" class="chart-dynamic"><canvas id="conferenceTitleChart"></canvas></div>
+
+      <!-- TITLE -->
+
+      <div
+        class="
+          card
+          p-6
+          xl:col-span-2
+        "
+      >
+
+        <h3
+          class="
+            font-black
+            text-lg
+            mb-1
+          "
+        >
+          Conference Titles / Organizations
+        </h3>
+
+        <div class="click-hint">
+          Click a bar to view details.
+        </div>
+
+        <div
+          id="titleChartWrap"
+          class="chart-dynamic"
+        >
+
+          <canvas
+            id="conferenceTitleChart"
+          ></canvas>
+
+        </div>
+
       </div>
 
-      <div class="card p-6">
-        <h3 class="font-black text-lg mb-1">Conferences by Faculty</h3>
-        <p class="muted text-sm mb-1">Conference events contributed by faculty.</p><div class="click-hint">Click a bar to view matching conference details.</div>
-        <div class="chart-box"><canvas id="conferenceFacultyChart"></canvas></div>
+
+      <!-- FACULTY -->
+
+      <div
+        class="card p-6"
+      >
+
+        <h3
+          class="
+            font-black
+            text-lg
+            mb-1
+          "
+        >
+          Conferences by Faculty
+        </h3>
+
+        <div class="chart-box">
+
+          <canvas
+            id="conferenceFacultyChart"
+          ></canvas>
+
+        </div>
+
       </div>
 
-      <div class="card p-6">
-        <h3 class="font-black text-lg mb-1">Conferences by Department</h3>
-        <p class="muted text-sm mb-1">Conference events contributed by department.</p><div class="click-hint">Click a bar to view matching conference details.</div>
-        <div class="chart-box"><canvas id="conferenceDepartmentChart"></canvas></div>
+
+      <!-- DEPARTMENT -->
+
+      <div
+        class="card p-6"
+      >
+
+        <h3
+          class="
+            font-black
+            text-lg
+            mb-1
+          "
+        >
+          Conferences by Department
+        </h3>
+
+        <div class="chart-box">
+
+          <canvas
+            id="conferenceDepartmentChart"
+          ></canvas>
+
+        </div>
+
       </div>
 
-      <div class="card p-6 xl:col-span-2">
-        <h3 class="font-black text-lg mb-1">Planned vs Scheduled Conferences</h3>
-        <p class="muted text-sm mb-3">Status of the conference records.</p>
-        <div class="small-chart"><canvas id="conferenceStatusChart"></canvas></div>
+
+      <!-- STATUS -->
+
+      <div
+        class="
+          card
+          p-6
+          xl:col-span-2
+        "
+      >
+
+        <h3
+          class="
+            font-black
+            text-lg
+            mb-1
+          "
+        >
+          Planned vs Scheduled Conferences
+        </h3>
+
+        <div class="small-chart">
+
+          <canvas
+            id="conferenceStatusChart"
+          ></canvas>
+
+        </div>
+
       </div>
+
     </div>
+
   </section>
+
 </main>
 
-<div class="detail-modal" id="detailModal" aria-hidden="true">
-  <div class="detail-dialog" role="dialog" aria-modal="true" aria-labelledby="detailModalTitle">
+
+<!-- =====================================================
+     POPUP
+     ===================================================== -->
+
+<div
+  class="detail-modal"
+  id="detailModal"
+  aria-hidden="true"
+>
+
+  <div
+    class="detail-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="detailModalTitle"
+  >
+
     <div class="detail-head">
+
       <div>
-        <div class="text-blue-100 text-xs uppercase tracking-[.18em] font-black">Conference Details</div>
-        <h2 id="detailModalTitle" class="text-2xl font-black mt-1">Details</h2>
+
+        <div
+          class="
+            text-blue-100
+            text-xs
+            uppercase
+            tracking-[.18em]
+            font-black
+          "
+        >
+          Conference Details
+        </div>
+
+        <h2
+          id="detailModalTitle"
+          class="
+            text-2xl
+            font-black
+            mt-1
+          "
+        >
+          Details
+        </h2>
+
       </div>
-      <button class="detail-close" id="detailClose" aria-label="Close popup">&times;</button>
+
+      <button
+        class="detail-close"
+        id="detailClose"
+        aria-label="Close popup"
+      >
+        ×
+      </button>
+
     </div>
-    <div class="detail-body" id="detailModalBody"></div>
+
+    <div
+      class="detail-body"
+      id="detailModalBody"
+    ></div>
+
   </div>
+
 </div>
 
 
 <script>
+
+/* =========================================================
+   DATA
+   ========================================================= */
+
 let conferenceRows = [];
+
 let filteredConferences = [];
+
 const charts = {};
-const $ = id => document.getElementById(id);
 
-function clean(v){
-  if(v === undefined || v === null) return "";
-  const s = String(v).trim();
-  return (!s || s.toLowerCase()==="undefined" || s.toLowerCase()==="null") ? "" : s;
+const $ = id =>
+  document.getElementById(id);
+
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+function clean(value){
+
+  if(
+    value === undefined ||
+    value === null
+  ){
+    return "";
+  }
+
+  const text =
+    String(value)
+      .trim();
+
+  if(
+    !text ||
+    [
+      "undefined",
+      "null",
+      "nan"
+    ].includes(
+      text.toLowerCase()
+    )
+  ){
+    return "";
+  }
+
+  return text;
 }
 
-function normalizeHeader(s){
-  return clean(s).toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+
+function normalizeHeader(value){
+
+  return clean(value)
+    .toLowerCase()
+    .replace(
+      /[^a-z0-9]+/g,
+      " "
+    )
+    .trim();
 }
 
-function getRowValue(row, names){
-  const keys = Object.keys(row);
-  for(const name of names){
-    const wanted = normalizeHeader(name);
-    const exact = keys.find(k => normalizeHeader(k) === wanted);
-    if(exact && clean(row[exact])) return clean(row[exact]);
+
+function getRowValue(
+  row,
+  names
+){
+
+  const keys =
+    Object.keys(row);
+
+  for(
+    const name
+    of names
+  ){
+
+    const wanted =
+      normalizeHeader(
+        name
+      );
+
+    const exact =
+      keys.find(
+        key =>
+          normalizeHeader(
+            key
+          ) ===
+          wanted
+      );
+
+    if(
+      exact !== undefined &&
+      clean(
+        row[exact]
+      )
+    ){
+
+      return clean(
+        row[exact]
+      );
+    }
   }
-  for(const name of names){
-    const wanted = normalizeHeader(name);
-    const partial = keys.find(k => normalizeHeader(k).includes(wanted));
-    if(partial && clean(row[partial])) return clean(row[partial]);
-  }
+
   return "";
 }
 
-function numberFrom(v){
-  const m = clean(v).replace(/,/g,"").match(/\d+(?:\.\d+)?/);
-  return m ? Number(m[0]) : 0;
+
+function numberFrom(value){
+
+  const match =
+    clean(value)
+      .replace(
+        /,/g,
+        ""
+      )
+      .match(
+        /-?\d+(?:\.\d+)?/
+      );
+
+  return match
+    ? Number(
+        match[0]
+      )
+    : 0;
 }
 
-function normalizeYesNo(v){
-  const s = clean(v).toLowerCase();
-  if(["yes","y","true","1","planned","scheduled"].includes(s)) return "Yes";
-  if(["no","n","false","0"].includes(s)) return "No";
-  return clean(v) || "Not Available";
+
+function normalizeYesNo(value){
+
+  const text =
+    normalizeHeader(
+      value
+    );
+
+  if(
+    [
+      "yes",
+      "y",
+      "true",
+      "1",
+      "planned",
+      "scheduled"
+    ].includes(
+      text
+    )
+  ){
+    return "Yes";
+  }
+
+  if(
+    [
+      "no",
+      "n",
+      "false",
+      "0"
+    ].includes(
+      text
+    )
+  ){
+    return "No";
+  }
+
+  return clean(
+    value
+  ) ||
+  "Not Available";
 }
 
-function parseConferenceRows(rows){
-  return rows.map(row => {
-    const separatedType = getRowValue(row,["Separated Activity Type","Activity Type"]);
-    const originalType = getRowValue(row,["Original Activity Type"]);
 
-    return {
-      separatedType,
-      originalType,
-      person: getRowValue(row,["Focal Person","Submitted By","Person","Name"]) || "Not Available",
-      designation: getRowValue(row,["Designation"]) || "Not Available",
-      faculty: getRowValue(row,["Faculty","Faculty Name"]) || "Not Available",
-      department: getRowValue(row,["Department","Department Name"]) || "Not Available",
-      title: getRowValue(row,[
-        "Organization / Activity Title",
-        "Organization / Activity",
-        "Activity Title",
-        "Organization",
-        "Name Of Organization Planned with"
-      ]) || "Conference",
-      events: numberFrom(getRowValue(row,["How Many","No. of Events","Number of Events"])) || 1,
-      planned: normalizeYesNo(getRowValue(row,["Planned","Is Planned"])),
-      scheduled: normalizeYesNo(getRowValue(row,["Scheduled","Is Scheduled"]))
-    };
-  }).filter(row => {
-    const s = row.separatedType.toLowerCase();
-    const o = row.originalType.toLowerCase();
+function invalid(value){
 
-    // The workbook itself is conference-only. Keep blank type values too,
-    // but reject a row only when it explicitly identifies another separated type.
-    if(!s && !o) return true;
-    if(s) return s === "conference" || s.includes("conference");
-    return o.includes("conference");
-  });
-}
+  const text =
+    normalizeHeader(
+      value
+    );
 
-function uniqueSorted(values){
-  return [...new Set(values.map(clean).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
-}
-
-function fillSelect(id, values, label){
-  const el = $(id);
-  el.innerHTML = `<option value="All">${label}</option>`;
-  uniqueSorted(values).forEach(v=>{
-    const option=document.createElement("option");
-    option.value=v; option.textContent=v; el.appendChild(option);
-  });
-}
-
-function populateFilters(){
-  fillSelect("facultyFilter",conferenceRows.map(x=>x.faculty),"All Faculties");
-  fillSelect("departmentFilter",conferenceRows.map(x=>x.department),"All Departments");
-  fillSelect("personFilter",conferenceRows.map(x=>x.person),"All People");
-}
-
-function applyFilters(){
-  const faculty=$("facultyFilter").value;
-  const department=$("departmentFilter").value;
-  const person=$("personFilter").value;
-  const planned=$("plannedFilter").value;
-  const scheduled=$("scheduledFilter").value;
-  const q=$("searchFilter").value.toLowerCase().trim();
-
-  filteredConferences=conferenceRows.filter(r =>
-    (faculty==="All" || r.faculty===faculty) &&
-    (department==="All" || r.department===department) &&
-    (person==="All" || r.person===person) &&
-    (planned==="All" || r.planned===planned) &&
-    (scheduled==="All" || r.scheduled===scheduled) &&
-    (!q || [r.person,r.designation,r.title,r.faculty,r.department]
-      .some(v=>String(v).toLowerCase().includes(q)))
+  return [
+    "",
+    "not available",
+    "unclassified",
+    "undefined",
+    "null",
+    "na",
+    "n a"
+  ].includes(
+    text
   );
-  renderDashboard();
-}
-
-function resetFilters(){
-  ["facultyFilter","departmentFilter","personFilter","plannedFilter","scheduledFilter"]
-    .forEach(id=>$(id).value="All");
-  $("searchFilter").value="";
-  filteredConferences=[...conferenceRows];
-  renderDashboard();
-}
-
-function groupBy(key){
-  const out={};
-  filteredConferences.forEach(r=>{
-    const label=clean(r[key]) || "Not Available";
-    out[label]=(out[label]||0)+Number(r.events||0);
-  });
-  return out;
-}
-
-function wrapLabel(text,max=42){
-  const words=String(text).split(/\s+/);
-  const lines=[]; let line="";
-  words.forEach(word=>{
-    const next=line ? line+" "+word : word;
-    if(next.length>max && line){lines.push(line);line=word}
-    else line=next;
-  });
-  if(line) lines.push(line);
-  return lines;
 }
 
 
 function escapeHtml(value){
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+
+  return String(
+    value ?? ""
+  )
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 }
 
-function matchingRows(chartId,label){
-  if(chartId==="conferencePeopleChart"){
-    return filteredConferences.filter(r=>{
-      const personLabel=r.designation!=="Not Available"
-        ? `${r.person} — ${r.designation}` : r.person;
-      return personLabel===label;
-    });
+
+/* =========================================================
+   PARSE CONFERENCE DATA
+   ========================================================= */
+
+function parseConferenceRows(rows){
+
+  return rows
+    .map(
+      row => {
+
+        const separatedType =
+          getRowValue(
+            row,
+            [
+              "Separated Activity Type",
+              "Activity Type"
+            ]
+          );
+
+        const originalType =
+          getRowValue(
+            row,
+            [
+              "Original Activity Type"
+            ]
+          );
+
+        const typeText =
+          `
+            ${normalizeHeader(separatedType)}
+            ${normalizeHeader(originalType)}
+          `
+          .trim();
+
+        return {
+
+          separatedType:
+            separatedType,
+
+          originalType:
+            originalType,
+
+          person:
+            getRowValue(
+              row,
+              [
+                "Focal Person",
+                "Submitted By",
+                "Person",
+                "Name"
+              ]
+            ) ||
+            "Not Available",
+
+          designation:
+            getRowValue(
+              row,
+              [
+                "Designation"
+              ]
+            ) ||
+            "Not Available",
+
+          faculty:
+            getRowValue(
+              row,
+              [
+                "Faculty",
+                "Faculty Name"
+              ]
+            ) ||
+            "Not Available",
+
+          department:
+            getRowValue(
+              row,
+              [
+                "Department",
+                "Department Name"
+              ]
+            ) ||
+            "Not Available",
+
+          organization:
+            getRowValue(
+              row,
+              [
+                "Organization / Activity Title",
+                "Organization / Activity",
+                "Activity Title",
+                "Organization",
+                "Name Of Organization Planned with",
+                "Name of Organization Planned with",
+                "Planned Partner / Organization"
+              ]
+            ) ||
+            "Not Available",
+
+          howMany:
+            numberFrom(
+              getRowValue(
+                row,
+                [
+                  "How Many",
+                  "No. of Events",
+                  "Number of Events"
+                ]
+              )
+            ) ||
+            1,
+
+          planned:
+            normalizeYesNo(
+              getRowValue(
+                row,
+                [
+                  "Planned",
+                  "Is Planned",
+                  "Planned?"
+                ]
+              )
+            ),
+
+          scheduled:
+            normalizeYesNo(
+              getRowValue(
+                row,
+                [
+                  "Scheduled",
+                  "Is Scheduled",
+                  "Scheduled?"
+                ]
+              )
+            ),
+
+          month:
+            getRowValue(
+              row,
+              [
+                "Reporting Month",
+                "Month"
+              ]
+            ) ||
+            "Not Available",
+
+          remarks:
+            getRowValue(
+              row,
+              [
+                "Remarks / Result",
+                "Remarks/Result",
+                "Actual Outcome",
+                "Remarks"
+              ]
+            ) ||
+            "Not Available",
+
+          isConference:
+            typeText.includes(
+              "conference"
+            )
+        };
+      }
+    )
+
+    .filter(
+      row =>
+        row.isConference
+    )
+
+    .filter(
+      row =>
+        !invalid(
+          row.faculty
+        ) &&
+        !invalid(
+          row.department
+        )
+    );
+}
+
+
+/* =========================================================
+   SELECT HELPERS
+   ========================================================= */
+
+function uniqueSorted(values){
+
+  return [
+    ...new Set(
+      values
+        .map(
+          clean
+        )
+        .filter(
+          value =>
+            !invalid(
+              value
+            )
+        )
+    )
+  ]
+    .sort(
+      (
+        a,
+        b
+      ) =>
+        a.localeCompare(
+          b
+        )
+    );
+}
+
+
+function refillSelect(
+  id,
+  values,
+  label
+){
+
+  const element =
+    $(id);
+
+  if(
+    !element
+  ){
+    return;
   }
-  if(chartId==="conferenceTitleChart")
-    return filteredConferences.filter(r=>r.title===label);
-  if(chartId==="conferenceFacultyChart")
-    return filteredConferences.filter(r=>r.faculty===label);
-  if(chartId==="conferenceDepartmentChart")
-    return filteredConferences.filter(r=>r.department===label);
+
+  const previous =
+    element.value;
+
+  const items =
+    uniqueSorted(
+      values
+    );
+
+  element.innerHTML =
+    `
+      <option value="All">
+        ${label}
+      </option>
+    `;
+
+  items.forEach(
+    item => {
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value =
+        item;
+
+      option.textContent =
+        item;
+
+      element.appendChild(
+        option
+      );
+    }
+  );
+
+  element.value =
+    (
+      previous !== "All" &&
+      items.includes(
+        previous
+      )
+    )
+      ? previous
+      : "All";
+}
+
+
+/* =========================================================
+   CASCADING FILTERS
+   Faculty -> Department -> Person -> Organization
+   ========================================================= */
+
+function updateFacultyFilter(){
+
+  refillSelect(
+    "facultyFilter",
+
+    conferenceRows.map(
+      row =>
+        row.faculty
+    ),
+
+    "All Faculties"
+  );
+}
+
+
+function updateDepartmentFilter(){
+
+  const faculty =
+    $("facultyFilter")
+      ?.value ||
+    "All";
+
+  let rows =
+    [
+      ...conferenceRows
+    ];
+
+  if(
+    faculty !== "All"
+  ){
+
+    rows =
+      rows.filter(
+        row =>
+          row.faculty ===
+          faculty
+      );
+  }
+
+  refillSelect(
+    "departmentFilter",
+
+    rows.map(
+      row =>
+        row.department
+    ),
+
+    "All Departments"
+  );
+}
+
+
+function updatePersonFilter(){
+
+  const faculty =
+    $("facultyFilter")
+      ?.value ||
+    "All";
+
+  const department =
+    $("departmentFilter")
+      ?.value ||
+    "All";
+
+  let rows =
+    [
+      ...conferenceRows
+    ];
+
+  if(
+    faculty !== "All"
+  ){
+
+    rows =
+      rows.filter(
+        row =>
+          row.faculty ===
+          faculty
+      );
+  }
+
+  if(
+    department !== "All"
+  ){
+
+    rows =
+      rows.filter(
+        row =>
+          row.department ===
+          department
+      );
+  }
+
+  refillSelect(
+    "personFilter",
+
+    rows.map(
+      row =>
+        row.person
+    ),
+
+    "All People"
+  );
+}
+
+
+function updateOrganizationFilter(){
+
+  const faculty =
+    $("facultyFilter")
+      ?.value ||
+    "All";
+
+  const department =
+    $("departmentFilter")
+      ?.value ||
+    "All";
+
+  const person =
+    $("personFilter")
+      ?.value ||
+    "All";
+
+  let rows =
+    [
+      ...conferenceRows
+    ];
+
+  if(
+    faculty !== "All"
+  ){
+
+    rows =
+      rows.filter(
+        row =>
+          row.faculty ===
+          faculty
+      );
+  }
+
+  if(
+    department !== "All"
+  ){
+
+    rows =
+      rows.filter(
+        row =>
+          row.department ===
+          department
+      );
+  }
+
+  if(
+    person !== "All"
+  ){
+
+    rows =
+      rows.filter(
+        row =>
+          row.person ===
+          person
+      );
+  }
+
+  refillSelect(
+    "organizationFilter",
+
+    rows.map(
+      row =>
+        row.organization
+    ),
+
+    "All Organizations"
+  );
+}
+
+
+function populateFilters(){
+
+  updateFacultyFilter();
+
+  $("facultyFilter")
+    .value =
+    "All";
+
+  updateDepartmentFilter();
+
+  updatePersonFilter();
+
+  updateOrganizationFilter();
+}
+
+
+/* =========================================================
+   APPLY FILTERS
+   ========================================================= */
+
+function applyFilters(){
+
+  const faculty =
+    $("facultyFilter")
+      ?.value ||
+    "All";
+
+  const department =
+    $("departmentFilter")
+      ?.value ||
+    "All";
+
+  const person =
+    $("personFilter")
+      ?.value ||
+    "All";
+
+  const organization =
+    $("organizationFilter")
+      ?.value ||
+    "All";
+
+  const planned =
+    $("plannedFilter")
+      ?.value ||
+    "All";
+
+  const scheduled =
+    $("scheduledFilter")
+      ?.value ||
+    "All";
+
+  const search =
+    (
+      $("searchFilter")
+        ?.value ||
+      ""
+    )
+      .toLowerCase()
+      .trim();
+
+
+  filteredConferences =
+    conferenceRows.filter(
+      row => {
+
+        const searchMatch =
+          (
+            !search ||
+
+            [
+              row.person,
+              row.designation,
+              row.organization,
+              row.faculty,
+              row.department,
+              row.month,
+              row.remarks
+            ]
+              .some(
+                value =>
+                  String(
+                    value ||
+                    ""
+                  )
+                    .toLowerCase()
+                    .includes(
+                      search
+                    )
+              )
+          );
+
+        return (
+
+          (
+            faculty === "All" ||
+            row.faculty ===
+            faculty
+          )
+
+          &&
+
+          (
+            department === "All" ||
+            row.department ===
+            department
+          )
+
+          &&
+
+          (
+            person === "All" ||
+            row.person ===
+            person
+          )
+
+          &&
+
+          (
+            organization === "All" ||
+            row.organization ===
+            organization
+          )
+
+          &&
+
+          (
+            planned === "All" ||
+            row.planned ===
+            planned
+          )
+
+          &&
+
+          (
+            scheduled === "All" ||
+            row.scheduled ===
+            scheduled
+          )
+
+          &&
+
+          searchMatch
+        );
+      }
+    );
+
+  renderDashboard();
+}
+
+
+/* =========================================================
+   FILTER HANDLERS
+   ========================================================= */
+
+function handleFacultyChange(){
+
+  updateDepartmentFilter();
+
+  updatePersonFilter();
+
+  updateOrganizationFilter();
+
+  applyFilters();
+}
+
+
+function handleDepartmentChange(){
+
+  updatePersonFilter();
+
+  updateOrganizationFilter();
+
+  applyFilters();
+}
+
+
+function handlePersonChange(){
+
+  updateOrganizationFilter();
+
+  applyFilters();
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+function resetFilters(){
+
+  $("facultyFilter")
+    .value =
+    "All";
+
+  updateDepartmentFilter();
+
+  $("departmentFilter")
+    .value =
+    "All";
+
+  updatePersonFilter();
+
+  $("personFilter")
+    .value =
+    "All";
+
+  updateOrganizationFilter();
+
+  $("organizationFilter")
+    .value =
+    "All";
+
+  $("plannedFilter")
+    .value =
+    "All";
+
+  $("scheduledFilter")
+    .value =
+    "All";
+
+  $("searchFilter")
+    .value =
+    "";
+
+  filteredConferences =
+    [
+      ...conferenceRows
+    ];
+
+  renderDashboard();
+}
+
+
+/* =========================================================
+   GROUP
+   ========================================================= */
+
+function groupBy(key){
+
+  const output =
+    {};
+
+  filteredConferences
+    .forEach(
+      row => {
+
+        const label =
+          clean(
+            row[key]
+          );
+
+        if(
+          invalid(
+            label
+          )
+        ){
+          return;
+        }
+
+        output[label] =
+          (
+            output[label] ||
+            0
+          )
+          +
+          Number(
+            row.howMany ||
+            0
+          );
+      }
+    );
+
+  return Object.fromEntries(
+    Object.entries(
+      output
+    )
+      .sort(
+        (
+          a,
+          b
+        ) =>
+          b[1] -
+          a[1]
+      )
+  );
+}
+
+
+/* =========================================================
+   WRAP LABEL
+   ========================================================= */
+
+function wrapLabel(
+  text,
+  max = 44
+){
+
+  const words =
+    String(text)
+      .split(
+        /\s+/
+      );
+
+  const lines =
+    [];
+
+  let line =
+    "";
+
+  words.forEach(
+    word => {
+
+      const next =
+        line
+          ? `${line} ${word}`
+          : word;
+
+      if(
+        next.length >
+          max &&
+        line
+      ){
+
+        lines.push(
+          line
+        );
+
+        line =
+          word;
+
+      }else{
+
+        line =
+          next;
+      }
+    }
+  );
+
+  if(
+    line
+  ){
+
+    lines.push(
+      line
+    );
+  }
+
+  return lines;
+}
+
+
+/* =========================================================
+   MATCH POPUP ROWS
+   ========================================================= */
+
+function matchingRows(
+  chartId,
+  label
+){
+
+  if(
+    chartId ===
+    "conferencePeopleChart"
+  ){
+
+    return filteredConferences
+      .filter(
+        row => {
+
+          const personLabel =
+            row.designation !==
+            "Not Available"
+              ? `${row.person} — ${row.designation}`
+              : row.person;
+
+          return personLabel ===
+            label;
+        }
+      );
+  }
+
+
+  if(
+    chartId ===
+    "conferenceTitleChart"
+  ){
+
+    return filteredConferences
+      .filter(
+        row =>
+          row.organization ===
+          label
+      );
+  }
+
+
+  if(
+    chartId ===
+    "conferenceFacultyChart"
+  ){
+
+    return filteredConferences
+      .filter(
+        row =>
+          row.faculty ===
+          label
+      );
+  }
+
+
+  if(
+    chartId ===
+    "conferenceDepartmentChart"
+  ){
+
+    return filteredConferences
+      .filter(
+        row =>
+          row.department ===
+          label
+      );
+  }
+
   return [];
 }
 
-function openDetailPopup(chartId,label){
-  const rows=matchingRows(chartId,label);
-  if(!rows.length) return;
 
-  const events=rows.reduce((sum,r)=>sum+Number(r.events||0),0);
-  const planned=rows.filter(r=>r.planned==="Yes").length;
-  const scheduled=rows.filter(r=>r.scheduled==="Yes").length;
+/* =========================================================
+   POPUP
+   ========================================================= */
 
-  $("detailModalTitle").textContent=label;
+function openDetailPopup(
+  chartId,
+  label
+){
 
-  $("detailModalBody").innerHTML=`
-    <div class="detail-summary">
-      <div class="detail-stat">
-        <div class="detail-stat-label">Matching Records</div>
-        <div class="detail-stat-value">${rows.length}</div>
-      </div>
-      <div class="detail-stat">
-        <div class="detail-stat-label">Total Events</div>
-        <div class="detail-stat-value">${events}</div>
-      </div>
-      <div class="detail-stat">
-        <div class="detail-stat-label">Planned / Scheduled</div>
-        <div class="detail-stat-value">${planned} / ${scheduled}</div>
-      </div>
-    </div>
+  const rows =
+    matchingRows(
+      chartId,
+      label
+    );
 
-    ${rows.map((r,i)=>`
-      <div class="detail-record">
-        <div class="font-black text-sm text-blue-700">Conference ${i+1}</div>
-        <div class="detail-grid">
-          <div class="detail-field"><small>Person</small><strong>${escapeHtml(r.person)}</strong></div>
-          <div class="detail-field"><small>Designation</small><strong>${escapeHtml(r.designation)}</strong></div>
-          <div class="detail-field"><small>Faculty</small><strong>${escapeHtml(r.faculty)}</strong></div>
-          <div class="detail-field"><small>Department</small><strong>${escapeHtml(r.department)}</strong></div>
-          <div class="detail-field" style="grid-column:1/-1"><small>Conference / Organization</small><strong>${escapeHtml(r.title)}</strong></div>
-          <div class="detail-field"><small>Events</small><strong>${escapeHtml(r.events)}</strong></div>
-          <div class="detail-field"><small>Planned</small><strong>${escapeHtml(r.planned)}</strong></div>
-          <div class="detail-field"><small>Scheduled</small><strong>${escapeHtml(r.scheduled)}</strong></div>
-        </div>
-      </div>
-    `).join("")}
-  `;
-
-  $("detailModal").classList.add("open");
-  $("detailModal").setAttribute("aria-hidden","false");
-  document.body.style.overflow="hidden";
-}
-
-function closeDetailPopup(){
-  $("detailModal").classList.remove("open");
-  $("detailModal").setAttribute("aria-hidden","true");
-  document.body.style.overflow="";
-}
-
-function horizontalChart(id,data,label,wrapId){
-  if(charts[id]) charts[id].destroy();
-
-  const labels=Object.keys(data);
-  const values=Object.values(data);
-
-  if(wrapId){
-    $(wrapId).style.height=Math.max(420,labels.length*58)+"px";
+  if(
+    !rows.length
+  ){
+    return;
   }
 
-  charts[id]=new Chart($(id),{
-    type:"bar",
-    data:{
-      labels,
-      datasets:[{
-        label,
-        data:values,
-        backgroundColor: labels.map((_,i)=>[
-          "#2563eb","#7c3aed","#06b6d4","#16a34a","#f59e0b",
-          "#ef4444","#ec4899","#14b8a6","#6366f1","#0ea5e9",
-          "#84cc16","#f97316"
-        ][i % 12]),
-        borderRadius:7,
-        maxBarThickness:28
-      }]
-    },
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      indexAxis:"y",
-      onHover:(event,elements)=>{
-        event.native.target.style.cursor=elements.length ? "pointer" : "default";
-      },
-      onClick:(event,elements)=>{
-        if(!elements.length) return;
-        const index=elements[0].index;
-        openDetailPopup(id,labels[index]);
-      },
-      plugins:{
-        legend:{display:false},
-        tooltip:{callbacks:{title:items=>items.length ? labels[items[0].dataIndex] : ""}}
-      },
-      scales:{
-        x:{beginAtZero:true,ticks:{precision:0,color:"#475569"},grid:{color:"#e2e8f0"}},
-        y:{
-          ticks:{
-            autoSkip:false,color:"#334155",font:{size:11},
-            callback:function(value){
-              const full=this.getLabelForValue(value);
-              return wrapLabel(full,window.innerWidth<=768 ? 24 : 48);
+
+  const howMany =
+    rows.reduce(
+      (
+        sum,
+        row
+      ) =>
+        sum +
+        Number(
+          row.howMany ||
+          0
+        ),
+      0
+    );
+
+
+  const planned =
+    rows.filter(
+      row =>
+        row.planned ===
+        "Yes"
+    )
+      .length;
+
+
+  const scheduled =
+    rows.filter(
+      row =>
+        row.scheduled ===
+        "Yes"
+    )
+      .length;
+
+
+  $("detailModalTitle")
+    .textContent =
+    label;
+
+
+  $("detailModalBody")
+    .innerHTML = `
+
+      <div class="detail-summary">
+
+        <div class="detail-stat">
+
+          <div class="detail-stat-label">
+            Matching Records
+          </div>
+
+          <div class="detail-stat-value">
+            ${rows.length}
+          </div>
+
+        </div>
+
+
+        <div class="detail-stat">
+
+          <div class="detail-stat-label">
+            How Many
+          </div>
+
+          <div class="detail-stat-value">
+            ${howMany}
+          </div>
+
+        </div>
+
+
+        <div class="detail-stat">
+
+          <div class="detail-stat-label">
+            Planned / Scheduled
+          </div>
+
+          <div class="detail-stat-value">
+            ${planned} / ${scheduled}
+          </div>
+
+        </div>
+
+      </div>
+
+
+      ${rows
+        .map(
+          (
+            row,
+            index
+          ) => `
+
+            <div class="detail-record">
+
+              <div
+                class="
+                  font-black
+                  text-sm
+                  text-blue-700
+                "
+              >
+                Conference ${index + 1}
+              </div>
+
+
+              <div class="detail-grid">
+
+                <div class="detail-field">
+
+                  <small>
+                    Person
+                  </small>
+
+                  <strong>
+                    ${escapeHtml(row.person)}
+                  </strong>
+
+                </div>
+
+
+                <div class="detail-field">
+
+                  <small>
+                    Designation
+                  </small>
+
+                  <strong>
+                    ${escapeHtml(row.designation)}
+                  </strong>
+
+                </div>
+
+
+                <div class="detail-field">
+
+                  <small>
+                    Faculty
+                  </small>
+
+                  <strong>
+                    ${escapeHtml(row.faculty)}
+                  </strong>
+
+                </div>
+
+
+                <div class="detail-field">
+
+                  <small>
+                    Department
+                  </small>
+
+                  <strong>
+                    ${escapeHtml(row.department)}
+                  </strong>
+
+                </div>
+
+
+                <div class="detail-field">
+
+                  <small>
+                    How Many
+                  </small>
+
+                  <strong>
+                    ${escapeHtml(row.howMany)}
+                  </strong>
+
+                </div>
+
+
+                <div class="detail-field">
+
+                  <small>
+                    Reporting Month
+                  </small>
+
+                  <strong>
+                    ${escapeHtml(row.month)}
+                  </strong>
+
+                </div>
+
+
+                <div
+                  class="detail-field"
+                  style="grid-column:1/-1"
+                >
+
+                  <small>
+                    Conference / Organization
+                  </small>
+
+                  <strong>
+                    ${escapeHtml(row.organization)}
+                  </strong>
+
+                </div>
+
+
+                <div class="detail-field">
+
+                  <small>
+                    Planned
+                  </small>
+
+                  <strong>
+                    ${escapeHtml(row.planned)}
+                  </strong>
+
+                </div>
+
+
+                <div class="detail-field">
+
+                  <small>
+                    Scheduled
+                  </small>
+
+                  <strong>
+                    ${escapeHtml(row.scheduled)}
+                  </strong>
+
+                </div>
+
+
+                <div
+                  class="detail-field"
+                  style="grid-column:1/-1"
+                >
+
+                  <small>
+                    Remarks / Result
+                  </small>
+
+                  <strong>
+                    ${escapeHtml(row.remarks)}
+                  </strong>
+
+                </div>
+
+              </div>
+
+            </div>
+          `
+        )
+        .join("")
+      }
+    `;
+
+
+  $("detailModal")
+    .classList
+    .add(
+      "open"
+    );
+
+
+  document.body
+    .style
+    .overflow =
+    "hidden";
+}
+
+
+function closeDetailPopup(){
+
+  $("detailModal")
+    ?.classList
+    .remove(
+      "open"
+    );
+
+  document.body
+    .style
+    .overflow =
+    "";
+}
+
+
+/* =========================================================
+   BAR CHART
+   ========================================================= */
+
+function horizontalChart(
+  id,
+  data,
+  label,
+  wrapId
+){
+
+  const canvas =
+    $(id);
+
+  if(
+    !canvas
+  ){
+    return;
+  }
+
+
+  if(
+    charts[id]
+  ){
+
+    charts[id]
+      .destroy();
+  }
+
+
+  const labels =
+    Object.keys(
+      data
+    );
+
+
+  const values =
+    Object.values(
+      data
+    );
+
+
+  if(
+    wrapId &&
+    $(wrapId)
+  ){
+
+    $(wrapId)
+      .style
+      .height =
+      Math.max(
+        420,
+        labels.length * 58
+      )
+      +
+      "px";
+  }
+
+
+  charts[id] =
+    new Chart(
+      canvas,
+      {
+
+        type:
+          "bar",
+
+
+        data:{
+
+          labels:
+            labels,
+
+
+          datasets:[
+            {
+
+              label:
+                label,
+
+
+              data:
+                values,
+
+
+              backgroundColor:
+                labels.map(
+                  (
+                    _,
+                    index
+                  ) =>
+                    [
+                      "#2563eb",
+                      "#7c3aed",
+                      "#06b6d4",
+                      "#16a34a",
+                      "#f59e0b",
+                      "#ef4444",
+                      "#ec4899",
+                      "#14b8a6",
+                      "#6366f1",
+                      "#0ea5e9",
+                      "#84cc16",
+                      "#f97316"
+                    ][
+                      index %
+                      12
+                    ]
+                ),
+
+
+              borderRadius:
+                7,
+
+
+              maxBarThickness:
+                28
+            }
+          ]
+        },
+
+
+        options:{
+
+          responsive:
+            true,
+
+
+          maintainAspectRatio:
+            false,
+
+
+          indexAxis:
+            "y",
+
+
+          onClick:
+            (
+              event,
+              elements
+            ) => {
+
+              if(
+                !elements.length
+              ){
+                return;
+              }
+
+              const index =
+                elements[0]
+                  .index;
+
+              openDetailPopup(
+                id,
+                labels[index]
+              );
+            },
+
+
+          plugins:{
+
+            legend:{
+
+              display:
+                false
+            },
+
+
+            tooltip:{
+
+              callbacks:{
+
+                label:
+                  context =>
+                    `How Many: ${context.raw}`
+              }
             }
           },
-          grid:{display:false}
+
+
+          scales:{
+
+            x:{
+
+              beginAtZero:
+                true,
+
+              ticks:{
+
+                precision:
+                  0
+              }
+            },
+
+
+            y:{
+
+              ticks:{
+
+                autoSkip:
+                  false,
+
+                callback:
+                  function(
+                    value
+                  ){
+
+                    return wrapLabel(
+                      this
+                        .getLabelForValue(
+                          value
+                        ),
+                      45
+                    );
+                  }
+              },
+
+              grid:{
+
+                display:
+                  false
+              }
+            }
+          }
         }
       }
-    }
-  });
+    );
 }
+
+
+/* =========================================================
+   STATUS CHART
+   ========================================================= */
 
 function statusChart(){
-  if(charts.status) charts.status.destroy();
-  const planned=filteredConferences.filter(x=>x.planned==="Yes").length;
-  const scheduled=filteredConferences.filter(x=>x.scheduled==="Yes").length;
 
-  charts.status=new Chart($("conferenceStatusChart"),{
-    type:"doughnut",
-    data:{
-      labels:["Planned","Scheduled"],
-      datasets:[{data:[planned,scheduled],backgroundColor:["#2563eb","#7c3aed"],borderColor:"#fff",borderWidth:3}]
-    },
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}}}
-  });
+  const canvas =
+    $("conferenceStatusChart");
+
+
+  if(
+    !canvas
+  ){
+    return;
+  }
+
+
+  if(
+    charts.status
+  ){
+
+    charts.status
+      .destroy();
+  }
+
+
+  const planned =
+    filteredConferences
+      .filter(
+        row =>
+          row.planned ===
+          "Yes"
+      )
+      .length;
+
+
+  const scheduled =
+    filteredConferences
+      .filter(
+        row =>
+          row.scheduled ===
+          "Yes"
+      )
+      .length;
+
+
+  charts.status =
+    new Chart(
+      canvas,
+      {
+
+        type:
+          "doughnut",
+
+
+        data:{
+
+          labels:[
+            "Planned",
+            "Scheduled"
+          ],
+
+
+          datasets:[
+            {
+
+              data:[
+                planned,
+                scheduled
+              ],
+
+
+              backgroundColor:[
+                "#2563eb",
+                "#7c3aed"
+              ],
+
+
+              borderColor:
+                "#fff",
+
+
+              borderWidth:
+                3
+            }
+          ]
+        },
+
+
+        options:{
+
+          responsive:
+            true,
+
+
+          maintainAspectRatio:
+            false,
+
+
+          plugins:{
+
+            legend:{
+
+              position:
+                "bottom"
+            }
+          }
+        }
+      }
+    );
 }
 
+
+/* =========================================================
+   RENDER DASHBOARD
+   ========================================================= */
+
 function renderDashboard(){
-  const eventTotal=filteredConferences.reduce((s,r)=>s+Number(r.events||0),0);
-  const people=new Set(filteredConferences.map(x=>x.person).filter(x=>x && x!=="Not Available"));
-  const faculties=new Set(filteredConferences.map(x=>x.faculty).filter(x=>x && x!=="Not Available"));
-  const planned=filteredConferences.filter(x=>x.planned==="Yes").length;
-  const scheduled=filteredConferences.filter(x=>x.scheduled==="Yes").length;
 
-  $("kConferenceRecords").textContent=filteredConferences.length;
-  $("kConferenceEvents").textContent=eventTotal;
-  $("kConferencePeople").textContent=people.size;
-  $("kFaculties").textContent=faculties.size;
-  $("kPlanned").textContent=planned;
-  $("kScheduled").textContent=scheduled;
+  const howMany =
+    filteredConferences
+      .reduce(
+        (
+          sum,
+          row
+        ) =>
+          sum +
+          Number(
+            row.howMany ||
+            0
+          ),
+        0
+      );
 
-  const personData={};
-  filteredConferences.forEach(r=>{
-    const label=r.designation!=="Not Available" ? `${r.person} — ${r.designation}` : r.person;
-    personData[label]=(personData[label]||0)+Number(r.events||0);
-  });
 
-  horizontalChart("conferencePeopleChart",personData,"Conference Events","peopleChartWrap");
-  horizontalChart("conferenceTitleChart",groupBy("title"),"Conference Events","titleChartWrap");
-  horizontalChart("conferenceFacultyChart",groupBy("faculty"),"Conference Events");
-  horizontalChart("conferenceDepartmentChart",groupBy("department"),"Conference Events");
+  const people =
+    new Set(
+      filteredConferences
+        .map(
+          row =>
+            row.person
+        )
+        .filter(
+          value =>
+            !invalid(
+              value
+            )
+        )
+    );
+
+
+  const faculties =
+    new Set(
+      filteredConferences
+        .map(
+          row =>
+            row.faculty
+        )
+        .filter(
+          value =>
+            !invalid(
+              value
+            )
+        )
+    );
+
+
+  const planned =
+    filteredConferences
+      .filter(
+        row =>
+          row.planned ===
+          "Yes"
+      )
+      .length;
+
+
+  const scheduled =
+    filteredConferences
+      .filter(
+        row =>
+          row.scheduled ===
+          "Yes"
+      )
+      .length;
+
+
+  $("kConferenceRecords")
+    .textContent =
+    filteredConferences
+      .length
+      .toLocaleString();
+
+
+  $("kConferenceHowMany")
+    .textContent =
+    howMany
+      .toLocaleString();
+
+
+  $("kConferencePeople")
+    .textContent =
+    people
+      .size
+      .toLocaleString();
+
+
+  $("kFaculties")
+    .textContent =
+    faculties
+      .size
+      .toLocaleString();
+
+
+  $("kPlanned")
+    .textContent =
+    planned
+      .toLocaleString();
+
+
+  $("kScheduled")
+    .textContent =
+    scheduled
+      .toLocaleString();
+
+
+  /* PERSON DATA */
+
+  const personData =
+    {};
+
+
+  filteredConferences
+    .forEach(
+      row => {
+
+        const label =
+          row.designation !==
+          "Not Available"
+            ? `${row.person} — ${row.designation}`
+            : row.person;
+
+
+        personData[label] =
+          (
+            personData[label] ||
+            0
+          )
+          +
+          Number(
+            row.howMany ||
+            0
+          );
+      }
+    );
+
+
+  horizontalChart(
+    "conferencePeopleChart",
+    personData,
+    "How Many",
+    "peopleChartWrap"
+  );
+
+
+  horizontalChart(
+    "conferenceTitleChart",
+    groupBy(
+      "organization"
+    ),
+    "How Many",
+    "titleChartWrap"
+  );
+
+
+  horizontalChart(
+    "conferenceFacultyChart",
+    groupBy(
+      "faculty"
+    ),
+    "How Many"
+  );
+
+
+  horizontalChart(
+    "conferenceDepartmentChart",
+    groupBy(
+      "department"
+    ),
+    "How Many"
+  );
+
+
   statusChart();
 }
 
+
+/* =========================================================
+   EXPORT
+   ========================================================= */
+
 function exportConferences(){
-  if(!filteredConferences.length){alert("There is no conference data to export.");return}
-  const rows=filteredConferences.map(r=>({
-    "Person":r.person,
-    "Designation":r.designation,
-    "Faculty":r.faculty,
-    "Department":r.department,
-    "Conference Title / Organization":r.title,
-    "Events":r.events,
-    "Planned":r.planned,
-    "Scheduled":r.scheduled
-  }));
-  const ws=XLSX.utils.json_to_sheet(rows);
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,"Conferences");
-  XLSX.writeFile(wb,"UOL_Conference_Analytics.xlsx");
+
+  if(
+    !filteredConferences.length
+  ){
+
+    alert(
+      "There is no conference data to export."
+    );
+
+    return;
+  }
+
+
+  const rows =
+    filteredConferences
+      .map(
+        row => ({
+
+          "Person":
+            row.person,
+
+          "Designation":
+            row.designation,
+
+          "Faculty":
+            row.faculty,
+
+          "Department":
+            row.department,
+
+          "Conference Title / Organization":
+            row.organization,
+
+          "How Many":
+            row.howMany,
+
+          "Reporting Month":
+            row.month,
+
+          "Planned":
+            row.planned,
+
+          "Scheduled":
+            row.scheduled,
+
+          "Remarks / Result":
+            row.remarks
+        })
+      );
+
+
+  const worksheet =
+    XLSX.utils
+      .json_to_sheet(
+        rows
+      );
+
+
+  const workbook =
+    XLSX.utils
+      .book_new();
+
+
+  XLSX.utils
+    .book_append_sheet(
+      workbook,
+      worksheet,
+      "Conferences"
+    );
+
+
+  XLSX.writeFile(
+    workbook,
+    "UOL_Conference_Analytics.xlsx"
+  );
 }
 
-function processWorkbook(buffer,source){
-  const wb=XLSX.read(new Uint8Array(buffer),{type:"array"});
 
-  // Prefer a sheet called Conference. If the separated workbook has only one
-  // worksheet, use that worksheet automatically.
-  let sheetName=wb.SheetNames.find(n=>n.trim().toLowerCase()==="conference");
-  if(!sheetName && wb.SheetNames.length===1) sheetName=wb.SheetNames[0];
-  if(!sheetName) throw new Error('No "Conference" worksheet was found.');
+/* =========================================================
+   FIND CONFERENCE SHEET
+   ========================================================= */
 
-  const rows=XLSX.utils.sheet_to_json(wb.Sheets[sheetName],{defval:"",raw:false});
-  if(!rows.length) throw new Error("The Conference worksheet is empty.");
+function findConferenceSheet(
+  workbook
+){
 
-  conferenceRows=parseConferenceRows(rows);
-  if(!conferenceRows.length) throw new Error("The worksheet loaded, but no conference records were detected.");
+  const exact =
+    workbook
+      .SheetNames
+      .find(
+        name =>
+          normalizeHeader(
+            name
+          ) ===
+          "conference"
+      );
 
-  filteredConferences=[...conferenceRows];
+
+  if(
+    exact
+  ){
+    return exact;
+  }
+
+
+  const partial =
+    workbook
+      .SheetNames
+      .find(
+        name =>
+          normalizeHeader(
+            name
+          )
+            .includes(
+              "conference"
+            )
+      );
+
+
+  if(
+    partial
+  ){
+    return partial;
+  }
+
+
+  return workbook
+    .SheetNames
+    .find(
+      name =>
+        normalizeHeader(
+          name
+        ) ===
+        normalizeHeader(
+          "All Separated Activities"
+        )
+    )
+    ||
+    null;
+}
+
+
+/* =========================================================
+   PROCESS WORKBOOK
+   ========================================================= */
+
+function processWorkbook(
+  buffer,
+  source
+){
+
+  const workbook =
+    XLSX.read(
+      new Uint8Array(
+        buffer
+      ),
+      {
+        type:
+          "array"
+      }
+    );
+
+
+  const sheetName =
+    findConferenceSheet(
+      workbook
+    );
+
+
+  if(
+    !sheetName
+  ){
+
+    throw new Error(
+      'No Conference or "All Separated Activities" worksheet was found.'
+    );
+  }
+
+
+  const rows =
+    XLSX.utils
+      .sheet_to_json(
+        workbook
+          .Sheets[
+            sheetName
+          ],
+        {
+          defval:
+            "",
+          raw:
+            false
+        }
+      );
+
+
+  conferenceRows =
+    parseConferenceRows(
+      rows
+    );
+
+
+  if(
+    !conferenceRows.length
+  ){
+
+    throw new Error(
+      "The workbook loaded, but no Conference records were detected."
+    );
+  }
+
+
+  filteredConferences =
+    [
+      ...conferenceRows
+    ];
+
+
   populateFilters();
+
   renderDashboard();
 
-  const events=conferenceRows.reduce((s,r)=>s+Number(r.events||0),0);
-  $("connection").innerHTML=
-    `<span style="color:#86efac">●</span> Connected • ${conferenceRows.length} records • ${events} events`;
 
-  console.log("Loaded",source,"sheet:",sheetName,"raw rows:",rows.length,"conference rows:",conferenceRows.length);
+  const howMany =
+    conferenceRows
+      .reduce(
+        (
+          sum,
+          row
+        ) =>
+          sum +
+          Number(
+            row.howMany ||
+            0
+          ),
+        0
+      );
+
+
+  $("connection")
+    .innerHTML =
+    `
+      <span
+        style="
+          color:#86efac
+        "
+      >
+        ●
+      </span>
+
+      Connected
+      • ${conferenceRows.length.toLocaleString()} records
+      • How Many: ${howMany.toLocaleString()}
+    `;
+
+
+  console.log(
+    "Loaded:",
+    source,
+    "Sheet:",
+    sheetName,
+    "Rows:",
+    conferenceRows.length,
+    "How Many:",
+    howMany
+  );
 }
 
-async function loadExcel(){
-  const candidates=[
-    "../data/UOL_Conference_Only_Separated.xlsx",
-    "./data/UOL_Conference_Only_Separated.xlsx",
-    "data/UOL_Conference_Only_Separated.xlsx",
-    "../UOL_Conference_Only_Separated.xlsx"
-  ];
 
-  let lastError=null;
-  for(const url of candidates){
+/* =========================================================
+   LOAD EXCEL
+   ========================================================= */
+
+async function loadExcel(){
+
+  const candidates =
+    [
+
+      "../data/UOL_Separated_All_Activity_Data_Cleaned.xlsx",
+
+      "./data/UOL_Separated_All_Activity_Data_Cleaned.xlsx",
+
+      "data/UOL_Separated_All_Activity_Data_Cleaned.xlsx",
+
+      "UOL_Separated_All_Activity_Data_Cleaned.xlsx",
+
+
+      "../data/UOL_Conference_Only_Separated.xlsx",
+
+      "./data/UOL_Conference_Only_Separated.xlsx",
+
+      "data/UOL_Conference_Only_Separated.xlsx",
+
+      "../UOL_Conference_Only_Separated.xlsx"
+    ];
+
+
+  let lastError =
+    null;
+
+
+  for(
+    const url
+    of candidates
+  ){
+
     try{
-      const response=await fetch(url,{cache:"no-store"});
-      if(!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
-      const buffer=await response.arrayBuffer();
-      processWorkbook(buffer,url);
+
+      const response =
+        await fetch(
+          url,
+          {
+            cache:
+              "no-store"
+          }
+        );
+
+
+      if(
+        !response.ok
+      ){
+
+        throw new Error(
+          `${url}: HTTP ${response.status}`
+        );
+      }
+
+
+      const buffer =
+        await response
+          .arrayBuffer();
+
+
+      processWorkbook(
+        buffer,
+        url
+      );
+
+
       return;
-    }catch(err){
-      lastError=err;
-      console.warn("Failed:",url,err);
+
+
+    }catch(
+      error
+    ){
+
+      lastError =
+        error;
+
+
+      console.warn(
+        "Failed:",
+        url,
+        error
+      );
     }
   }
 
-  $("connection").innerHTML='<span style="color:#f87171">●</span> Excel connection failed';
-  console.error("Excel could not be loaded. Use Live Server and keep the workbook in the data folder.",lastError);
+
+  $("connection")
+    .innerHTML =
+    `
+      <span
+        style="
+          color:#f87171
+        "
+      >
+        ●
+      </span>
+
+      Excel connection failed
+    `;
+
+
+  console.error(
+    "Excel could not be loaded.",
+    lastError
+  );
 }
 
-["facultyFilter","departmentFilter","personFilter","plannedFilter","scheduledFilter"]
-  .forEach(id=>$(id).addEventListener("change",applyFilters));
-$("searchFilter").addEventListener("input",applyFilters);
-$("resetBtn").addEventListener("click",resetFilters);
-$("exportBtn").addEventListener("click",exportConferences);
 
-$("mobileNavToggle").addEventListener("click",()=>{
-  $("sidebar").classList.toggle("mobile-open");
-});
+/* =========================================================
+   EVENTS
+   ========================================================= */
+
+$("facultyFilter")
+  .addEventListener(
+    "change",
+    handleFacultyChange
+  );
 
 
-$("detailClose").addEventListener("click",closeDetailPopup);
-$("detailModal").addEventListener("click",event=>{
-  if(event.target===$("detailModal")) closeDetailPopup();
-});
-document.addEventListener("keydown",event=>{
-  if(event.key==="Escape" && $("detailModal").classList.contains("open")){
-    closeDetailPopup();
-  }
-});
+$("departmentFilter")
+  .addEventListener(
+    "change",
+    handleDepartmentChange
+  );
+
+
+$("personFilter")
+  .addEventListener(
+    "change",
+    handlePersonChange
+  );
+
+
+$("organizationFilter")
+  .addEventListener(
+    "change",
+    applyFilters
+  );
+
+
+$("plannedFilter")
+  .addEventListener(
+    "change",
+    applyFilters
+  );
+
+
+$("scheduledFilter")
+  .addEventListener(
+    "change",
+    applyFilters
+  );
+
+
+$("searchFilter")
+  .addEventListener(
+    "input",
+    applyFilters
+  );
+
+
+$("resetBtn")
+  .addEventListener(
+    "click",
+    resetFilters
+  );
+
+
+$("exportBtn")
+  .addEventListener(
+    "click",
+    exportConferences
+  );
+
+
+$("mobileNavToggle")
+  .addEventListener(
+    "click",
+    () => {
+
+      $("sidebar")
+        .classList
+        .toggle(
+          "mobile-open"
+        );
+    }
+  );
+
+
+$("detailClose")
+  .addEventListener(
+    "click",
+    closeDetailPopup
+  );
+
+
+$("detailModal")
+  .addEventListener(
+    "click",
+    event => {
+
+      if(
+        event.target ===
+        $("detailModal")
+      ){
+
+        closeDetailPopup();
+      }
+    }
+  );
+
+
+document
+  .addEventListener(
+    "keydown",
+    event => {
+
+      if(
+        event.key ===
+        "Escape"
+      ){
+
+        closeDetailPopup();
+      }
+    }
+  );
+
+
+/* =========================================================
+   START
+   ========================================================= */
 
 loadExcel();
+
 </script>
+
 </body>
 </html>

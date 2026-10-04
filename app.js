@@ -530,7 +530,9 @@ function unique(values) {
   return [
     ...new Set(
       values
-        .map(clean)
+        .map(
+          clean
+        )
         .filter(
           value =>
             !isInvalidLabel(
@@ -596,20 +598,26 @@ function setSelectOptions(
     }
   );
 
-  select.value =
-    (
-      previous !== "All" &&
-      items.includes(
-        previous
-      )
+  if (
+    previous !== "All" &&
+    items.includes(
+      previous
     )
-      ? previous
-      : "All";
+  ) {
+
+    select.value =
+      previous;
+
+  } else {
+
+    select.value =
+      "All";
+  }
 }
 
 
 /* =========================================================
-   CASCADING FILTERS
+   FACULTY FILTER
    ========================================================= */
 
 function updateFacultyFilter() {
@@ -625,6 +633,11 @@ function updateFacultyFilter() {
 }
 
 
+/* =========================================================
+   DEPARTMENT FILTER
+   Depends on Faculty
+   ========================================================= */
+
 function updateDepartmentFilter() {
 
   const faculty =
@@ -638,6 +651,7 @@ function updateDepartmentFilter() {
   if (
     faculty !== "All"
   ) {
+
     rows =
       rows.filter(
         row =>
@@ -657,6 +671,11 @@ function updateDepartmentFilter() {
 }
 
 
+/* =========================================================
+   ACTIVITY FILTER
+   Depends on Faculty + Department
+   ========================================================= */
+
 function updateActivityFilter() {
 
   const faculty =
@@ -675,6 +694,7 @@ function updateActivityFilter() {
   if (
     faculty !== "All"
   ) {
+
     rows =
       rows.filter(
         row =>
@@ -686,6 +706,7 @@ function updateActivityFilter() {
   if (
     department !== "All"
   ) {
+
     rows =
       rows.filter(
         row =>
@@ -704,6 +725,11 @@ function updateActivityFilter() {
   );
 }
 
+
+/* =========================================================
+   MONTH FILTER
+   Depends on Faculty + Department + Activity
+   ========================================================= */
 
 function updateMonthFilter() {
 
@@ -728,6 +754,7 @@ function updateMonthFilter() {
   if (
     faculty !== "All"
   ) {
+
     rows =
       rows.filter(
         row =>
@@ -739,6 +766,7 @@ function updateMonthFilter() {
   if (
     department !== "All"
   ) {
+
     rows =
       rows.filter(
         row =>
@@ -750,6 +778,7 @@ function updateMonthFilter() {
   if (
     activity !== "All"
   ) {
+
     rows =
       rows.filter(
         row =>
@@ -768,6 +797,20 @@ function updateMonthFilter() {
   );
 }
 
+
+/* =========================================================
+   ORGANIZATION FILTER
+
+   IMPORTANT:
+   Depends on:
+   Faculty
+   + Department
+   + Activity Type
+   + Reporting Month
+
+   So organizations are NEVER taken from the whole workbook
+   when a Faculty/Department/etc. has already been selected.
+   ========================================================= */
 
 function updateOrganizationFilter() {
 
@@ -794,9 +837,13 @@ function updateOrganizationFilter() {
   let rows =
     [...allRows];
 
+
+  /* Faculty */
+
   if (
     faculty !== "All"
   ) {
+
     rows =
       rows.filter(
         row =>
@@ -805,9 +852,13 @@ function updateOrganizationFilter() {
       );
   }
 
+
+  /* Department */
+
   if (
     department !== "All"
   ) {
+
     rows =
       rows.filter(
         row =>
@@ -816,9 +867,13 @@ function updateOrganizationFilter() {
       );
   }
 
+
+  /* Activity */
+
   if (
     activity !== "All"
   ) {
+
     rows =
       rows.filter(
         row =>
@@ -827,9 +882,13 @@ function updateOrganizationFilter() {
       );
   }
 
+
+  /* Month */
+
   if (
     month !== "All"
   ) {
+
     rows =
       rows.filter(
         row =>
@@ -838,16 +897,32 @@ function updateOrganizationFilter() {
       );
   }
 
+
+  /* Organizations only from remaining rows */
+
   setSelectOptions(
     "organizationFilter",
-    rows.map(
-      row =>
-        row.organization
-    ),
+
+    rows
+      .map(
+        row =>
+          row.organization
+      )
+      .filter(
+        organization =>
+          !isInvalidLabel(
+            organization
+          )
+      ),
+
     "All Organizations"
   );
 }
 
+
+/* =========================================================
+   INITIAL FILTER LOAD
+   ========================================================= */
 
 function populateFilters() {
 
@@ -953,6 +1028,7 @@ function applyFilters() {
         const searchMatch =
           (
             !search ||
+
             [
               row.faculty,
               row.department,
@@ -997,6 +1073,10 @@ function applyFilters() {
 
 function handleFacultyChange() {
 
+  /*
+    Selecting Faculty rebuilds EVERYTHING below it.
+  */
+
   updateDepartmentFilter();
 
   updateActivityFilter();
@@ -1011,6 +1091,11 @@ function handleFacultyChange() {
 
 function handleDepartmentChange() {
 
+  /*
+    Selecting Department rebuilds:
+    Activity -> Month -> Organization
+  */
+
   updateActivityFilter();
 
   updateMonthFilter();
@@ -1023,6 +1108,11 @@ function handleDepartmentChange() {
 
 function handleActivityChange() {
 
+  /*
+    Selecting Activity rebuilds:
+    Month -> Organization
+  */
+
   updateMonthFilter();
 
   updateOrganizationFilter();
@@ -1032,6 +1122,10 @@ function handleActivityChange() {
 
 
 function handleMonthChange() {
+
+  /*
+    Selecting Month rebuilds Organization.
+  */
 
   updateOrganizationFilter();
 
@@ -1045,11 +1139,16 @@ function handleOrganizationChange() {
 }
 
 
+/* =========================================================
+   RESET
+   ========================================================= */
+
 function resetFilters() {
 
   if (
     $("facultyFilter")
   ) {
+
     $("facultyFilter")
       .value =
       "All";
@@ -1057,9 +1156,11 @@ function resetFilters() {
 
   updateDepartmentFilter();
 
+
   if (
     $("departmentFilter")
   ) {
+
     $("departmentFilter")
       .value =
       "All";
@@ -1067,9 +1168,11 @@ function resetFilters() {
 
   updateActivityFilter();
 
+
   if (
     $("activityFilter")
   ) {
+
     $("activityFilter")
       .value =
       "All";
@@ -1077,9 +1180,11 @@ function resetFilters() {
 
   updateMonthFilter();
 
+
   if (
     $("monthFilter")
   ) {
+
     $("monthFilter")
       .value =
       "All";
@@ -1087,17 +1192,21 @@ function resetFilters() {
 
   updateOrganizationFilter();
 
+
   if (
     $("organizationFilter")
   ) {
+
     $("organizationFilter")
       .value =
       "All";
   }
 
+
   if (
     $("searchFilter")
   ) {
+
     $("searchFilter")
       .value =
       "";
@@ -1111,7 +1220,7 @@ function resetFilters() {
 
 
 /* =========================================================
-   INTERNSHIP / PLACEMENT FILTERING
+   INTERNSHIP / PLACEMENT
    ========================================================= */
 
 function getFilteredIpRows() {
@@ -1246,6 +1355,7 @@ function setImpactRowVisible(
   if (
     row
   ) {
+
     row.style.display =
       visible
         ? ""
@@ -1282,6 +1392,7 @@ function setImpactLabel(
   if (
     label
   ) {
+
     label.textContent =
       text;
   }
@@ -1309,6 +1420,7 @@ function renderStudentSummary() {
       if (
         $(id)
       ) {
+
         $(id)
           .textContent =
           summary.total
@@ -1320,6 +1432,7 @@ function renderStudentSummary() {
   if (
     $("impactIpRecords")
   ) {
+
     $("impactIpRecords")
       .textContent =
       summary.rowCount
@@ -1329,6 +1442,7 @@ function renderStudentSummary() {
   if (
     $("impactIpDepartments")
   ) {
+
     $("impactIpDepartments")
       .textContent =
       summary.departmentCount
@@ -1393,6 +1507,7 @@ function renderStudentSummary() {
 
         setImpactLabel(
           id,
+
           type === "IP"
             ? "IP Students"
             : `${type} Students`
@@ -1401,6 +1516,7 @@ function renderStudentSummary() {
         if (
           $(id)
         ) {
+
           $(id)
             .textContent =
             value
@@ -1517,7 +1633,7 @@ function wrapLabel(
 
       if (
         next.length >
-        max &&
+          max &&
         line
       ) {
 
@@ -1539,6 +1655,7 @@ function wrapLabel(
   if (
     line
   ) {
+
     lines.push(
       line
     );
@@ -1586,6 +1703,7 @@ function barChart(
     wrapper &&
     $(wrapper)
   ) {
+
     $(wrapper)
       .style
       .height =
@@ -1612,6 +1730,7 @@ function barChart(
           datasets: [
 
             {
+
               data:
                 values,
 
@@ -1622,6 +1741,7 @@ function barChart(
                     _,
                     index
                   ) =>
+
                     [
                       "#0b6b3a",
                       "#1556c0",
@@ -1680,6 +1800,7 @@ function barChart(
           plugins: {
 
             legend: {
+
               display:
                 false
             }
@@ -1693,6 +1814,7 @@ function barChart(
                 true,
 
               ticks: {
+
                 precision:
                   0
               }
@@ -1720,12 +1842,14 @@ function barChart(
                   },
 
                 font: {
+
                   size:
                     9
                 }
               },
 
               grid: {
+
                 display:
                   false
               }
@@ -1855,6 +1979,7 @@ function activityChart() {
           datasets: [
 
             {
+
               data:
                 values,
 
@@ -1908,6 +2033,7 @@ function activityChart() {
           plugins: {
 
             legend: {
+
               display:
                 false
             }
@@ -1992,6 +2118,7 @@ function renderActivityLegend(
             if (
               labels[index]
             ) {
+
               openPopup(
                 "type",
                 labels[index]
@@ -2025,6 +2152,7 @@ function monthKey(value) {
         text
       )
   ) {
+
     return text.slice(
       0,
       7
@@ -2037,6 +2165,7 @@ function monthKey(value) {
         text
       )
   ) {
+
     return text;
   }
 
@@ -2050,6 +2179,7 @@ function monthKey(value) {
       date
     )
   ) {
+
     return date
       .toISOString()
       .slice(
@@ -2130,6 +2260,7 @@ function monthlyChart() {
           datasets: [
 
             {
+
               data:
                 labels.map(
                   month =>
@@ -2167,6 +2298,7 @@ function monthlyChart() {
           plugins: {
 
             legend: {
+
               display:
                 false
             }
@@ -2180,6 +2312,7 @@ function monthlyChart() {
                 true,
 
               ticks: {
+
                 precision:
                   0
               }
@@ -2188,6 +2321,7 @@ function monthlyChart() {
             x: {
 
               grid: {
+
                 display:
                   false
               }
@@ -2200,7 +2334,7 @@ function monthlyChart() {
 
 
 /* =========================================================
-   RENDER DASHBOARD
+   RENDER
    ========================================================= */
 
 function render() {
@@ -2312,6 +2446,7 @@ function render() {
       if (
         $(id)
       ) {
+
         $(id)
           .textContent =
           value;
@@ -2496,6 +2631,7 @@ function findActivitySheet(
         "department"
       )
     ) {
+
       return sheetName;
     }
   }
@@ -2530,6 +2666,7 @@ async function fetchWorkbook(
       if (
         !response.ok
       ) {
+
         throw new Error(
           `HTTP ${response.status}`
         );
@@ -2608,6 +2745,7 @@ async function loadActivityWorkbook() {
   if (
     !activitySheet
   ) {
+
     throw new Error(
       "All Separated Activities sheet not found"
     );
@@ -2660,6 +2798,7 @@ async function loadExcel() {
   if (
     $("connection")
   ) {
+
     $("connection")
       .innerHTML =
       `<span style="color:#f59e0b">●</span> Loading workbook…`;
@@ -2710,6 +2849,7 @@ async function loadExcel() {
     if (
       $("connection")
     ) {
+
       $("connection")
         .innerHTML = `
           <span style="color:#16a34a">●</span>
@@ -2735,6 +2875,7 @@ async function loadExcel() {
     if (
       $("connection")
     ) {
+
       $("connection")
         .innerHTML =
         `<span style="color:#dc2626">●</span> Excel workbook failed`;
@@ -2789,6 +2930,7 @@ function openPopup(
   if (
     $("detailModalTitle")
   ) {
+
     $("detailModalTitle")
       .textContent =
       label;
@@ -3093,6 +3235,7 @@ function bindEvents() {
           event.target ===
           $("detailModal")
         ) {
+
           closePopup();
         }
       }
@@ -3107,6 +3250,7 @@ function bindEvents() {
           event.key ===
           "Escape"
         ) {
+
           closePopup();
         }
       }
