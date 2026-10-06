@@ -8,6 +8,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
 
   <link rel="stylesheet" href="style.css">
 </head>
@@ -17,7 +19,7 @@
   <aside class="side" id="sidebar">
 
     <div class="brand-wrap">
-      <div class="brand-mark">UOL</div>
+      <img src="assets/uol-wordmark.png" alt="The University of Lahore" class="brand-wordmark">
 
       <div>
         <div class="brand-title">UOL Analytics</div>
@@ -92,15 +94,6 @@
 
     <div class="side-overview">
       <div class="side-overview-title">Tentative Overview</div>
-
-      <div class="side-overview-value" id="sideActivities">0</div>
-      <div class="side-overview-label">Total Activities</div>
-
-      <div class="side-mini-row">
-        <span>Records</span>
-        <strong id="sideRecords">0</strong>
-      </div>
-
       <div class="side-mini-row">
         <span>IP Students</span>
         <strong id="sideStudents">—</strong>
@@ -114,18 +107,9 @@
 
     <header class="topbar">
 
-      <div class="top-logo">
-        <div class="uol-badge">UOL</div>
-
-        <div>
-          <div class="university-name">
-            THE UNIVERSITY OF LAHORE
-          </div>
-
-          <div class="office-name">
-            Office of External Linkages
-          </div>
-        </div>
+      <div class="top-logo official-logo-wrap">
+        <img src="assets/uol-wordmark.png" alt="The University of Lahore" class="official-uol-logo">
+        <div class="office-name official-office-name">Office of External Linkages</div>
       </div>
 
       <div class="title-block">
@@ -172,7 +156,7 @@
       </select>
 
       <select id="monthFilter" class="filter">
-        <option value="All">All Reporting Months</option>
+        <option value="All">All Semesters</option>
       </select>
 
       <select id="organizationFilter" class="filter">
@@ -188,9 +172,12 @@
       <button class="btn subtle" id="resetBtn">
         ↺ Reset
       </button>
+<button class="btn" id="exportBtn">
+        ⇩ Export Excel
+      </button>
 
-      <button class="btn" id="exportBtn">
-        ⇩ Export Report
+      <button class="btn" id="pdfBtn">
+        📄 PDF Report
       </button>
 
     </section>
@@ -198,42 +185,26 @@
 
     <div class="tentative-alert">
       <strong>Tentative Dashboard:</strong>
-      activity figures and Internship/Placement student totals are calculated
-      from the same cleaned Excel workbook.
+      activity figures are calculated from the same cleaned Excel workbook.
+      Internship/Placement student totals appear only when relevant to the selected activity type.
     </div>
 
 
     <section class="kpi-grid">
-
-      <div class="kpi-card">
-        <div class="kpi-icon green">◎</div>
-        <div class="kpi-label">Activity Records</div>
-        <div id="kRecords" class="kpi-value">0</div>
-        <div class="kpi-foot">Rows in current view</div>
-      </div>
-
-      <div class="kpi-card">
+      <div class="kpi-card" id="totalActivitiesKpiCard">
         <div class="kpi-icon blue">▤</div>
         <div class="kpi-label">Total Activities</div>
         <div id="kActivities" class="kpi-value">0</div>
-        <div class="kpi-foot">Sum of activity How Many</div>
+        <div class="kpi-foot">Overall total for the current view</div>
       </div>
 
-      <div class="kpi-card emphasized">
+      <div class="kpi-card emphasized" id="internshipKpiCard">
         <div class="kpi-icon purple">◉</div>
         <div class="kpi-label">Internship / Placement Students</div>
         <div id="kInternshipStudents" class="kpi-value">—</div>
         <div class="kpi-foot">IP + Internship/Placement</div>
       </div>
-
-      <div class="kpi-card">
-        <div class="kpi-icon orange">⌛</div>
-        <div class="kpi-label">Scheduled Activities</div>
-        <div id="kScheduled" class="kpi-value">0</div>
-        <div class="kpi-foot">Scheduled = Yes</div>
-      </div>
-
-      <div class="kpi-card">
+<div class="kpi-card">
         <div class="kpi-icon teal">◫</div>
         <div class="kpi-label">Faculties</div>
         <div id="kFaculties" class="kpi-value">0</div>
@@ -305,8 +276,8 @@
 
         <div class="panel-head">
           <div>
-            <h3>MONTHLY TREND</h3>
-            <p>Activities by reporting month</p>
+            <h3>SEMESTER TREND</h3>
+            <p>Activities by semester</p>
           </div>
         </div>
 
@@ -412,14 +383,6 @@
             <span>2</span>
             <strong>Planned</strong>
             <small id="flowPlanned">0</small>
-          </div>
-
-          <b>→</b>
-
-          <div>
-            <span>3</span>
-            <strong>Scheduled</strong>
-            <small id="flowScheduled">0</small>
           </div>
 
         </div>

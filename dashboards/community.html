@@ -162,7 +162,7 @@ body{color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;background:rad
 <div class="grid md:grid-cols-2 xl:grid-cols-5 gap-3"><select id="facultyFilter" class="filter"><option value="All">All Faculties</option></select><select id="departmentFilter" class="filter"><option value="All">All Departments</option></select><select id="personFilter" class="filter"><option value="All">All People</option></select><select id="plannedFilter" class="filter"><option value="All">All Planned Status</option><option>Yes</option><option>No</option><option>Not Available</option></select><select id="scheduledFilter" class="filter"><option value="All">All Scheduled Status</option><option>Yes</option><option>No</option><option>Not Available</option></select></div>
 <div class="grid md:grid-cols-[1fr_auto_auto] gap-3 mt-3"><input id="searchFilter" class="filter" placeholder="Search activity title, organization, person, designation or remarks"><button class="btn" id="resetBtn">↺ Reset</button><button class="btn" id="exportBtn">📥 Export Community Engagement Excel</button></div></section>
 <section class="grid kpi-grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-<div class="card kpi-card"><div class="kpi-label">Engagement Records</div><div id="kRecords" class="kpi">0</div></div>
+<div class="card kpi-card" style="display:none"><div class="kpi-label">Engagement Records</div><div id="kRecords" class="kpi">0</div></div>
 <div class="card kpi-card"><div class="kpi-label">Total Engagements / How Many</div><div id="kTotal" class="kpi">0</div></div>
 <div class="card kpi-card"><div class="kpi-label">People Involved</div><div id="kPeople" class="kpi">0</div></div>
 <div class="card kpi-card"><div class="kpi-label">Faculties</div><div id="kFaculties" class="kpi">0</div></div>
