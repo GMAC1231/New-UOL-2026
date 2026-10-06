@@ -3585,7 +3585,7 @@ doc.setFillColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(7.6);
   doc.setTextColor(11, 107, 58);
-  doc.text("DEAN OEL", cardX + 4, authorityY + 5);
+  doc.text("DEAN OSA", cardX + 4, authorityY + 5);
   doc.setFontSize(9.2);
   doc.setTextColor(15, 23, 42);
   doc.text("Ms. Ammara Awais Raoof", cardX + 4, authorityY + 10.2);
@@ -3699,7 +3699,7 @@ function addPdfHeader(doc, section, sectionIndex, sectionCount, label = "ACTIVIT
   doc.text("Official Activity Intelligence Report", 84, 20.5);
   doc.setFontSize(7.2);
   doc.setTextColor(100, 116, 139);
-  doc.text("Dean OEL: Ms. Ammara Awais Raoof  |  Director OEL: Dr. Muhammad Shafique", 84, 26.5);
+  doc.text("Dean OSA: Ms. Ammara Awais Raoof  |  Director OEL: Dr. Muhammad Shafique", 84, 26.5);
 
   doc.setFillColor(9, 31, 84);
   doc.roundedRect(pageWidth - 75, 7, 61, 15, 3, 3, "F");
@@ -3739,7 +3739,7 @@ function addPdfFooter(doc) {
     doc.text("THE UNIVERSITY OF LAHORE - Office of External Linkages", 14, height - 9.5);
     doc.setFontSize(6.8);
     doc.setTextColor(120, 130, 145);
-    doc.text("Dean OEL: Ms. Ammara Awais Raoof  |  Director OEL: Dr. Muhammad Shafique", 14, height - 5.5);
+    doc.text("Dean OSA: Ms. Ammara Awais Raoof  |  Director OEL: Dr. Muhammad Shafique", 14, height - 5.5);
     doc.setFontSize(7.8);
     doc.setTextColor(100, 116, 139);
     doc.text(`Page ${page - 1} of ${pages - 1}`, width - 14, height - 8, { align: "right" });
