@@ -69,6 +69,42 @@ function norm(value) {
 }
 
 
+function normalizeDisplayText(value) {
+
+  let text = clean(value);
+
+  if (!text) {
+    return "";
+  }
+
+  // Fix OCR / extracted text where letters are split with spaces,
+  // e.g. "H e a l t h" -> "Health".
+  text = text.replace(/\s*([,.;:!?()\/])\s*/g, "$1 ");
+  text = text.replace(/\s*-\s*/g, "-");
+  text = text.replace(/\s{2,}/g, " ").trim();
+
+  const collapseSingleLetterWords = input =>
+    input.replace(/\b(?:[A-Za-z]\s+){2,}[A-Za-z]\b/g, match =>
+      match.replace(/\s+/g, "")
+    );
+
+  let prev = "";
+  while (text !== prev) {
+    prev = text;
+    text = collapseSingleLetterWords(text);
+  }
+
+  // Tidy punctuation spacing after collapsing.
+  text = text
+    .replace(/\s+([,.;:!?])/g, "$1")
+    .replace(/([,.;:!?])(\S)/g, "$1 $2")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+  return text;
+}
+
+
 function val(
   row,
   names
@@ -3443,6 +3479,220 @@ function detailRows(rows) {
   ]);
 }
 
+function expectedOutcomeBullets(rows) {
+  const present = new Set(rows.map(row => clean(row.type)).filter(Boolean));
+  const rules = [
+    ["Internship / Placement", "Internship / Placement: Improve student employability and workplace readiness by expanding structured opportunities for practical training, professional exposure and recruitment. Expected results include stronger employer networks, improved job-readiness, better understanding of workplace standards and a clearer pathway from academic learning to employment."],
+    ["Alumni Talk / Mentoring", "Alumni Talk / Mentoring: Strengthen alumni participation in student development through career guidance, mentoring, networking and sharing of professional experience. Expected results include improved career awareness, stronger alumni-student connections and access to sector-specific advice and opportunities."],
+    ["Industrial Visit / IV", "Industrial Visit / IV: Provide direct exposure to operational environments, technologies, professional practices and organizational systems. Expected results include improved understanding of industry processes, stronger application of classroom learning and increased awareness of workplace expectations."],
+    ["Seminar", "Seminar: Enhance knowledge exchange by connecting students and faculty with external experts, practitioners and current developments in relevant disciplines. Expected results include improved professional awareness, updated subject knowledge and opportunities for academic and industry networking."],
+    ["Guest Lecture / GLIT", "Guest Lecture / GLIT: Integrate industry and external-expert perspectives into teaching and learning. Expected results include stronger understanding of real-world practices, emerging trends, career pathways and professional competencies required by employers."],
+    ["Research Collaboration", "Research Collaboration: Expand joint research, interdisciplinary projects, access to external expertise and opportunities for collaborative publications or funded proposals. Expected results include stronger research networks, improved research impact and greater institutional visibility."],
+    ["MoU / MoU Signing", "MoU / MoU Signing: Formalize sustainable relationships with academic institutions, industry, government, NGOs and international partners. Expected results include a structured framework for internships, research, faculty/student exchange, training, joint events and future collaborative initiatives."],
+    ["Curriculum Feedback", "Curriculum Feedback: Incorporate employer, professional and external stakeholder feedback into academic planning. Expected results include improved curriculum relevance, stronger alignment with labour-market needs and identification of skill gaps that can be addressed through programme improvement."],
+    ["Community Engagement", "Community Engagement: Increase the university's contribution to society through outreach, awareness, service and collaborative community initiatives. Expected results include stronger social impact, improved stakeholder relationships and increased opportunities for experiential learning."],
+    ["Workshop", "Workshop: Build practical and professional capacity through hands-on training, demonstrations and applied learning. Expected results include development of technical and soft skills, improved confidence in applying knowledge and exposure to current tools and professional practices."],
+    ["IAB / Industry Consultation", "IAB / Industry Consultation: Strengthen systematic industry participation in academic and strategic planning. Expected results include actionable employer input, programme improvement, stronger university-industry coordination and better alignment of graduate competencies with sector requirements."],
+    ["Conference", "Conference: Promote scholarly exchange, dissemination of research, professional networking and institutional visibility. Expected results include exposure to current research and practice, development of academic networks and opportunities for future collaborative research and professional engagement."],
+    ["Others", "Other External-Linkage Activities: Support additional initiatives that contribute to institutional engagement, external visibility, partnership development or student and faculty development. Expected outcomes should be assessed against the specific purpose and measurable results of each activity."]
+  ];
+
+  const bullets = rules.filter(([type]) => present.has(type)).map(([, outcome]) => outcome);
+  if (!bullets.length) {
+    bullets.push("Overall Expected Outcome: Strengthen external engagement and convert planned activities into measurable academic, professional and institutional outcomes through sustained partnerships, documented implementation and evidence of impact.");
+  }
+  return bullets;
+}
+
+function reportManagementRemarks(rows) {
+  const total = rows.reduce((sum, row) => sum + rowAmount(row), 0);
+  const activity = activityBreakdown(rows);
+  const departments = new Set(rows.map(row => clean(row.department)).filter(Boolean));
+  const faculties = new Set(rows.map(row => clean(row.faculty)).filter(Boolean));
+  const remarks = [];
+
+  if (total > 0) {
+    remarks.push(`Overall review: The selected report contains ${total.toLocaleString()} reported activity outcomes across ${departments.size} department${departments.size === 1 ? "" : "s"} and ${faculties.size} facult${faculties.size === 1 ? "y" : "ies"}. The figures should be reviewed together with supporting evidence and completion status to distinguish planned activity from executed and verified outcomes.`);
+  }
+
+  if (activity.length) {
+    const [topType, topValue] = activity[0];
+    const pct = total ? ((topValue / total) * 100).toFixed(1) : "0.0";
+    remarks.push(`Activity concentration: ${topType} is the largest activity category with ${topValue.toLocaleString()} reported outcomes (${pct}% of the selected total). OEL may review whether the portfolio is sufficiently balanced across employability, partnerships, research collaboration, industry consultation, curriculum engagement and other strategic linkage areas.`);
+  }
+
+  const mou = activity.find(([type]) => type === "MoU / MoU Signing");
+  if (mou) {
+    remarks.push(`Partnership follow-through: ${mou[1].toLocaleString()} MoU / MoU Signing outcome${mou[1] === 1 ? " is" : "s are"} reported. Departments should link each formal partnership with subsequent activities, responsible persons, timelines, evidence and measurable benefits so that signed agreements translate into active collaboration.`);
+  }
+
+  const internship = activity.find(([type]) => type === "Internship / Placement");
+  if (internship) {
+    remarks.push(`Employability follow-through: ${internship[1].toLocaleString()} Internship / Placement outcome${internship[1] === 1 ? " is" : "s are"} reported. Departments should maintain organization-wise evidence, student participation records, completion status and, where possible, conversion to employment or other measurable career outcomes.`);
+  }
+
+  const research = activity.find(([type]) => type === "Research Collaboration");
+  if (research) {
+    remarks.push(`Research follow-through: ${research[1].toLocaleString()} Research Collaboration outcome${research[1] === 1 ? " is" : "s are"} reported. Future monitoring should capture resulting proposals, publications, grants, shared facilities, researcher exchanges or other tangible research outputs.`);
+  }
+
+  remarks.push("Monitoring recommendation: For the next review cycle, departments should report progress against semester plans using clear status categories (planned, scheduled, executed and completed), attach supporting evidence and state the actual outcome achieved for students, faculty, partners or the institution.");
+
+  return remarks;
+}
+
+function reportRemarksBullets(rows) {
+  const seen = new Set();
+  const remarks = [];
+
+  rows.forEach(row => {
+    const value = normalizeDisplayText(row.remarks);
+    if (!value || isInvalidLabel(value)) return;
+    const normalized = value.toLowerCase().replace(/\s+/g, " ").trim();
+    if (!normalized || seen.has(normalized)) return;
+    seen.add(normalized);
+    remarks.push(value);
+  });
+
+  return remarks.slice(0, 18);
+}
+
+function drawPdfBulletSection(doc, title, bullets, startY, options = {}) {
+  const left = options.left || 18;
+  const right = options.right || 18;
+  const width = doc.internal.pageSize.getWidth();
+  const maxWidth = width - left - right - 8;
+  let y = startY;
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12.5);
+  doc.setTextColor(9, 31, 84);
+  doc.text(title, left, y);
+  y += 7;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9.1);
+  doc.setTextColor(15, 23, 42);
+
+  bullets.forEach(text => {
+    const lines = doc.splitTextToSize(String(text), maxWidth);
+    doc.setFont("helvetica", "bold");
+    doc.text("•", left + 1, y);
+    doc.setFont("helvetica", "normal");
+    doc.text(lines, left + 6, y, { lineHeightFactor: 1.35 });
+    y += Math.max(6, lines.length * 4.25 + 2.5);
+  });
+
+  return y;
+}
+
+function addPdfExpectedOutcomesPage(doc, section, sectionIndex, sectionCount, logoDataUrl = "") {
+  const outcomes = expectedOutcomeBullets(section.rows);
+
+  const pageSection = {
+    ...section,
+    subtitle: `${section.subtitle || ""} - Detailed Expected Outcomes`
+  };
+
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const bottomLimit = pageHeight - 28;
+
+  const newContinuationPage = () => {
+    doc.addPage();
+    addPdfHeader(doc, pageSection, sectionIndex, sectionCount, "EXPECTED OUTCOMES", logoDataUrl);
+    return 60;
+  };
+
+  const drawPagedBullets = (title, bullets, y) => {
+    if (y > bottomLimit - 25) y = newContinuationPage();
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12.5);
+    doc.setTextColor(9, 31, 84);
+    doc.text(title, 18, y);
+    y += 7;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9.4);
+    doc.setTextColor(0, 0, 0);
+    const maxWidth = doc.internal.pageSize.getWidth() - 44;
+
+    bullets.forEach(text => {
+      const lines = doc.splitTextToSize(String(text), maxWidth);
+      const needed = Math.max(7, lines.length * 4.25 + 3);
+      if (y + needed > bottomLimit) {
+        y = newContinuationPage();
+      }
+      doc.setFont("helvetica", "bold");
+      doc.text("•", 19, y);
+      doc.setFont("helvetica", "normal");
+      doc.text(lines, 24, y, { lineHeightFactor: 1.35 });
+      y += needed;
+    });
+    return y;
+  };
+
+  addPdfHeader(doc, pageSection, sectionIndex, sectionCount, "EXPECTED OUTCOMES", logoDataUrl);
+  drawPagedBullets("Detailed Expected Outcomes", outcomes, 60);
+}
+
+function addPdfRemarksPage(doc, section, sectionIndex, sectionCount, logoDataUrl = "") {
+  const managementRemarks = reportManagementRemarks(section.rows);
+  const recordedRemarks = reportRemarksBullets(section.rows);
+
+  const pageSection = {
+    ...section,
+    subtitle: `${section.subtitle || ""} - Detailed Remarks`
+  };
+
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const bottomLimit = pageHeight - 28;
+
+  const newContinuationPage = () => {
+    doc.addPage();
+    addPdfHeader(doc, pageSection, sectionIndex, sectionCount, "REMARKS", logoDataUrl);
+    return 60;
+  };
+
+  const drawPagedBullets = (title, bullets, y) => {
+    if (y > bottomLimit - 25) y = newContinuationPage();
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12.5);
+    doc.setTextColor(9, 31, 84);
+    doc.text(title, 18, y);
+    y += 7;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9.4);
+    doc.setTextColor(0, 0, 0);
+    const maxWidth = doc.internal.pageSize.getWidth() - 44;
+
+    bullets.forEach(text => {
+      const lines = doc.splitTextToSize(String(text), maxWidth);
+      const needed = Math.max(7, lines.length * 4.25 + 3);
+      if (y + needed > bottomLimit) {
+        y = newContinuationPage();
+      }
+      doc.setFont("helvetica", "bold");
+      doc.text("•", 19, y);
+      doc.setFont("helvetica", "normal");
+      doc.text(lines, 24, y, { lineHeightFactor: 1.35 });
+      y += needed;
+    });
+    return y;
+  };
+
+  addPdfHeader(doc, pageSection, sectionIndex, sectionCount, "REMARKS", logoDataUrl);
+
+  let y = drawPagedBullets("Management Review Remarks", managementRemarks, 60);
+  y += 5;
+
+  const actualRemarks = recordedRemarks.length
+    ? recordedRemarks
+    : ["No specific Remarks / Result text was recorded in the filtered source data. This is a source-data gap and should be completed by the responsible department or focal person where applicable."];
+  drawPagedBullets("Recorded Remarks / Results", actualRemarks, y);
+}
 
 
 function addPdfLogo(doc, logoDataUrl, x, y, maxWidth, maxHeight) {
@@ -3527,7 +3777,7 @@ doc.setFillColor(255, 255, 255);
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8.5);
-  doc.setTextColor(100, 116, 139);
+  doc.setTextColor(0, 0, 0);
   doc.text(`Generated on: ${reportGeneratedOn()}`, width / 2, 180, { align: "center" });
 
   doc.setFillColor(9, 31, 84);
@@ -3568,7 +3818,7 @@ function addFacultyDividerPage(doc, section, logoDataUrl = "") {
   doc.text(titleLines, 20, 84);
 
   const titleExtra = Math.max(0, titleLines.length - 1) * 9;
-  doc.setTextColor(71, 85, 105);
+  doc.setTextColor(0, 0, 0);
   doc.setFontSize(11);
   doc.text("Faculty-wise activity summary and detailed report", 20, 106 + titleExtra);
 
@@ -3586,7 +3836,7 @@ function addFacultyDividerPage(doc, section, logoDataUrl = "") {
     doc.setFillColor(255, 255, 255);
     doc.setDrawColor(207, 224, 216);
     doc.roundedRect(x, y, cardW, 30, 3, 3, "FD");
-    doc.setTextColor(100, 116, 139);
+    doc.setTextColor(0, 0, 0);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(8.5);
     doc.text(item[0].toUpperCase(), x + 5, y + 9);
@@ -3599,6 +3849,9 @@ function addFacultyDividerPage(doc, section, logoDataUrl = "") {
 function addPdfHeader(doc, section, sectionIndex, sectionCount, label = "ACTIVITY REPORT", logoDataUrl = "") {
   const pageWidth = doc.internal.pageSize.getWidth();
 
+  // IMPORTANT: only paint the header band here. autoTable calls this function
+  // from didDrawPage after table rows have been rendered; painting the whole
+  // page here would erase the Faculty, Activity and Department tables.
   doc.setFillColor(255, 255, 255);
   doc.rect(0, 0, pageWidth, 35, "F");
   doc.setFillColor(11, 107, 58);
@@ -3613,10 +3866,10 @@ function addPdfHeader(doc, section, sectionIndex, sectionCount, label = "ACTIVIT
   doc.setFontSize(12.5);
   doc.text("OFFICE OF EXTERNAL LINKAGES", 84, 13);
   doc.setFontSize(8.5);
-  doc.setTextColor(71, 85, 105);
+  doc.setTextColor(0, 0, 0);
   doc.text("External Linkages Intelligence Management System", 84, 20.5);
   doc.setFontSize(7.2);
-  doc.setTextColor(100, 116, 139);
+  doc.setTextColor(0, 0, 0);
   doc.text("Dean OSA: Ms. Ammara Awais Raoof  |  Director OEL: Dr. Muhammad Shafique", 84, 26.5);
 
   doc.setFillColor(9, 31, 84);
@@ -3633,11 +3886,11 @@ function addPdfHeader(doc, section, sectionIndex, sectionCount, label = "ACTIVIT
   doc.text(title.slice(0, 1), 14, 45);
 
   doc.setFontSize(8.7);
-  doc.setTextColor(71, 85, 105);
+  doc.setTextColor(0, 0, 0);
   doc.text(section.subtitle || "", 14, 51);
 
   doc.setFontSize(8.2);
-  doc.setTextColor(100, 116, 139);
+  doc.setTextColor(0, 0, 0);
   doc.text(`Section ${sectionIndex + 1} of ${sectionCount}`, pageWidth - 14, 44, { align: "right" });
   doc.text(`Generated: ${reportGeneratedOn()}`, pageWidth - 14, 50.5, { align: "right" });
 }
@@ -3653,13 +3906,13 @@ function addPdfFooter(doc) {
     doc.line(14, height - 14, width - 14, height - 14);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(7.8);
-    doc.setTextColor(100, 116, 139);
+    doc.setTextColor(0, 0, 0);
     doc.text("THE UNIVERSITY OF LAHORE - Office of External Linkages", 14, height - 9.5);
     doc.setFontSize(6.8);
-    doc.setTextColor(120, 130, 145);
+    doc.setTextColor(0, 0, 0);
     doc.text("Dean OSA: Ms. Ammara Awais Raoof  |  Director OEL: Dr. Muhammad Shafique", 14, height - 5.5);
     doc.setFontSize(7.8);
-    doc.setTextColor(100, 116, 139);
+    doc.setTextColor(0, 0, 0);
     doc.text(`Page ${page - 1} of ${pages - 1}`, width - 14, height - 8, { align: "right" });
   }
 }
@@ -3996,7 +4249,7 @@ function drawPdfDashboardGraphPair(doc, leftItem, rightItem, section, startY = 8
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7.3);
-    doc.setTextColor(100, 116, 139);
+    doc.setTextColor(0, 0, 0);
     doc.text(subtitle, x + 3, y + 11);
 
     const imageTop = y + 13;
@@ -4099,6 +4352,7 @@ async function generatePdfReport() {
     const meta = reportMeta(section.rows);
     const breakdown = activityBreakdown(section.rows);
     const facultyBreakdown = reportGroupBy(section.rows, "faculty");
+    const departmentBreakdown = reportGroupBy(section.rows, "department");
     const focalPeople = focalPersonBreakdown(section.rows);
     const sectionTotal = reportAmount(section.rows);
 
@@ -4228,25 +4482,24 @@ async function generatePdfReport() {
       });
     }
 
-    // ---------- FOCAL PERSON PAGE ----------
-    if (focalPeople.length) {
+    // ---------- DEPARTMENT-WISE BREAKDOWN PAGE ----------
+    if (departmentBreakdown.length) {
       doc.addPage();
-      const focalSection = { ...section, subtitle: `${section.subtitle || ""} - Focal Person Summary` };
-      addPdfHeader(doc, focalSection, index, sections.length, "FOCAL PERSONS", logoDataUrl);
-      const focalStartY = 58;
+      const departmentTableSection = { ...section, subtitle: `${section.subtitle || ""} - Department-wise Activities` };
+      addPdfHeader(doc, departmentTableSection, index, sections.length, "DEPARTMENT-WISE ACTIVITIES", logoDataUrl);
+      const departmentStartY = 58;
       doc.autoTable({
-        startY: focalStartY,
-        head: [["FOCAL PERSON", "DESIGNATION", "DEPARTMENT", "ACTIVITY TOTAL", "PERCENTAGE"]],
-        body: focalPeople.map(item => [
-          item.name,
-          item.designation,
-          item.department,
-          item.total.toLocaleString(),
-          reportPercentage(item.total, sectionTotal)
+        startY: departmentStartY,
+        head: [["DEPARTMENT", "TOTAL ACTIVITIES", "PERCENTAGE"]],
+        body: departmentBreakdown.map(([department, total]) => [
+          department,
+          Number(total).toLocaleString(),
+          reportPercentage(total, sectionTotal)
         ]),
         theme: "grid",
         styles: {
-          fontSize: 8.8,
+          fontSize: 9.0,
+          fontStyle: "bold",
           cellPadding: 3.0,
           lineColor: [193, 204, 218],
           lineWidth: 0.22,
@@ -4254,25 +4507,31 @@ async function generatePdfReport() {
           textColor: [15, 23, 42]
         },
         headStyles: {
-          fillColor: [11, 107, 58],
+          fillColor: [9, 31, 84],
           textColor: [255, 255, 255],
           fontStyle: "bold",
-          fontSize: 9.2
+          fontSize: 9.4
         },
-        alternateRowStyles: { fillColor: [246, 251, 248] },
+        alternateRowStyles: { fillColor: [248, 250, 252] },
         columnStyles: {
-          0: { cellWidth: 50, fontStyle: "bold" },
-          1: { cellWidth: 47 },
-          2: { cellWidth: 90 },
-          3: { cellWidth: 32, halign: "right", fontStyle: "bold" },
-          4: { cellWidth: 33, halign: "right", fontStyle: "bold" }
+          0: { cellWidth: 176 },
+          1: { cellWidth: 38, halign: "right", fontStyle: "bold" },
+          2: { cellWidth: 38, halign: "right", fontStyle: "bold" }
         },
-        margin: { left: 14, right: 14, top: focalStartY, bottom: 18 },
+        margin: { left: 14, right: 14, top: departmentStartY, bottom: 18 },
         didDrawPage: () => {
-          addPdfHeader(doc, focalSection, index, sections.length, "FOCAL PERSONS", logoDataUrl);
+          addPdfHeader(doc, departmentTableSection, index, sections.length, "DEPARTMENT-WISE ACTIVITIES", logoDataUrl);
         }
       });
     }
+
+    // ---------- EXPECTED OUTCOMES ----------
+    doc.addPage();
+    addPdfExpectedOutcomesPage(doc, section, index, sections.length, logoDataUrl);
+
+    // ---------- REMARKS ----------
+    doc.addPage();
+    addPdfRemarksPage(doc, section, index, sections.length, logoDataUrl);
 
     // ---------- GRAPH PAGES: ONE GRAPH PER PAGE FOR MAXIMUM VISIBILITY ----------
     const sectionCharts = await buildSectionCharts(section);
@@ -4387,9 +4646,11 @@ async function printReport() {
   for (const section of sections) {
     const meta = reportMeta(section.rows);
     const breakdown = activityBreakdown(section.rows);
+    const facultyBreakdown = reportGroupBy(section.rows, "faculty");
+    const departmentBreakdown = reportGroupBy(section.rows, "department");
+    const sectionTotal = reportAmount(section.rows);
     const rows = detailRows(section.rows);
     const charts = await buildSectionCharts(section);
-    const focalPeople = focalPersonBreakdown(section.rows).slice(0, 10);
 
     sectionHtmlParts.push(`
       <section class="report-section">
@@ -4411,38 +4672,57 @@ async function printReport() {
           ${meta.map(item => `<div class="kpi"><span>${esc(item[0])}</span><strong>${esc(item[1])}</strong></div>`).join("")}
         </div>
 
-        <div class="summary-grid">
-          <div>
-            <h2>Activity Breakdown</h2>
-            <table class="small"><thead><tr><th>Activity Type</th><th>Total</th></tr></thead><tbody>
-              ${breakdown.map(item => `<tr><td>${esc(item[0])}</td><td>${esc(item[1].toLocaleString())}</td></tr>`).join("")}
-            </tbody></table>
-          </div>
-          <div>
-            ${buildPrintFocalPersonsHtml(focalPeople)}
-          </div>
+        <div class="report-subsection page-section">
+          <h2>Faculty-wise Activities</h2>
+          <table class="small faculty-table"><thead><tr><th>Faculty</th><th>Total Activities</th><th>Percentage</th></tr></thead><tbody>
+            ${facultyBreakdown.length
+              ? facultyBreakdown.map(([faculty,total]) => `<tr><td>${esc(faculty)}</td><td>${esc(Number(total).toLocaleString())}</td><td>${esc(reportPercentage(total, sectionTotal))}</td></tr>`).join("")
+              : `<tr><td>-</td><td>0</td><td>0.0%</td></tr>`}
+          </tbody></table>
+        </div>
+
+        <div class="report-subsection page-section">
+          <h2>Activity Breakdown</h2>
+          <table class="small activity-table"><thead><tr><th>Activity Type</th><th>Total</th><th>Percentage</th></tr></thead><tbody>
+            ${breakdown.length
+              ? breakdown.map(([type,total]) => `<tr><td>${esc(type)}</td><td>${esc(Number(total).toLocaleString())}</td><td>${esc(reportPercentage(total, sectionTotal))}</td></tr>`).join("")
+              : `<tr><td>-</td><td>0</td><td>0.0%</td></tr>`}
+          </tbody></table>
+        </div>
+
+        <div class="report-subsection page-section">
+          <h2>Department-wise Activities</h2>
+          <table class="small department-table"><thead><tr><th>Department</th><th>Total Activities</th><th>Percentage</th></tr></thead><tbody>
+            ${departmentBreakdown.length
+              ? departmentBreakdown.map(([department,total]) => `<tr><td>${esc(department)}</td><td>${esc(Number(total).toLocaleString())}</td><td>${esc(reportPercentage(total, sectionTotal))}</td></tr>`).join("")
+              : `<tr><td>-</td><td>0</td><td>0.0%</td></tr>`}
+          </tbody></table>
         </div>
 
         ${buildPrintGraphsHtml(charts)}
 
+        <div class="page-section detailed-records-section">
         <h2>Detailed Records</h2>
         <table><thead><tr><th>Month</th><th>Department</th><th>Activity Type</th><th>How Many</th><th>Organization</th><th>Focal Person</th><th>Designation</th><th>Scheduled</th></tr></thead><tbody>
           ${rows.map(cols => `<tr>${cols.map(col => `<td>${esc(col)}</td>`).join("")}</tr>`).join("")}
         </tbody></table>
+        </div>
       </section>`);
   }
 
   popup.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc(reportFileName("pdf").replace(".pdf", ""))}</title>
     <style>
       @page{size:A4 landscape;margin:12mm}
-      *{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#0f172a;margin:0;background:#fff}
+      *{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#000000;margin:0;background:#fff}
       .report-section{page-break-after:always}.report-section:last-child{page-break-after:auto}
       .report-head{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,#091f54,#0b2d74);color:white;padding:14px 16px;border-radius:10px;border-bottom:5px solid #0b6b3a}
       .head-left{display:flex;align-items:center;gap:12px}.report-logo{width:56px;height:56px;border-radius:50%;background:#fff;padding:2px}
       .university{font-size:18px;font-weight:800;letter-spacing:.4px}.office{font-size:11px;margin-top:4px}.report-label{font-size:12px;font-weight:800;background:#fff;color:#091f54;padding:8px 12px;border-radius:20px}
-      h1{font-size:20px;margin:18px 0 2px}.subtitle{color:#64748b;font-size:11px;margin-bottom:4px}.generated-on{font-size:10px;color:#64748b;margin-bottom:12px}h2{font-size:13px;margin:16px 0 7px}
-      .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.kpi{border:1px solid #dbe4f0;border-radius:7px;padding:8px;background:#f8fafc}.kpi span{display:block;font-size:9px;color:#64748b}.kpi strong{font-size:15px}
+      h1{font-size:20px;margin:18px 0 2px}.subtitle{color:#000000;font-size:11px;margin-bottom:4px}.generated-on{font-size:10px;color:#000000;margin-bottom:12px}h2{font-size:13px;margin:16px 0 7px}
+      .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.kpi{border:1px solid #dbe4f0;border-radius:7px;padding:8px;background:#f8fafc}.kpi span{display:block;font-size:9px;color:#000000}.kpi strong{font-size:15px}
       .summary-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:12px;align-items:start}
+      .report-subsection{margin-top:14px}.page-section{break-before:page;page-break-before:always}.report-subsection:first-of-type{break-before:auto;page-break-before:auto}
+      .faculty-table th,.department-table th{background:#091f54}.activity-table th{background:#0b6b3a}
       .graph-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:10px 0 14px}.graph-card{border:1px solid #dbe4f0;border-radius:8px;padding:8px;background:#fff}.graph-title{font-size:11px;font-weight:700;margin-bottom:6px}.graph-card img{width:100%;height:250px;object-fit:contain;display:block;background:#fff}
       table{width:100%;border-collapse:collapse;font-size:8px;table-layout:fixed}th{background:#17365d;color:white;text-align:left;padding:5px;border:1px solid #dbe4f0}td{padding:4px;border:1px solid #dbe4f0;vertical-align:top;word-break:break-word}.small,.focal-table{width:100%;table-layout:auto}.small th{background:#7c3aed}.focal-table th{background:#0b6b3a}
       @media print{button{display:none}}
