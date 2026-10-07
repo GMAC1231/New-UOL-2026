@@ -1759,6 +1759,17 @@ function barChart(
       data
     );
 
+  const chartTotal =
+    values.reduce(
+      (sum, value) => sum + Number(value || 0),
+      0
+    );
+
+  const chartPercent = value =>
+    chartTotal > 0
+      ? ((Number(value || 0) / chartTotal) * 100).toFixed(1) + "%"
+      : "0.0%";
+
   if (
     wrapper &&
     $(wrapper)
@@ -1863,6 +1874,15 @@ function barChart(
 
               display:
                 false
+            },
+
+            tooltip: {
+              callbacks: {
+                label: context => {
+                  const value = Number(context.raw || 0);
+                  return `${value.toLocaleString()} (${chartPercent(value)})`;
+                }
+              }
             }
           },
 
@@ -1892,11 +1912,24 @@ function barChart(
                     value
                   ) {
 
-                    return wrapLabel(
+                    const label =
                       this
                         .getLabelForValue(
                           value
-                        ),
+                        );
+
+                    const index =
+                      labels.indexOf(
+                        label
+                      );
+
+                    const pct =
+                      index >= 0
+                        ? chartPercent(values[index])
+                        : "0.0%";
+
+                    return wrapLabel(
+                      `${label} (${pct})`,
                       30
                     );
                   },
@@ -1990,6 +2023,17 @@ function activityChart() {
       ) =>
         value
     );
+
+  const activityTotal =
+    values.reduce(
+      (sum, value) => sum + Number(value || 0),
+      0
+    );
+
+  const activityPercent = value =>
+    activityTotal > 0
+      ? ((Number(value || 0) / activityTotal) * 100).toFixed(1) + "%"
+      : "0.0%";
 
   const palette =
     [
@@ -2096,6 +2140,16 @@ function activityChart() {
 
               display:
                 false
+            },
+
+            tooltip: {
+              callbacks: {
+                label: context => {
+                  const value = Number(context.raw || 0);
+                  const label = context.label || "";
+                  return `${label}: ${value.toLocaleString()} (${activityPercent(value)})`;
+                }
+              }
             }
           }
         }
@@ -2125,6 +2179,17 @@ function renderActivityLegend(
     return;
   }
 
+  const total =
+    values.reduce(
+      (sum, value) => sum + Number(value || 0),
+      0
+    );
+
+  const pct = value =>
+    total > 0
+      ? ((Number(value || 0) / total) * 100).toFixed(1) + "%"
+      : "0.0%";
+
   legend.innerHTML =
     labels.map(
       (
@@ -2148,7 +2213,7 @@ function renderActivityLegend(
           </span>
 
           <strong class="activity-legend-value">
-            ${Number(values[index] || 0).toLocaleString()}
+            ${Number(values[index] || 0).toLocaleString()} (${pct(values[index])})
           </strong>
 
         </button>
@@ -2285,6 +2350,12 @@ function monthlyChart() {
 
   const labels = Object.keys(result).sort((a, b) => semesterSortKey(a) - semesterSortKey(b));
 
+  const semesterTotal = Object.values(result).reduce((sum, value) => sum + Number(value || 0), 0);
+  const semesterPercent = value =>
+    semesterTotal > 0
+      ? ((Number(value || 0) / semesterTotal) * 100).toFixed(1) + "%"
+      : "0.0%";
+
   charts.monthChart =
     new Chart(
       canvas,
@@ -2313,7 +2384,15 @@ function monthlyChart() {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { display: false }
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: context => {
+                  const value = Number(context.raw || 0);
+                  return `${value.toLocaleString()} (${semesterPercent(value)})`;
+                }
+              }
+            }
           },
           scales: {
             y: {
@@ -3271,6 +3350,13 @@ function reportAmount(rows) {
   return rows.reduce((sum, row) => sum + rowAmount(row), 0);
 }
 
+function reportPercentage(value, total) {
+  const n = Number(value) || 0;
+  const t = Number(total) || 0;
+  if (t <= 0) return "0.0%";
+  return `${((n / t) * 100).toFixed(1)}%`;
+}
+
 function reportScheduled(rows) {
   return rows
     .filter(row => yes(row.scheduled))
@@ -3570,7 +3656,7 @@ doc.setFillColor(255, 255, 255);
   doc.setTextColor(9, 31, 84);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(22);
-  doc.text("OFFICIAL ACTIVITY INTELLIGENCE REPORT", width / 2, 97, { align: "center" });
+  doc.text("External Linkages Intelligence Management System", width / 2, 97, { align: "center" });
   const cardX = 40;
   const cardW = width - 80;
 
@@ -3696,7 +3782,7 @@ function addPdfHeader(doc, section, sectionIndex, sectionCount, label = "ACTIVIT
   doc.text("OFFICE OF EXTERNAL LINKAGES", 84, 13);
   doc.setFontSize(8.5);
   doc.setTextColor(71, 85, 105);
-  doc.text("Official Activity Intelligence Report", 84, 20.5);
+  doc.text("External Linkages Intelligence Management System", 84, 20.5);
   doc.setFontSize(7.2);
   doc.setTextColor(100, 116, 139);
   doc.text("Dean OSA: Ms. Ammara Awais Raoof  |  Director OEL: Dr. Muhammad Shafique", 84, 26.5);
@@ -4182,6 +4268,7 @@ async function generatePdfReport() {
     const breakdown = activityBreakdown(section.rows);
     const facultyBreakdown = reportGroupBy(section.rows, "faculty");
     const focalPeople = focalPersonBreakdown(section.rows);
+    const sectionTotal = reportAmount(section.rows);
 
     // A faculty report always begins with its own clean divider page.
     doc.addPage();
@@ -4231,8 +4318,12 @@ async function generatePdfReport() {
       const facultyStartY = 58;
       doc.autoTable({
         startY: facultyStartY,
-        head: [["FACULTY", "TOTAL ACTIVITIES"]],
-        body: facultyBreakdown.map(([faculty, total]) => [faculty, Number(total).toLocaleString()]),
+        head: [["FACULTY", "TOTAL ACTIVITIES", "PERCENTAGE"]],
+        body: facultyBreakdown.map(([faculty, total]) => [
+          faculty,
+          Number(total).toLocaleString(),
+          reportPercentage(total, sectionTotal)
+        ]),
         theme: "grid",
         styles: {
           fontSize: 9.1,
@@ -4251,8 +4342,9 @@ async function generatePdfReport() {
         },
         alternateRowStyles: { fillColor: [248, 250, 252] },
         columnStyles: {
-          0: { cellWidth: 210 },
-          1: { cellWidth: 42, halign: "right", fontStyle: "bold" }
+          0: { cellWidth: 176 },
+          1: { cellWidth: 38, halign: "right", fontStyle: "bold" },
+          2: { cellWidth: 38, halign: "right", fontStyle: "bold" }
         },
         margin: { left: 14, right: 14, top: facultyStartY, bottom: 18 },
         didDrawPage: () => {
@@ -4269,8 +4361,12 @@ async function generatePdfReport() {
       const typeStartY = 58;
       doc.autoTable({
         startY: typeStartY,
-        head: [["ACTIVITY TYPE", "TOTAL"]],
-        body: breakdown.map(([type, total]) => [type, total.toLocaleString()]),
+        head: [["ACTIVITY TYPE", "TOTAL", "PERCENTAGE"]],
+        body: breakdown.map(([type, total]) => [
+          type,
+          total.toLocaleString(),
+          reportPercentage(total, sectionTotal)
+        ]),
         theme: "grid",
         styles: {
           fontSize: 9.1,
@@ -4289,8 +4385,9 @@ async function generatePdfReport() {
         },
         alternateRowStyles: { fillColor: [246, 251, 248] },
         columnStyles: {
-          0: { cellWidth: 210 },
-          1: { cellWidth: 42, halign: "right", fontStyle: "bold" }
+          0: { cellWidth: 176 },
+          1: { cellWidth: 38, halign: "right", fontStyle: "bold" },
+          2: { cellWidth: 38, halign: "right", fontStyle: "bold" }
         },
         margin: { left: 14, right: 14, top: typeStartY, bottom: 18 },
         didDrawPage: () => {
@@ -4307,12 +4404,13 @@ async function generatePdfReport() {
       const focalStartY = 58;
       doc.autoTable({
         startY: focalStartY,
-        head: [["FOCAL PERSON", "DESIGNATION", "DEPARTMENT", "ACTIVITY TOTAL"]],
+        head: [["FOCAL PERSON", "DESIGNATION", "DEPARTMENT", "ACTIVITY TOTAL", "PERCENTAGE"]],
         body: focalPeople.map(item => [
           item.name,
           item.designation,
           item.department,
-          item.total.toLocaleString()
+          item.total.toLocaleString(),
+          reportPercentage(item.total, sectionTotal)
         ]),
         theme: "grid",
         styles: {
@@ -4331,10 +4429,11 @@ async function generatePdfReport() {
         },
         alternateRowStyles: { fillColor: [246, 251, 248] },
         columnStyles: {
-          0: { cellWidth: 60, fontStyle: "bold" },
-          1: { cellWidth: 55 },
-          2: { cellWidth: 105 },
-          3: { cellWidth: 32, halign: "right", fontStyle: "bold" }
+          0: { cellWidth: 50, fontStyle: "bold" },
+          1: { cellWidth: 47 },
+          2: { cellWidth: 90 },
+          3: { cellWidth: 32, halign: "right", fontStyle: "bold" },
+          4: { cellWidth: 33, halign: "right", fontStyle: "bold" }
         },
         margin: { left: 14, right: 14, top: focalStartY, bottom: 18 },
         didDrawPage: () => {
@@ -4467,7 +4566,7 @@ async function printReport() {
             ${logoDataUrl ? `<img class="report-logo" src="${logoDataUrl}" alt="UOL Logo">` : ""}
             <div>
               <div class="university">THE UNIVERSITY OF LAHORE</div>
-              <div class="office">Office of External Linkages • Official Activity Intelligence Report</div>
+              <div class="office">External Linkages Intelligence Management System</div>
             </div>
           </div>
           <div class="report-label">ACTIVITY REPORT</div>
