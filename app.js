@@ -477,11 +477,17 @@ function buildIpBreakdownFromActivities() {
           "IP";
       }
 
+      const semester =
+        semesterFromMonth(
+          row.month
+        );
+
       const key =
         [
           row.faculty,
           row.department,
-          sourceType
+          sourceType,
+          semester
         ].join(
           "||"
         );
@@ -500,6 +506,9 @@ function buildIpBreakdownFromActivities() {
 
           sourceType:
             sourceType,
+
+          semester:
+            semester,
 
           students:
             0
@@ -618,17 +627,44 @@ function setSelectOptions(
 
 
 /* =========================================================
+   SEMESTER-FIRST CASCADING FILTERS
+
+   Semester
+      -> Faculty
+      -> Department
+      -> Activity Type
+      -> Organization
+   ========================================================= */
+
+function currentSemester() {
+  return $("monthFilter")?.value || "All";
+}
+
+function rowsForSemester(rows = allRows) {
+  const semester = currentSemester();
+
+  if (semester === "All") {
+    return [...rows];
+  }
+
+  return rows.filter(
+    row => semesterFromMonth(row.month) === semester
+  );
+}
+
+
+/* =========================================================
    FACULTY FILTER
+   Depends on Semester
    ========================================================= */
 
 function updateFacultyFilter() {
 
+  const rows = rowsForSemester(allRows);
+
   setSelectOptions(
     "facultyFilter",
-    allRows.map(
-      row =>
-        row.faculty
-    ),
+    rows.map(row => row.faculty),
     "All Faculties"
   );
 }
@@ -636,37 +672,25 @@ function updateFacultyFilter() {
 
 /* =========================================================
    DEPARTMENT FILTER
-   Depends on Faculty
+   Depends on Semester + Faculty
    ========================================================= */
 
 function updateDepartmentFilter() {
 
   const faculty =
-    $("facultyFilter")
-      ?.value ||
-    "All";
+    $("facultyFilter")?.value || "All";
 
-  let rows =
-    [...allRows];
+  let rows = rowsForSemester(allRows);
 
-  if (
-    faculty !== "All"
-  ) {
-
-    rows =
-      rows.filter(
-        row =>
-          row.faculty ===
-          faculty
-      );
+  if (faculty !== "All") {
+    rows = rows.filter(
+      row => row.faculty === faculty
+    );
   }
 
   setSelectOptions(
     "departmentFilter",
-    rows.map(
-      row =>
-        row.department
-    ),
+    rows.map(row => row.department),
     "All Departments"
   );
 }
@@ -674,46 +698,29 @@ function updateDepartmentFilter() {
 
 /* =========================================================
    ACTIVITY FILTER
-   Depends on Faculty + Department
+   Depends on Semester + Faculty + Department
    ========================================================= */
 
 function updateActivityFilter() {
 
   const faculty =
-    $("facultyFilter")
-      ?.value ||
-    "All";
+    $("facultyFilter")?.value || "All";
 
   const department =
-    $("departmentFilter")
-      ?.value ||
-    "All";
+    $("departmentFilter")?.value || "All";
 
-  let rows =
-    [...allRows];
+  let rows = rowsForSemester(allRows);
 
-  if (
-    faculty !== "All"
-  ) {
-
-    rows =
-      rows.filter(
-        row =>
-          row.faculty ===
-          faculty
-      );
+  if (faculty !== "All") {
+    rows = rows.filter(
+      row => row.faculty === faculty
+    );
   }
 
-  if (
-    department !== "All"
-  ) {
-
-    rows =
-      rows.filter(
-        row =>
-          row.department ===
-          department
-      );
+  if (department !== "All") {
+    rows = rows.filter(
+      row => row.department === department
+    );
   }
 
   setSelectOptions(
@@ -727,10 +734,8 @@ function updateActivityFilter() {
 
 
 /* =========================================================
-   MONTH FILTER
-   Depends on Faculty + Department + Activity
+   SEMESTER FILTER
    ========================================================= */
-
 
 function semesterFromMonth(value) {
   const text = clean(value);
@@ -793,63 +798,9 @@ function semesterFromMonth(value) {
 
 function updateMonthFilter() {
 
-  const faculty =
-    $("facultyFilter")
-      ?.value ||
-    "All";
-
-  const department =
-    $("departmentFilter")
-      ?.value ||
-    "All";
-
-  const activity =
-    $("activityFilter")
-      ?.value ||
-    "All";
-
-  let rows =
-    [...allRows];
-
-  if (
-    faculty !== "All"
-  ) {
-
-    rows =
-      rows.filter(
-        row =>
-          row.faculty ===
-          faculty
-      );
-  }
-
-  if (
-    department !== "All"
-  ) {
-
-    rows =
-      rows.filter(
-        row =>
-          row.department ===
-          department
-      );
-  }
-
-  if (
-    activity !== "All"
-  ) {
-
-    rows =
-      rows.filter(
-        row =>
-          row.type ===
-          activity
-      );
-  }
-
   setSelectOptions(
     "monthFilter",
-    rows
+    allRows
       .map(row => semesterFromMonth(row.month))
       .filter(Boolean),
     "All Semesters"
@@ -859,121 +810,45 @@ function updateMonthFilter() {
 
 /* =========================================================
    ORGANIZATION FILTER
-
-   IMPORTANT:
-   Depends on:
-   Faculty
-   + Department
-   + Activity Type
-   + Reporting Month
-
-   So organizations are NEVER taken from the whole workbook
-   when a Faculty/Department/etc. has already been selected.
+   Depends on Semester + Faculty + Department + Activity Type
    ========================================================= */
 
 function updateOrganizationFilter() {
 
   const faculty =
-    $("facultyFilter")
-      ?.value ||
-    "All";
+    $("facultyFilter")?.value || "All";
 
   const department =
-    $("departmentFilter")
-      ?.value ||
-    "All";
+    $("departmentFilter")?.value || "All";
 
   const activity =
-    $("activityFilter")
-      ?.value ||
-    "All";
+    $("activityFilter")?.value || "All";
 
-  const month =
-    $("monthFilter")
-      ?.value ||
-    "All";
+  let rows = rowsForSemester(allRows);
 
-  let rows =
-    [...allRows];
-
-
-  /* Faculty */
-
-  if (
-    faculty !== "All"
-  ) {
-
-    rows =
-      rows.filter(
-        row =>
-          row.faculty ===
-          faculty
-      );
+  if (faculty !== "All") {
+    rows = rows.filter(
+      row => row.faculty === faculty
+    );
   }
 
-
-  /* Department */
-
-  if (
-    department !== "All"
-  ) {
-
-    rows =
-      rows.filter(
-        row =>
-          row.department ===
-          department
-      );
+  if (department !== "All") {
+    rows = rows.filter(
+      row => row.department === department
+    );
   }
 
-
-  /* Activity */
-
-  if (
-    activity !== "All"
-  ) {
-
-    rows =
-      rows.filter(
-        row =>
-          row.type ===
-          activity
-      );
+  if (activity !== "All") {
+    rows = rows.filter(
+      row => row.type === activity
+    );
   }
-
-
-  /* Month */
-
-  if (
-    month !== "All"
-  ) {
-
-    rows =
-      rows.filter(
-        row =>
-          row.month ===
-          month
-      );
-  }
-
-
-  /* Organizations only from remaining rows */
 
   setSelectOptions(
     "organizationFilter",
-
     rows
-      .map(
-        row =>
-          row.organization
-      )
-      .filter(
-        organization =>
-          !isInvalidLabel(
-            organization
-          )
-      ),
-
+      .map(row => row.organization)
+      .filter(organization => !isInvalidLabel(organization)),
     "All Organizations"
   );
 }
@@ -985,22 +860,20 @@ function updateOrganizationFilter() {
 
 function populateFilters() {
 
+  updateMonthFilter();
+
+  if ($("monthFilter")) {
+    $("monthFilter").value = "All";
+  }
+
   updateFacultyFilter();
 
-  if (
-    $("facultyFilter")
-  ) {
-    $("facultyFilter")
-      .value =
-      "All";
+  if ($("facultyFilter")) {
+    $("facultyFilter").value = "All";
   }
 
   updateDepartmentFilter();
-
   updateActivityFilter();
-
-  updateMonthFilter();
-
   updateOrganizationFilter();
 }
 
@@ -1012,116 +885,69 @@ function populateFilters() {
 function applyFilters() {
 
   const faculty =
-    $("facultyFilter")
-      ?.value ||
-    "All";
+    $("facultyFilter")?.value || "All";
 
   const department =
-    $("departmentFilter")
-      ?.value ||
-    "All";
+    $("departmentFilter")?.value || "All";
 
   const activity =
-    $("activityFilter")
-      ?.value ||
-    "All";
+    $("activityFilter")?.value || "All";
 
   const month =
-    $("monthFilter")
-      ?.value ||
-    "All";
+    $("monthFilter")?.value || "All";
 
   const organization =
-    $("organizationFilter")
-      ?.value ||
-    "All";
+    $("organizationFilter")?.value || "All";
 
   const search =
-    (
-      $("searchFilter")
-        ?.value ||
-      ""
-    )
+    ($("searchFilter")?.value || "")
       .toLowerCase()
       .trim();
 
-  filteredRows =
-    allRows.filter(
-      row => {
+  filteredRows = allRows.filter(row => {
 
-        const facultyMatch =
-          (
-            faculty === "All" ||
-            row.faculty ===
-            faculty
-          );
+    const facultyMatch =
+      faculty === "All" || row.faculty === faculty;
 
-        const departmentMatch =
-          (
-            department === "All" ||
-            row.department ===
-            department
-          );
+    const departmentMatch =
+      department === "All" || row.department === department;
 
-        const activityMatch =
-          (
-            activity === "All" ||
-            row.type ===
-            activity
-          );
+    const activityMatch =
+      activity === "All" || row.type === activity;
 
-        const monthMatch =
-          (
-            month === "All" ||
-            semesterFromMonth(row.month) ===
-            month
-          );
+    const monthMatch =
+      month === "All" || semesterFromMonth(row.month) === month;
 
-        const organizationMatch =
-          (
-            organization === "All" ||
-            row.organization ===
-            organization
-          );
+    const organizationMatch =
+      organization === "All" || row.organization === organization;
 
-        const searchMatch =
-          (
-            !search ||
+    const searchMatch =
+      !search || [
+        row.faculty,
+        row.department,
+        row.type,
+        row.originalType,
+        row.person,
+        row.designation,
+        row.organization,
+        row.remarks,
+        row.month,
+        semesterFromMonth(row.month)
+      ].some(value =>
+        String(value || "")
+          .toLowerCase()
+          .includes(search)
+      );
 
-            [
-              row.faculty,
-              row.department,
-              row.type,
-              row.originalType,
-              row.person,
-              row.designation,
-              row.organization,
-              row.remarks,
-              row.month,
-              semesterFromMonth(row.month)
-            ].some(
-              value =>
-                String(
-                  value ||
-                  ""
-                )
-                  .toLowerCase()
-                  .includes(
-                    search
-                  )
-            )
-          );
-
-        return (
-          facultyMatch &&
-          departmentMatch &&
-          activityMatch &&
-          monthMatch &&
-          organizationMatch &&
-          searchMatch
-        );
-      }
+    return (
+      facultyMatch &&
+      departmentMatch &&
+      activityMatch &&
+      monthMatch &&
+      organizationMatch &&
+      searchMatch
     );
+  });
 
   render();
 }
@@ -1131,70 +957,47 @@ function applyFilters() {
    FILTER HANDLERS
    ========================================================= */
 
-function handleFacultyChange() {
-
-  /*
-    Selecting Faculty rebuilds EVERYTHING below it.
-  */
-
-  updateDepartmentFilter();
-
-  updateActivityFilter();
-
-  updateMonthFilter();
-
-  updateOrganizationFilter();
-
-  applyFilters();
-}
-
-
-function handleDepartmentChange() {
-
-  /*
-    Selecting Department rebuilds:
-    Activity -> Month -> Organization
-  */
-
-  updateActivityFilter();
-
-  updateMonthFilter();
-
-  updateOrganizationFilter();
-
-  applyFilters();
-}
-
-
-function handleActivityChange() {
-
-  /*
-    Selecting Activity rebuilds:
-    Month -> Organization
-  */
-
-  updateMonthFilter();
-
-  updateOrganizationFilter();
-
-  applyFilters();
-}
-
-
 function handleMonthChange() {
 
   /*
-    Selecting Month rebuilds Organization.
+    Semester controls all downstream filters.
+    Example:
+      Fall Semester 2026
+        -> Fall faculties only
+        -> departments within those faculties
+        -> activity types within those departments
+        -> organizations within those activities
   */
 
+  updateFacultyFilter();
+  updateDepartmentFilter();
+  updateActivityFilter();
   updateOrganizationFilter();
-
   applyFilters();
 }
 
+function handleFacultyChange() {
+
+  updateDepartmentFilter();
+  updateActivityFilter();
+  updateOrganizationFilter();
+  applyFilters();
+}
+
+function handleDepartmentChange() {
+
+  updateActivityFilter();
+  updateOrganizationFilter();
+  applyFilters();
+}
+
+function handleActivityChange() {
+
+  updateOrganizationFilter();
+  applyFilters();
+}
 
 function handleOrganizationChange() {
-
   applyFilters();
 }
 
@@ -1205,79 +1008,42 @@ function handleOrganizationChange() {
 
 function resetFilters() {
 
-  if (
-    $("facultyFilter")
-  ) {
+  if ($("monthFilter")) {
+    $("monthFilter").value = "All";
+  }
 
-    $("facultyFilter")
-      .value =
-      "All";
+  updateMonthFilter();
+  updateFacultyFilter();
+
+  if ($("facultyFilter")) {
+    $("facultyFilter").value = "All";
   }
 
   updateDepartmentFilter();
 
-
-  if (
-    $("departmentFilter")
-  ) {
-
-    $("departmentFilter")
-      .value =
-      "All";
+  if ($("departmentFilter")) {
+    $("departmentFilter").value = "All";
   }
 
   updateActivityFilter();
 
-
-  if (
-    $("activityFilter")
-  ) {
-
-    $("activityFilter")
-      .value =
-      "All";
-  }
-
-  updateMonthFilter();
-
-
-  if (
-    $("monthFilter")
-  ) {
-
-    $("monthFilter")
-      .value =
-      "All";
+  if ($("activityFilter")) {
+    $("activityFilter").value = "All";
   }
 
   updateOrganizationFilter();
 
-
-  if (
-    $("organizationFilter")
-  ) {
-
-    $("organizationFilter")
-      .value =
-      "All";
+  if ($("organizationFilter")) {
+    $("organizationFilter").value = "All";
   }
 
-
-  if (
-    $("searchFilter")
-  ) {
-
-    $("searchFilter")
-      .value =
-      "";
+  if ($("searchFilter")) {
+    $("searchFilter").value = "";
   }
 
-  filteredRows =
-    [...allRows];
-
+  filteredRows = [...allRows];
   render();
 }
-
 
 /* =========================================================
    INTERNSHIP / PLACEMENT
@@ -1301,6 +1067,11 @@ function getFilteredIpRows() {
       ?.value ||
     "All";
 
+  const semester =
+    $("monthFilter")
+      ?.value ||
+    "All";
+
   return allIpRows.filter(
     row => {
 
@@ -1318,9 +1089,17 @@ function getFilteredIpRows() {
           department
         );
 
+      const semesterMatch =
+        (
+          semester === "All" ||
+          row.semester ===
+          semester
+        );
+
       return (
         facultyMatch &&
-        departmentMatch
+        departmentMatch &&
+        semesterMatch
       );
     }
   );
@@ -1785,6 +1564,27 @@ function barChart(
       "px";
   }
 
+  const visibleBarValuePlugin = {
+    id: `visibleBarValue_${id}`,
+    afterDatasetsDraw(chart) {
+      const { ctx } = chart;
+      const meta = chart.getDatasetMeta(0);
+      ctx.save();
+      ctx.font = "600 10px Inter, Segoe UI, Arial, sans-serif";
+      ctx.fillStyle = "#334155";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+
+      meta.data.forEach((bar, index) => {
+        const value = Number(values[index] || 0);
+        const label = `${value.toLocaleString()} (${chartPercent(value)})`;
+        const x = Math.min(bar.x + 7, chart.chartArea.right + 68);
+        ctx.fillText(label, x, bar.y);
+      });
+      ctx.restore();
+    }
+  };
+
   charts[id] =
     new Chart(
       canvas,
@@ -1792,6 +1592,8 @@ function barChart(
 
         type:
           "bar",
+
+        plugins: [visibleBarValuePlugin],
 
         data: {
 
@@ -1842,6 +1644,12 @@ function barChart(
 
           maintainAspectRatio:
             false,
+
+          layout: {
+            padding: {
+              right: 92
+            }
+          },
 
           indexAxis:
             "y",
@@ -2067,6 +1875,28 @@ function activityChart() {
         ]
     );
 
+  const visibleActivityPercentPlugin = {
+    id: "visibleActivityPercent",
+    afterDatasetsDraw(chart) {
+      const { ctx } = chart;
+      const meta = chart.getDatasetMeta(0);
+      ctx.save();
+      ctx.font = "700 10px Inter, Segoe UI, Arial, sans-serif";
+      ctx.fillStyle = "#ffffff";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      meta.data.forEach((arc, index) => {
+        const value = Number(values[index] || 0);
+        const numericPct = activityTotal > 0 ? (value / activityTotal) * 100 : 0;
+        if (numericPct < 3) return;
+        const pos = arc.tooltipPosition();
+        ctx.fillText(`${numericPct.toFixed(1)}%`, pos.x, pos.y);
+      });
+      ctx.restore();
+    }
+  };
+
   charts.activityChart =
     new Chart(
       canvas,
@@ -2074,6 +1904,8 @@ function activityChart() {
 
         type:
           "doughnut",
+
+        plugins: [visibleActivityPercentPlugin],
 
         data: {
 
