@@ -1503,25 +1503,7 @@
       mb-8
     "
   >
-
-
-    <div class="card kpi-card" style="display:none">
-
-      <div class="kpi-label">
-        Internship / Placement Records
-      </div>
-
-      <div
-        id="kRecords"
-        class="kpi"
-      >
-        0
-      </div>
-
-    </div>
-
-
-    <div class="card kpi-card">
+<div class="card kpi-card">
 
       <div class="kpi-label">
         How Many
@@ -1842,151 +1824,6 @@
   </section>
 
 </main>
-
-
-<!-- =====================================================
-     DETAIL POPUP
-     ===================================================== -->
-
-<div
-  class="detail-modal"
-  id="detailModal"
-  aria-hidden="true"
->
-
-  <div
-    class="detail-dialog"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="detailTitle"
-  >
-
-
-    <div class="detail-head">
-
-      <div>
-
-        <div
-          style="
-            font-size:10px;
-            font-weight:900;
-            letter-spacing:.14em;
-            text-transform:uppercase;
-            color:#dbeafe;
-          "
-        >
-          Internship / Placement Details
-        </div>
-
-
-        <h3
-          id="detailTitle"
-          style="
-            margin:5px 0 0;
-            font-size:21px;
-            font-weight:900;
-          "
-        >
-          Details
-        </h3>
-
-
-        <div
-          id="detailSubtitle"
-          style="
-            margin-top:5px;
-            font-size:12px;
-            color:#dbeafe;
-          "
-        ></div>
-
-      </div>
-
-
-      <button
-        class="detail-close"
-        id="detailClose"
-        type="button"
-        aria-label="Close"
-      >
-        ×
-      </button>
-
-    </div>
-
-
-    <div class="detail-body">
-
-
-      <div class="detail-summary">
-
-
-        <div class="detail-stat">
-
-          <div class="detail-stat-label">
-
-            Matching Records
-
-          </div>
-
-          <div
-            class="detail-stat-value"
-            id="detailRecordCount"
-          >
-            0
-          </div>
-
-        </div>
-
-
-        <div class="detail-stat">
-
-          <div class="detail-stat-label">
-
-            How Many
-
-          </div>
-
-          <div
-            class="detail-stat-value"
-            id="detailHowMany"
-          >
-            0
-          </div>
-
-        </div>
-
-
-        <div class="detail-stat">
-
-          <div class="detail-stat-label">
-
-            Organizations
-
-          </div>
-
-          <div
-            class="detail-stat-value"
-            id="detailOrganizationCount"
-          >
-            0
-          </div>
-
-        </div>
-
-
-      </div>
-
-
-      <div
-        id="detailRecords"
-      ></div>
-
-    </div>
-
-  </div>
-
-</div>
 
 
 <script>
@@ -3216,7 +3053,7 @@ function resetFilters(){
 
 
   filtered =
-    rows.slice();
+    rows.filter(row => !invalid(row.organization) && !invalid(row.department) && !invalid(row.faculty));
 
 
   render();
@@ -4172,15 +4009,7 @@ function drawStatusChart(){
    ========================================================= */
 
 function render(){
-
-  $("kRecords")
-    .textContent =
-    filtered
-      .length
-      .toLocaleString();
-
-
-  $("kHowMany")
+$("kHowMany")
     .textContent =
     sumHowMany(
       filtered

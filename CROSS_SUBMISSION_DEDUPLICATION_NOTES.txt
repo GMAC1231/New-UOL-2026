@@ -1,0 +1,4 @@
+23 matching cross-submission activity records removed; 12 distinct activity groups retained once each.
+Retained PRPSTFPT92 (Economics) and PRPSTFPT86 (Architecture).
+Guest Lecture / GLIT: -19; Workshop: -2; Industrial Visit / IV: -2.
+No other activity types changed.

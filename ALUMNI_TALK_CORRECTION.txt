@@ -1,0 +1,7 @@
+Alumni Talk / Mentoring correction
+The active Excel workbook has been replaced by UOL_Activity_Data_Alumni_Duplicate_Removed_598.xlsx.
+One duplicate PRPSTFPT49 row (Department of Economics) was removed from the cleaned activity data.
+Alumni Talk / Mentoring: 4 records; total How Many = 598.
+The active dashboard still fetches data/UOL_Separated_All_Activity_Data_Cleaned(20261008-063814).xlsx.
+The generic filename is synchronized as well.
+Other activities, the source 56 submissions and the MoU files are left untouched.

@@ -608,67 +608,33 @@ function unique(values) {
 }
 
 
-function setSelectOptions(
-  id,
-  values,
-  allLabel
-) {
+function setSelectOptions(id, values, allLabel, counts = null, total = null) {
+  const select = $(id);
+  if (!select) return;
+  const previous = select.value;
+  const items = unique(values);
+  select.replaceChildren();
+  const makeOption = (value, label) => {
+    const option = document.createElement('option');
+    option.value = value;
+    option.textContent = label;
+    select.appendChild(option);
+  };
+  // Values remain unchanged: only visible text contains totals.
+  const allCount = total ?? (counts ? [...counts.values()].reduce((a,b)=>a+b,0) : items.length);
+  makeOption('All', `${allLabel} (${Number(allCount).toLocaleString()})`);
+  items.forEach(item => makeOption(item, `${item} (${Number(counts?.get(item) ?? values.filter(v=>v===item).length).toLocaleString()})`));
+  select.value = previous !== 'All' && items.includes(previous) ? previous : 'All';
+}
 
-  const select =
-    $(id);
-
-  if (
-    !select
-  ) {
-    return;
+function optionTotals(rows, key) {
+  const totals = new Map();
+  for (const row of rows) {
+    const label = clean(row[key]);
+    if (isInvalidLabel(label)) continue;
+    totals.set(label, (totals.get(label) || 0) + rowAmount(row));
   }
-
-  const previous =
-    select.value;
-
-  const items =
-    unique(
-      values
-    );
-
-  select.innerHTML =
-    `<option value="All">${allLabel}</option>`;
-
-  items.forEach(
-    item => {
-
-      const option =
-        document.createElement(
-          "option"
-        );
-
-      option.value =
-        item;
-
-      option.textContent =
-        item;
-
-      select.appendChild(
-        option
-      );
-    }
-  );
-
-  if (
-    previous !== "All" &&
-    items.includes(
-      previous
-    )
-  ) {
-
-    select.value =
-      previous;
-
-  } else {
-
-    select.value =
-      "All";
-  }
+  return totals;
 }
 
 
@@ -711,7 +677,7 @@ function updateFacultyFilter() {
   setSelectOptions(
     "facultyFilter",
     rows.map(row => row.faculty),
-    "All Faculties"
+    "All Faculties", optionTotals(rows, "faculty"), rows.reduce((n,r)=>n+rowAmount(r),0)
   );
 }
 
@@ -737,7 +703,7 @@ function updateDepartmentFilter() {
   setSelectOptions(
     "departmentFilter",
     rows.map(row => row.department),
-    "All Departments"
+    "All Departments", optionTotals(rows, "department"), rows.reduce((n,r)=>n+rowAmount(r),0)
   );
 }
 
@@ -774,7 +740,7 @@ function updateActivityFilter() {
     rows
       .map(row => row.type)
       .filter(type => norm(type) !== "total activities"),
-    "All Activity Types"
+    "All Activity Types", optionTotals(rows.filter(r=>norm(r.type)!=="total activities"), "type"), rows.filter(r=>norm(r.type)!=="total activities").reduce((n,r)=>n+rowAmount(r),0)
   );
 }
 
@@ -849,7 +815,7 @@ function updateMonthFilter() {
     allRows
       .map(row => semesterFromMonth(row.month))
       .filter(Boolean),
-    "All Semesters"
+    "All Semesters", (()=>{const map=new Map();for(const r of allRows){const k=semesterFromMonth(r.month);if(k&&!isInvalidLabel(k))map.set(k,(map.get(k)||0)+rowAmount(r));}return map;})(), allRows.reduce((n,r)=>n+rowAmount(r),0)
   );
 }
 
@@ -895,7 +861,7 @@ function updateOrganizationFilter() {
     rows
       .map(row => row.organization)
       .filter(organization => !isInvalidLabel(organization)),
-    "All Organizations"
+    "All Organizations", optionTotals(rows, "organization"), rows.reduce((n,r)=>n+rowAmount(r),0)
   );
 }
 
@@ -2446,6 +2412,39 @@ function render() {
         : "none";
   }
 
+  // One activity-specific KPI: never repeat the existing Internship / Placement total.
+  const selectedCard = $("selectedActivityKpiCard");
+  if (selectedCard) {
+    const showSelected = selectedActivityType !== "All" &&
+      selectedActivityType !== "Internship / Placement";
+    selectedCard.style.display = showSelected ? "" : "none";
+    if (showSelected) {
+      const activityIcons = {
+        "Alumni Talk / Mentoring": ["🎓", "#087c65"],
+        "Community Engagement": ["🤝", "#087c65"],
+        "Conference": ["🎤", "#3547ad"],
+        "Curriculum Feedback Session": ["📋", "#7d50b5"],
+        "Curriculum Feedback": ["📋", "#7d50b5"],
+        "Guest Lecture / GLIT": ["🎙", "#175dbb"],
+        "IAB / Industry Consultation": ["🏭", "#a25d1c"],
+        "Industrial Visit / IV": ["🚍", "#087c8d"],
+        "MoU / MoU Signing": ["✍", "#6f4bb5"],
+        "Others": ["✦", "#64748b"],
+        "Planned": ["📅", "#d16c23"],
+        "Remote": ["💻", "#197b9d"],
+        "Research Collaboration": ["🔬", "#4d67a8"],
+        "Seminar": ["📚", "#136e4d"],
+        "Workshop": ["🛠", "#ad641c"]
+      };
+      const [symbol, color] = activityIcons[selectedActivityType] || ["◆", "#175dbb"];
+      $("selectedActivityLabel").textContent = selectedActivityType;
+      $("selectedActivityTotal").textContent = totalActivities.toLocaleString("en-US");
+      const icon = $("selectedActivityIcon");
+      icon.textContent = symbol;
+      icon.style.backgroundColor = color;
+    }
+  }
+
   setText(
     "kActivities",
     totalActivities
@@ -2771,6 +2770,8 @@ async function loadActivityWorkbook() {
       }
     });
   }
+
+  // Separate section dashboards provide the reporting and MoU charts.
 
   filteredRows =
     [...allRows];
@@ -4829,3 +4830,70 @@ async function printReport() {
 window.addEventListener("DOMContentLoaded", () => {
   $("pdfBtn")?.addEventListener("click", generatePdfReport);
 });
+
+
+/* =======================================================
+   SUBMISSION SECTIONS: directly read source workbook sheets
+   ======================================================= */
+function initSubmissionExplorer(workbook) {
+  const sheet = name => workbook.Sheets[name]
+    ? XLSX.utils.sheet_to_json(workbook.Sheets[name], {defval: "", raw: false}) : [];
+  const activities = sheet("All Separated Activities");
+  const mouRecords = sheet("MoU Country (No Nulls)").filter(r => clean(r.Country));
+  const basicRecords = Array.from(new Map(activities.filter(r => clean(r["Ref #"]))
+    .map(r => [r["Ref #"], r])).values());
+  const ids = ["reportCampus","reportFaculty","reportDepartment","reportActivity","reportCountry","reportMouType"];
+  const val = id => $(id)?.value || "All";
+  const distinct = values => [...new Set(values.map(clean).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+  const options = (id,values,defaultName) => {
+    const select = $(id); if(!select) return;
+    const previous = select.value;
+    select.replaceChildren();
+    const make = (v,label) => {const o=document.createElement("option");o.value=v;o.textContent=label;select.appendChild(o)};
+    make("All",defaultName);distinct(values).forEach(v=>make(v,v));
+    select.value = [...select.options].some(o=>o.value===previous) ? previous : "All";
+  };
+  const matchBasic = r =>
+    (val("reportCampus")==="All" || clean(r.Campus)===val("reportCampus")) &&
+    (val("reportFaculty")==="All" || clean(r.Faculty)===val("reportFaculty")) &&
+    (val("reportDepartment")==="All" || clean(r.Department)===val("reportDepartment"));
+  const matchingFacultyDepartment = r =>
+    (val("reportFaculty")==="All" || clean(r.Faculty)===val("reportFaculty")) &&
+    (val("reportDepartment")==="All" || clean(r.Department)===val("reportDepartment"));
+  const td = (row,text) => {const cell=document.createElement("td");cell.textContent=clean(text) || "—";row.appendChild(cell)};
+  const table = (id,rows,fields,empty) => {
+    const body=$(id);if(!body)return;body.replaceChildren();
+    if(!rows.length){const tr=document.createElement("tr");const cell=document.createElement("td");cell.colSpan=fields.length;cell.textContent=empty;tr.appendChild(cell);body.appendChild(tr);return;}
+    const fragment=document.createDocumentFragment();
+    rows.forEach(r=>{const tr=document.createElement("tr");fields.forEach(k=>td(tr,r[k]));fragment.appendChild(tr)});
+    body.appendChild(fragment);
+  };
+  const refresh = (changed) => {
+    if(changed === "reportCampus"){$("reportFaculty").value="All";$("reportDepartment").value="All"}
+    if(changed === "reportFaculty")$("reportDepartment").value="All";
+    options("reportCampus",basicRecords.map(r=>r.Campus),"All Campuses");
+    options("reportFaculty",basicRecords.filter(r=>val("reportCampus")==="All"||r.Campus===val("reportCampus")).map(r=>r.Faculty),"All Faculties");
+    options("reportDepartment",basicRecords.filter(r=>(val("reportCampus")==="All"||r.Campus===val("reportCampus")) && (val("reportFaculty")==="All"||r.Faculty===val("reportFaculty"))).map(r=>r.Department),"All Departments");
+    const basics=basicRecords.filter(matchBasic);
+    const refs=new Set(basics.map(r=>clean(r["Ref #"])));
+    if($("reportBasicSummary"))$("reportBasicSummary").textContent=`${basics.length} submissions • ${distinct(basics.map(r=>r.Campus)).length} campuses • ${distinct(basics.map(r=>r.Faculty)).length} faculties • ${distinct(basics.map(r=>r.Department)).length} departments`;
+    const activityScope=activities.filter(r=>refs.has(clean(r["Ref #"])));
+    options("reportActivity",activityScope.map(r=>clean(r["Separated Activity Type"])||r["Original Activity Type"]),"All Activity Types");
+    const term=clean($("reportOrganization")?.value).toLowerCase();
+    const shown=activityScope.filter(r=>(val("reportActivity")==="All"||(clean(r["Separated Activity Type"])||clean(r["Original Activity Type"]))===val("reportActivity")) && (!term||clean(r["Organization / Activity Title"]).toLowerCase().includes(term)));
+    table("reportActivityBody",shown,["Faculty","Department","Separated Activity Type","How Many","Organization / Activity Title"],"No matching activities");
+    const sum=shown.reduce((n,r)=>n+(Number(clean(r["How Many"]).replace(/,/g,""))||0),0);
+    if($("reportActivityTotal"))$("reportActivityTotal").value=sum.toLocaleString();
+    if($("reportActivityFooter"))$("reportActivityFooter").textContent=`${shown.length} activity records displayed • ${sum.toLocaleString()} total reported in “How Many”`;
+    const mouScope=mouRecords.filter(r=>matchingFacultyDepartment(r) && (val("reportCampus")==="All" || refs.has(clean(r["Submission Ref"]))));
+    options("reportCountry",mouScope.map(r=>r.Country),"All Countries");
+    options("reportMouType",mouScope.map(r=>r["MoU Type"]),"All MoU Types");
+    const partner=clean($("reportPartner")?.value).toLowerCase();
+    const mous=mouScope.filter(r=>(val("reportCountry")==="All"||r.Country===val("reportCountry")) && (val("reportMouType")==="All"||r["MoU Type"]===val("reportMouType")) && (!partner||clean(r["Partner Institution"]).toLowerCase().includes(partner)));
+    table("reportMouBody",mous,["Partner Institution","Country","MoU Type","Status","Faculty","Department"],"No matching MoU records with a valid country");
+    if($("reportMouFooter"))$("reportMouFooter").textContent=`${mous.length} valid-country MoU entries displayed • Null and missing countries excluded • Evidence not included`;
+  };
+  ids.forEach(id=>$(id)?.addEventListener("change",()=>refresh(id)));
+  ["reportOrganization","reportPartner"].forEach(id=>$(id)?.addEventListener("input",()=>refresh(id)));
+  refresh();
+}

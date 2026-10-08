@@ -34,69 +34,6 @@
 
     <div class="mobile-nav-menu" id="navMenu">
 
-      <a class="nav-link" href="index.html">
-        📊 Tentative Dashboard
-      </a>
-
-      <a class="nav-link" href="dashboards/workshop.html">
-        🛠 Workshop Dashboard
-      </a>
-
-      <a class="nav-link" href="dashboards/seminar.html">
-        🎤 Seminar Dashboard
-      </a>
-
-      <a class="nav-link" href="dashboards/conference.html">
-        🎓 Conference Dashboard
-      </a>
-
-      <a class="nav-link" href="dashboards/guest.html">
-        👨‍🏫 Guest Lecture
-      </a>
-
-      <a class="nav-link" href="dashboards/internship-placement.html">
-        💼 Internship / Placement
-      </a>
-      <a class="nav-link" href="index.html?activity=Planned">
-        📅 Planned Activities
-      </a>
-      <a class="nav-link" href="index.html?activity=Remote">
-        🌐 Remote Activities
-      </a>
-
-
-      <a class="nav-link" href="dashboards/mou.html">
-        🤝 MoU 
-      </a>
-
-      <a class="nav-link" href="dashboards/iv.html">
-        🏭 Industrial Visit 
-      </a>
-
-      <a class="nav-link" href="dashboards/others.html">
-        📌 Others
-      </a>
-
-      <a class="nav-link" href="dashboards/iab.html">
-        🤝 IAB / Industry Consultation
-      </a>
-
-      <a class="nav-link" href="dashboards/research-collaboration.html">
-        🔬 Research Collaboration
-      </a>
-
-      <a class="nav-link" href="dashboards/community.html">
-        🌍 Community Engagement
-      </a>
-
-      <a class="nav-link" href="dashboards/alumni.html">
-        🎓 Alumni Talk / Mentoring
-      </a>
-
-      <a class="nav-link" href="dashboards/curriculum-feedback.html">
-        📝 Curriculum Feedback
-      </a>
-
     </div>
 
     <div class="side-overview">
@@ -146,7 +83,8 @@
     </header>
 
 
-    <section class="filter-strip">
+    <nav class="tentative-section-nav" aria-label="Tentative dashboard pages"><a href="index.html" class="tnav-current">Overview</a><a href="basic-reporting.html">01 · Basic Reporting (56)</a><a href="internship-placement.html">02 · Internship / Placement</a><a href="mou-collaborations.html">03 · MoU Collaborations</a></nav>
+<section class="filter-strip">
 
       <div class="filter-label">Filter By</div>
 
@@ -195,14 +133,19 @@
       activity figures are calculated from the same cleaned Excel workbook.
       Internship/Placement student totals appear only when relevant to the selected activity type.
     </div>
-
-
-    <section class="kpi-grid">
+<section class="kpi-grid">
       <div class="kpi-card" id="totalActivitiesKpiCard">
         <div class="kpi-icon blue">▤</div>
         <div class="kpi-label">Total Activities</div>
         <div id="kActivities" class="kpi-value">0</div>
         <div class="kpi-foot">Overall total for the current view</div>
+      </div>
+
+      <div class="kpi-card selected-activity-card" id="selectedActivityKpiCard" style="display:none" aria-live="polite">
+        <div class="kpi-icon selected-activity-icon" id="selectedActivityIcon" aria-hidden="true">★</div>
+        <div class="kpi-label" id="selectedActivityLabel">Selected Activity</div>
+        <div class="kpi-value" id="selectedActivityTotal">0</div>
+        <div class="kpi-foot">Total for selected activity and filters</div>
       </div>
 
       <div class="kpi-card emphasized" id="internshipKpiCard">

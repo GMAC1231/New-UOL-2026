@@ -977,3 +977,31 @@ body{
 @media(max-width:1100px){
   .official-uol-logo{width:190px}
 }
+
+
+/* Reporting sections: source-linked and intentionally evidence-free */
+.submission-explorer{margin:24px 0 26px;display:grid;gap:18px}
+.explorer-intro,.explorer-section{background:#fff;border:1px solid #e1e8f1;border-radius:15px;padding:20px;box-shadow:0 3px 12px rgba(17,36,75,.045)}
+.explorer-intro h2{font-size:19px;font-weight:800;color:#102b56;margin:0 0 5px}
+.explorer-intro p{margin:0;color:#65728b;font-size:13px}
+.explorer-section h3{display:flex;align-items:center;gap:11px;font-size:16px;font-weight:800;color:#122d50;border-bottom:1px solid #e4eaf3;padding-bottom:13px;margin:0 0 17px}
+.section-number{display:grid;place-items:center;min-width:30px;height:30px;border-radius:9px;background:#2275f4;color:white;font-size:14px;box-shadow:0 3px 7px #2e77ee33}
+.explorer-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:16px}
+.explorer-fields label{display:flex;flex-direction:column;gap:8px;font-weight:700;color:#283448;font-size:12px;min-width:0}
+.explorer-fields input,.explorer-fields select{width:100%;min-width:0;height:41px;border:1px solid #d4deea;border-radius:8px;padding:0 12px;background:#fff;color:#23344e;font-size:13px}
+.explorer-fields input:focus,.explorer-fields select:focus{outline:2px solid #84b5ff;outline-offset:0}
+.explorer-fields input[readonly]{background:#f2f6fb;font-weight:700}
+.explorer-summary,.explorer-table-footer{color:#47566d;font-size:12px;padding-top:8px}
+.explorer-table-wrap{width:100%;max-height:350px;overflow:auto;border:1px solid #e3e9f2;border-radius:9px}
+.explorer-table{border-collapse:collapse;width:100%;min-width:720px;font-size:12px}
+.explorer-table th{position:sticky;top:0;background:#17365d;color:white;text-align:left;padding:11px;font-weight:700;white-space:nowrap}
+.explorer-table td{border-bottom:1px solid #ebeff5;padding:10px;vertical-align:top;overflow-wrap:anywhere;color:#273a54}
+.explorer-table tbody tr:nth-child(even){background:#f8fafc}
+@media(max-width:800px){.explorer-fields{grid-template-columns:1fr}.explorer-section,.explorer-intro{padding:14px}}
+
+.tentative-section-nav{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0;padding:13px;background:#fff;border:1px solid #dee7f3;border-radius:14px}.tentative-section-nav a{padding:10px 14px;border-radius:9px;color:#16315b;text-decoration:none;font-weight:750;font-size:13px;background:#eef3fa}.tentative-section-nav a:hover,.tentative-section-nav .tnav-current{color:#fff;background:#1b63d5}
+
+/* Activity-specific KPI shown when a non-IP activity is selected. */
+.selected-activity-card { border-color:#d5e2f3; background:linear-gradient(180deg,#fff,#f7faff); }
+.selected-activity-icon { font-family:"Segoe UI Emoji","Apple Color Emoji","Segoe UI Symbol",sans-serif; font-size:17px; }
+.selected-activity-card .kpi-label { overflow-wrap:anywhere; }
