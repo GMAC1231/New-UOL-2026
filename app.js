@@ -242,6 +242,15 @@ function standardizeActivityType(value) {
   }
 
   if (
+    type === "planned" ||
+    type.includes(
+      "planned activity"
+    )
+  ) {
+    return "Planned";
+  }
+
+  if (
     type === "ip" ||
     type === "internship placement" ||
     type.includes(
@@ -355,7 +364,8 @@ function parseActivities(rows) {
               row,
               [
                 "Reporting Month",
-                "Month"
+                "Month",
+                "Submission Date"
               ]
             ),
 
@@ -996,40 +1006,58 @@ function applyFilters() {
 function handleMonthChange() {
 
   /*
-    Semester controls all downstream filters.
-    Example:
-      Fall Semester 2026
-        -> Fall faculties only
-        -> departments within those faculties
-        -> activity types within those departments
-        -> organizations within those activities
+    Strict cascading order:
+      Semester -> Faculty -> Department -> Activity Type -> Organization
+
+    When an upstream filter changes, all downstream selections are reset
+    so stale values cannot remain active.
   */
 
   updateFacultyFilter();
+  if ($("facultyFilter")) $("facultyFilter").value = "All";
+
   updateDepartmentFilter();
+  if ($("departmentFilter")) $("departmentFilter").value = "All";
+
   updateActivityFilter();
+  if ($("activityFilter")) $("activityFilter").value = "All";
+
   updateOrganizationFilter();
+  if ($("organizationFilter")) $("organizationFilter").value = "All";
+
   applyFilters();
 }
 
 function handleFacultyChange() {
 
   updateDepartmentFilter();
+  if ($("departmentFilter")) $("departmentFilter").value = "All";
+
   updateActivityFilter();
+  if ($("activityFilter")) $("activityFilter").value = "All";
+
   updateOrganizationFilter();
+  if ($("organizationFilter")) $("organizationFilter").value = "All";
+
   applyFilters();
 }
 
 function handleDepartmentChange() {
 
   updateActivityFilter();
+  if ($("activityFilter")) $("activityFilter").value = "All";
+
   updateOrganizationFilter();
+  if ($("organizationFilter")) $("organizationFilter").value = "All";
+
   applyFilters();
 }
 
 function handleActivityChange() {
 
   updateOrganizationFilter();
+  if ($("organizationFilter")) $("organizationFilter").value = "All";
+
   applyFilters();
 }
 
@@ -2702,6 +2730,48 @@ async function loadActivityWorkbook() {
       activityRows
     );
 
+  // Keep Remote activities as a separate dashboard category.
+  // A record is treated as Remote when its source remarks explicitly say Mode: Remote.
+  allRows = allRows.map(row => {
+    const isRemote = /\bmode\s*:\s*remote\b/i.test(clean(row.remarks));
+    return isRemote ? { ...row, type: "Remote" } : row;
+  });
+
+  // Planned is stored separately in the 56-submission workbook.
+  // Add it to the dashboard as its own activity category instead of
+  // mixing it with Internship / Placement.
+  const plannedSheetName = workbook.SheetNames.find(name =>
+    ["Planned Activities", "Planned - Section 4"].includes(name)
+  );
+
+  if (plannedSheetName) {
+    const plannedRowsRaw = XLSX.utils.sheet_to_json(
+      workbook.Sheets[plannedSheetName],
+      { defval: "", raw: false }
+    );
+
+    const plannedRows = parseActivities(plannedRowsRaw)
+      .map(row => {
+        const isRemote = /\bmode\s*:\s*remote\b/i.test(clean(row.remarks));
+        return { ...row, type: isRemote ? "Remote" : "Planned" };
+      });
+
+    const seen = new Set(allRows.map(row => [
+      row.ref, row.department, row.originalType, row.events, row.organization, row.month
+    ].join("||").toLowerCase()));
+
+    plannedRows.forEach(row => {
+      const key = [
+        row.ref, row.department, row.originalType, row.events, row.organization, row.month
+      ].join("||").toLowerCase();
+
+      if (!seen.has(key)) {
+        seen.add(key);
+        allRows.push(row);
+      }
+    });
+  }
+
   filteredRows =
     [...allRows];
 
@@ -2740,6 +2810,17 @@ async function loadExcel() {
     await loadActivityWorkbook();
 
     populateFilters();
+
+    const requestedActivity = new URLSearchParams(window.location.search).get("activity");
+    if (requestedActivity && $("activityFilter")) {
+      const wanted = Array.from($("activityFilter").options)
+        .find(option => norm(option.value) === norm(requestedActivity));
+      if (wanted) {
+        $("activityFilter").value = wanted.value;
+        updateOrganizationFilter();
+        applyFilters();
+      }
+    }
 
     render();
 
@@ -3266,28 +3347,30 @@ function reportFilterDetails(section = null) {
   const current = getCurrentFilterSummary();
 
   return [
+    ["Semester", current.month === "All" ? "All Semesters" : current.month],
     ["Faculty", current.faculty === "All" ? "All Faculties" : current.faculty],
     ["Department", current.department === "All" ? "All Departments" : current.department],
     ["Activity Type", current.activity === "All" ? "All Activity Types" : current.activity],
-    ["Semester", current.month === "All" ? "All Semesters" : current.month]
+    ["Organization", current.organization === "All" ? "All Organizations" : current.organization]
   ];
 }
 
 function addPdfFilterBanner(doc, section, startY = 57) {
   const width = doc.internal.pageSize.getWidth();
   const items = Object.fromEntries(reportFilterDetails(section));
-  const left = 18;
-  const right = 18;
-  const gap = 5;
+  const left = 14;
+  const right = 14;
+  const gap = 3;
   const available = width - left - right;
-  const boxW = (available - gap * 3) / 4;
-  const boxH = 28;
+  const boxW = (available - gap * 4) / 5;
+  const boxH = 30;
 
   const boxes = [
-    ["FACULTY", items["Faculty"], left, startY, boxW],
-    ["DEPARTMENT", items["Department"], left + (boxW + gap), startY, boxW],
-    ["ACTIVITY TYPE", items["Activity Type"], left + (boxW + gap) * 2, startY, boxW],
-    ["SEMESTER", items["Semester"], left + (boxW + gap) * 3, startY, boxW]
+    ["SEMESTER", items["Semester"], left, startY, boxW],
+    ["FACULTY", items["Faculty"], left + (boxW + gap), startY, boxW],
+    ["DEPARTMENT", items["Department"], left + (boxW + gap) * 2, startY, boxW],
+    ["ACTIVITY TYPE", items["Activity Type"], left + (boxW + gap) * 3, startY, boxW],
+    ["ORGANIZATION", items["Organization"], left + (boxW + gap) * 4, startY, boxW]
   ];
 
   boxes.forEach(([label, value, x, y, w]) => {
@@ -3296,25 +3379,23 @@ function addPdfFilterBanner(doc, section, startY = 57) {
     doc.setLineWidth(0.4);
     doc.roundedRect(x, y, w, boxH, 2.5, 2.5, "FD");
 
-    // Horizontal category heading.
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(7.8);
+    doc.setFontSize(7.2);
     doc.setTextColor(11, 107, 58);
-    doc.text(label, x + w / 2, y + 5.3, { align: "center" });
+    doc.text(label, x + w / 2, y + 5.2, { align: "center" });
 
-    // Selected name/value is stacked vertically under the heading.
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(9.3);
-    doc.setTextColor(15, 23, 42);
-    const valueLines = doc.splitTextToSize(String(value || "-"), w - 8);
-    const lines = valueLines.slice(0, 4);
-    const lineHeight = 4.2;
+    doc.setFontSize(8.0);
+    doc.setTextColor(0, 0, 0);
+    const valueLines = doc.splitTextToSize(String(value || "-"), w - 6);
+    const lines = valueLines.slice(0, 5);
+    const lineHeight = 3.8;
     const totalTextHeight = Math.max(lineHeight, lines.length * lineHeight);
     const startTextY = y + 10 + Math.max(0, (boxH - 12 - totalTextHeight) / 2);
 
     doc.text(lines, x + w / 2, startTextY, {
       align: "center",
-      lineHeightFactor: 1.35
+      lineHeightFactor: 1.25
     });
   });
 
@@ -3325,10 +3406,11 @@ function reportSections() {
   const f = getCurrentFilterSummary();
   const parts = [];
 
+  if (f.month !== "All") parts.push(f.month);
   if (f.faculty !== "All") parts.push(f.faculty);
   if (f.department !== "All") parts.push(f.department);
   if (f.activity !== "All") parts.push(f.activity);
-  if (f.month !== "All") parts.push(f.month);
+  if (f.organization !== "All") parts.push(f.organization);
   if (f.search) parts.push(`Search: ${f.search}`);
 
   return [{
@@ -3367,7 +3449,8 @@ function reportMeta(rows) {
   const meta = [
     ["Faculties", reportUnique(rows, "faculty").toLocaleString()],
     ["Departments", reportUnique(rows, "department").toLocaleString()],
-    ["Activity Types", reportUnique(rows, "type").toLocaleString()]
+    ["Activity Types", reportUnique(rows, "type").toLocaleString()],
+    ["Organizations", reportUnique(rows, "organization").toLocaleString()]
   ];
 
   if (selectedActivity === "All") {
@@ -3466,16 +3549,22 @@ function activityBreakdown(rows) {
   return Object.entries(grouped).sort((a, b) => b[1] - a[1]);
 }
 
+function reportDisplayValue(value) {
+  const cleaned = clean(value);
+  return !cleaned || isInvalidLabel(cleaned) ? "-" : cleaned;
+}
+
 function detailRows(rows) {
   return rows.map(row => [
     semesterFromMonth(row.month) || "-",
-    row.department || "-",
-    row.type || "-",
+    reportDisplayValue(row.faculty),
+    reportDisplayValue(row.department),
+    reportDisplayValue(row.type),
     rowAmount(row),
-    row.organization || "-",
-    row.person || "-",
-    row.designation || "-",
-    row.scheduled || "-"
+    reportDisplayValue(row.organization),
+    reportDisplayValue(row.person),
+    reportDisplayValue(row.designation),
+    reportDisplayValue(row.scheduled)
   ]);
 }
 
@@ -3483,6 +3572,8 @@ function expectedOutcomeBullets(rows) {
   const present = new Set(rows.map(row => clean(row.type)).filter(Boolean));
   const rules = [
     ["Internship / Placement", "Internship / Placement: Improve student employability and workplace readiness by expanding structured opportunities for practical training, professional exposure and recruitment. Expected results include stronger employer networks, improved job-readiness, better understanding of workplace standards and a clearer pathway from academic learning to employment."],
+    ["Planned", "Planned Activities: Establish a forward-looking pipeline of external-linkage opportunities with clear partner organizations, student participation targets, timelines, delivery modes and responsible departments. Expected results include improved semester planning, earlier coordination with external partners, better conversion of planned opportunities into executed internships, placements, visits or collaborations, and stronger evidence-based monitoring of progress."],
+    ["Remote", "Remote Activities: Expand access to external-linkage opportunities through virtual or remote participation where physical attendance is not required. Expected results include broader student participation, flexible engagement with external organizations, improved accessibility, documented remote delivery, and measurable academic or professional outcomes from online placements, collaborations or planned activities."],
     ["Alumni Talk / Mentoring", "Alumni Talk / Mentoring: Strengthen alumni participation in student development through career guidance, mentoring, networking and sharing of professional experience. Expected results include improved career awareness, stronger alumni-student connections and access to sector-specific advice and opportunities."],
     ["Industrial Visit / IV", "Industrial Visit / IV: Provide direct exposure to operational environments, technologies, professional practices and organizational systems. Expected results include improved understanding of industry processes, stronger application of classroom learning and increased awareness of workplace expectations."],
     ["Seminar", "Seminar: Enhance knowledge exchange by connecting students and faculty with external experts, practitioners and current developments in relevant disciplines. Expected results include improved professional awareness, updated subject knowledge and opportunities for academic and industry networking."],
@@ -4078,8 +4169,8 @@ async function buildSectionCharts(section) {
   const palette = reportChartPalette();
   const charts = [];
   const facultyEntries = reportGroupBy(rows, "faculty").slice(0, 10);
-  const departmentEntries = reportGroupBy(rows, "department").slice(0, 10);
-  const typeEntries = activityBreakdown(rows).slice(0, 10);
+  const departmentEntries = reportGroupBy(rows, "department");
+  const typeEntries = activityBreakdown(rows);
   const monthEntries = reportMonthBreakdown(rows);
 
   if (facultyEntries.length > 1) {
@@ -4129,10 +4220,10 @@ async function buildSectionCharts(section) {
           plugins: { legend: { display: false }, title: { display: false } },
           scales: {
             x: { beginAtZero: true, ticks: { precision: 0, autoSkip: false, font: { size: 28, weight: "bold" }, color: "#0f172a", padding: 10 }, grid: { color: "rgba(15,23,42,.16)", lineWidth: 2 }, border: { color: "#334155", width: 3 } },
-            y: { ticks: { autoSkip: false, font: { size: 26, weight: "bold" }, color: "#0f172a", padding: 12 }, grid: { display: false }, border: { color: "#334155", width: 3 } }
+            y: { ticks: { autoSkip: false, font: { size: 20, weight: "bold" }, color: "#0f172a", padding: 12 }, grid: { display: false }, border: { color: "#334155", width: 3 } }
           }
         }
-      }, 3600, 1650)
+      }, 3600, 3000)
     });
   }
 
@@ -4155,10 +4246,10 @@ async function buildSectionCharts(section) {
           cutout: "55%",
           plugins: {
             title: { display: false },
-            legend: { position: "right", labels: { boxWidth: 30, padding: 24, color: "#0f172a", font: { size: 28, weight: "bold" } } }
+            legend: { position: "right", labels: { boxWidth: 26, padding: 16, color: "#0f172a", font: { size: 24, weight: "bold" } } }
           }
         }
-      }, 2200, 1850)
+      }, 2400, 2200)
     });
   }
 
@@ -4562,7 +4653,7 @@ async function generatePdfReport() {
 
     doc.autoTable({
       startY: detailsStartY,
-      head: [["SEMESTER", "DEPARTMENT", "ACTIVITY TYPE", "HOW MANY", "ORGANIZATION", "FOCAL PERSON", "DESIGNATION", "SCHEDULED"]],
+      head: [["SEMESTER", "FACULTY", "DEPARTMENT", "ACTIVITY TYPE", "HOW MANY", "ORGANIZATION", "FOCAL PERSON", "DESIGNATION", "SCHEDULED"]],
       body: detailRows(section.rows),
       theme: "grid",
       styles: {
@@ -4581,14 +4672,15 @@ async function generatePdfReport() {
       },
       alternateRowStyles: { fillColor: [248, 250, 252] },
       columnStyles: {
-        0: { cellWidth: 25, fontStyle: "bold" },
-        1: { cellWidth: 39 },
-        2: { cellWidth: 34, fontStyle: "bold" },
-        3: { cellWidth: 16, halign: "right", fontStyle: "bold" },
-        4: { cellWidth: 52 },
-        5: { cellWidth: 34 },
-        6: { cellWidth: 34 },
-        7: { cellWidth: 18, halign: "center" }
+        0: { cellWidth: 23, fontStyle: "bold" },
+        1: { cellWidth: 34 },
+        2: { cellWidth: 36 },
+        3: { cellWidth: 29, fontStyle: "bold" },
+        4: { cellWidth: 15, halign: "right", fontStyle: "bold" },
+        5: { cellWidth: 45 },
+        6: { cellWidth: 29 },
+        7: { cellWidth: 29 },
+        8: { cellWidth: 17, halign: "center" }
       },
       margin: { left: 14, right: 14, top: detailsStartY, bottom: 18 },
       didDrawPage: () => {
@@ -4668,6 +4760,10 @@ async function printReport() {
         <div class="subtitle">${esc(section.subtitle || "")}</div>
         <div class="generated-on">Generated on: ${esc(reportGeneratedOn())}</div>
 
+        <div class="print-filters">
+          ${reportFilterDetails(section).map(([label,value]) => `<div class="print-filter"><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`).join("")}
+        </div>
+
         <div class="kpis">
           ${meta.map(item => `<div class="kpi"><span>${esc(item[0])}</span><strong>${esc(item[1])}</strong></div>`).join("")}
         </div>
@@ -4703,7 +4799,7 @@ async function printReport() {
 
         <div class="page-section detailed-records-section">
         <h2>Detailed Records</h2>
-        <table><thead><tr><th>Month</th><th>Department</th><th>Activity Type</th><th>How Many</th><th>Organization</th><th>Focal Person</th><th>Designation</th><th>Scheduled</th></tr></thead><tbody>
+        <table><thead><tr><th>Semester</th><th>Faculty</th><th>Department</th><th>Activity Type</th><th>How Many</th><th>Organization</th><th>Focal Person</th><th>Designation</th><th>Scheduled</th></tr></thead><tbody>
           ${rows.map(cols => `<tr>${cols.map(col => `<td>${esc(col)}</td>`).join("")}</tr>`).join("")}
         </tbody></table>
         </div>
@@ -4719,7 +4815,7 @@ async function printReport() {
       .head-left{display:flex;align-items:center;gap:12px}.report-logo{width:56px;height:56px;border-radius:50%;background:#fff;padding:2px}
       .university{font-size:18px;font-weight:800;letter-spacing:.4px}.office{font-size:11px;margin-top:4px}.report-label{font-size:12px;font-weight:800;background:#fff;color:#091f54;padding:8px 12px;border-radius:20px}
       h1{font-size:20px;margin:18px 0 2px}.subtitle{color:#000000;font-size:11px;margin-bottom:4px}.generated-on{font-size:10px;color:#000000;margin-bottom:12px}h2{font-size:13px;margin:16px 0 7px}
-      .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.kpi{border:1px solid #dbe4f0;border-radius:7px;padding:8px;background:#f8fafc}.kpi span{display:block;font-size:9px;color:#000000}.kpi strong{font-size:15px}
+      .print-filters{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0 12px}.print-filter{border:1px solid #c1d3cb;border-radius:7px;padding:7px;background:#f8fafc;min-height:48px}.print-filter span{display:block;font-size:8px;font-weight:700;color:#0b6b3a;text-transform:uppercase;margin-bottom:4px}.print-filter strong{display:block;font-size:9px;color:#000;line-height:1.25}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.kpi{border:1px solid #dbe4f0;border-radius:7px;padding:8px;background:#f8fafc}.kpi span{display:block;font-size:9px;color:#000000}.kpi strong{font-size:15px}
       .summary-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:12px;align-items:start}
       .report-subsection{margin-top:14px}.page-section{break-before:page;page-break-before:always}.report-subsection:first-of-type{break-before:auto;page-break-before:auto}
       .faculty-table th,.department-table th{background:#091f54}.activity-table th{background:#0b6b3a}

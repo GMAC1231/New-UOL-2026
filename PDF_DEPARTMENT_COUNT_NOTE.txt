@@ -1,0 +1,6 @@
+PDF Department-wise Activities update
+=====================================
+The Department-wise Activities chart no longer uses the previous top-10 limit.
+It now includes all departments available in the filtered report selection.
+For the current all-data view, this is 25 departments.
+The Department-wise Activities table already includes all departments.

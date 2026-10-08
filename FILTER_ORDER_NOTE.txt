@@ -1,0 +1,10 @@
+Dashboard filter order
+======================
+1. Semester
+2. Faculty
+3. Department
+4. Activity Type
+5. Organization
+
+Each upstream selection rebuilds and resets all downstream filters.
+Planned and Remote remain separate activity types.

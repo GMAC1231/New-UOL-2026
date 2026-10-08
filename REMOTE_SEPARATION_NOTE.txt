@@ -1,0 +1,5 @@
+Remote activity handling
+========================
+Records whose Remarks / Result contains 'Mode: Remote' are classified as the separate Activity Type 'Remote'.
+This keeps Remote records out of Internship / Placement and Planned totals while preserving the overall data total.
+Current known Remote records: Human Rights Committee, Punjab Bar Council (1) and Youth Club (100), total 101.
