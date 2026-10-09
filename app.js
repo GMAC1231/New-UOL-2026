@@ -3507,7 +3507,8 @@ function detailRows(rows) {
     reportDisplayValue(row.organization),
     reportDisplayValue(row.person),
     reportDisplayValue(row.designation),
-    reportDisplayValue(row.scheduled)
+    reportDisplayValue(row.scheduled),
+    reportDisplayValue(row.remarks)
   ]);
 }
 
@@ -3901,6 +3902,31 @@ function reportGroupBy(rows, key) {
   });
 
   return Object.entries(grouped).sort((a, b) => b[1] - a[1]);
+}
+
+// Organizations shown alongside each summary category; all names remain
+// available in the full organization-wise table and detailed records.
+function reportOrganizationsForGroup(rows, key, label) {
+  const names = [...new Set(rows
+    .filter(row => row[key] === label)
+    .map(row => clean(row.organization))
+    .filter(name => !isInvalidLabel(name)))].sort((a,b) => a.localeCompare(b));
+  if (!names.length) return "-";
+  const preview = names.slice(0, 5).join("; ");
+  return names.length > 5 ? `${preview}; +${names.length - 5} more (see Organization-wise Activities)` : preview;
+}
+
+// Distinct recorded remarks for each summary group. Keep summary cells concise;
+// full source remarks are included, untruncated, in Detailed Records.
+function reportRemarksForGroup(rows, key, label) {
+  const remarks = [...new Set(rows
+    .filter(row => clean(row[key]) === clean(label))
+    .map(row => clean(row.remarks))
+    .filter(value => !isInvalidLabel(value)))];
+  if (!remarks.length) return "-";
+  const shown = remarks.slice(0, 2).map(value =>
+    value.length > 165 ? `${value.slice(0, 162)}...` : value);
+  return shown.join("; ") + (remarks.length > 2 ? `; +${remarks.length - 2} more (see Detailed Records)` : "");
 }
 
 function reportMonthBreakdown(rows) {
@@ -4533,9 +4559,9 @@ async function generatePdfReport() {
 
     // ---------- MODERN INSTITUTIONAL BREAKDOWN TABLES ----------
     const breakdownTables = [
-      { title: "FACULTY-WISE ACTIVITIES", subtitle: "Faculty-wise activity summary", firstLabel: "FACULTY", entries: facultyBreakdown },
-      { title: "ACTIVITY BREAKDOWN", subtitle: "Activity type summary", firstLabel: "ACTIVITY TYPE", entries: breakdown },
-      { title: "DEPARTMENT-WISE ACTIVITIES", subtitle: "Department-wise activity summary", firstLabel: "DEPARTMENT", entries: departmentBreakdown }
+      { title: "FACULTY-WISE ACTIVITIES", subtitle: "Faculty-wise activity summary with organizations", firstLabel: "FACULTY", groupKey: "faculty", entries: facultyBreakdown },
+      { title: "ACTIVITY BREAKDOWN", subtitle: "Activity type summary with organizations", firstLabel: "ACTIVITY TYPE", groupKey: "type", entries: breakdown },
+      { title: "DEPARTMENT-WISE ACTIVITIES", subtitle: "Department-wise activity summary with organizations", firstLabel: "DEPARTMENT", groupKey: "department", entries: departmentBreakdown }
     ];
     for (const spec of breakdownTables) {
       if (!spec.entries.length) continue;
@@ -4545,15 +4571,41 @@ async function generatePdfReport() {
       header();
       addModernPdfTable(doc, {
         startY: 60,
-        headers: [spec.firstLabel, "TOTAL ACTIVITIES", "SHARE"],
+        headers: [spec.firstLabel, "ORGANIZATION(S)", "REMARKS / RESULT", "TOTAL ACTIVITIES", "SHARE"],
         rows: spec.entries.map(([name, amount]) => [
-          name, Number(amount).toLocaleString("en-US"), reportPercentage(amount, sectionTotal)
+          name, reportOrganizationsForGroup(section.rows, spec.groupKey, name),
+          reportRemarksForGroup(section.rows, spec.groupKey, name),
+          Number(amount).toLocaleString("en-US"), reportPercentage(amount, sectionTotal)
         ]),
-        numericColumns: [1, 2],
-        widths: [164, 44, 61],
+        numericColumns: [3, 4],
+        widths: [51, 91, 85, 24, 18],
+        compact: true,
         onPage: header,
         summaryLabel: "TOTAL REPORTED",
         summaryValue: sectionTotal.toLocaleString("en-US")
+      });
+    }
+
+    // ---------- FULL ORGANIZATION-WISE TABLE ----------
+    // Names are sourced from the same filtered records as the report.
+    const organizationBreakdown = reportGroupBy(section.rows, "organization");
+    if (organizationBreakdown.length) {
+      doc.addPage();
+      const orgSection = { ...section, subtitle: "Full organization-wise activities and participation" };
+      const orgHeader = () => addPdfHeader(doc, orgSection, index, sections.length, "ORGANIZATION-WISE ACTIVITIES", logoDataUrl);
+      orgHeader();
+      addModernPdfTable(doc, {
+        startY: 60,
+        headers: ["ORGANIZATION NAME", "REMARKS / RESULT", "TOTAL ACTIVITIES"],
+        rows: organizationBreakdown.map(([name, amount]) => [
+          name, reportRemarksForGroup(section.rows, "organization", name),
+          Number(amount).toLocaleString("en-US")
+        ]),
+        numericColumns: [2],
+        widths: [94, 143, 32],
+        onPage: orgHeader,
+        summaryLabel: "TOTAL WITH NAMED ORGANIZATIONS",
+        summaryValue: organizationBreakdown.reduce((n, entry) => n + entry[1], 0).toLocaleString("en-US")
       });
     }
 
@@ -4592,10 +4644,10 @@ async function generatePdfReport() {
 
     addModernPdfTable(doc, {
       startY: 58,
-      headers: ["SEMESTER", "FACULTY", "DEPARTMENT", "ACTIVITY TYPE", "HOW MANY", "ORGANIZATION", "FOCAL PERSON", "DESIGNATION", "SCHEDULED"],
+      headers: ["SEMESTER", "FACULTY", "DEPARTMENT", "ACTIVITY TYPE", "HOW MANY", "ORGANIZATION", "FOCAL PERSON", "DESIGNATION", "SCHEDULED", "REMARKS / RESULT"],
       rows: detailRows(section.rows),
       numericColumns: [4],
-      widths: [23, 34, 36, 29, 15, 45, 29, 29, 17],
+      widths: [20, 27, 30, 24, 13, 36, 22, 21, 14, 62],
       compact: true,
       onPage: () => addPdfHeader(doc, detailSection, index, sections.length, "DETAILED RECORDS", logoDataUrl)
     });
