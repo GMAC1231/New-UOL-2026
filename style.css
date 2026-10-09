@@ -1005,3 +1005,56 @@ body{
 .selected-activity-card { border-color:#d5e2f3; background:linear-gradient(180deg,#fff,#f7faff); }
 .selected-activity-icon { font-family:"Segoe UI Emoji","Apple Color Emoji","Segoe UI Symbol",sans-serif; font-size:17px; }
 .selected-activity-card .kpi-label { overflow-wrap:anywhere; }
+
+
+/* ===========================================================
+   UOL | PROFESSIONAL INSTITUTIONAL ANALYTICS REFRESH (2026)
+   Visual-only overrides; existing chart and data logic retained.
+   =========================================================== */
+:root{--side:252px;--ink:#10243b;--muted:#60728a;--bg:#f1f5fa;--navy:#082d50;--navy2:#0b4967;--green:#087a55;--green2:#10a477;--blue:#216cba;--line:#dee7f0}
+body{font-family:Inter,'Segoe UI',Arial,sans-serif;font-size:13px;background:var(--bg);letter-spacing:.005em}
+.side{background:linear-gradient(171deg,#062c43 0%,#073953 47%,#052536 100%);padding:22px 13px;box-shadow:5px 0 35px rgba(6,39,65,.10)}
+.brand-wrap{align-items:flex-start;padding:4px 6px 26px;margin-bottom:20px;gap:8px;border-bottom-color:rgba(255,255,255,.16);flex-direction:column}
+.brand-wordmark{max-height:72px!important;max-width:208px!important;object-fit:contain;object-position:left center}
+.brand-title{font-size:20px;letter-spacing:-.6px;color:white;line-height:1.3}
+.brand-sub{font-size:10px;line-height:1.4;color:#a9cdda;letter-spacing:.10em}
+.nav-caption{font-size:10px;letter-spacing:.18em;font-weight:800;color:#72aabd;margin:8px 13px 13px}
+.secondary-caption{margin-top:30px}
+.nav-link{margin:5px 0;padding:13px 12px;color:#cfdfeb;border-radius:10px;font-size:12px;font-weight:600;gap:12px;transition:background .15s ease,transform .15s ease}
+.nav-link:hover{background:rgba(255,255,255,.10);transform:translateX(2px)}
+.nav-link.active{background:linear-gradient(105deg,#0d9677,#08755f);box-shadow:0 7px 18px rgba(0,0,0,.12);color:#fff}
+.nav-glyph{font-size:17px;width:23px;text-align:center;opacity:.94}
+.side-overview{margin-top:32px;background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.14);padding:18px;border-radius:14px}
+.side-overview-title{font-size:10px;letter-spacing:.1em;color:#b0d5da}
+.side-mini-row{font-size:12px;padding-top:15px;margin-top:8px}
+.side-mini-row strong{font-size:19px;color:white}
+.main{padding:25px clamp(18px,2.4vw,38px) 32px;max-width:1920px}
+.topbar{grid-template-columns:190px minmax(0,1fr) 174px;gap:24px;background:#fff;padding:22px 26px;border:1px solid #e2eaf2;border-radius:17px;box-shadow:0 5px 24px rgba(21,57,79,.04);position:relative;overflow:hidden}
+.topbar:before{content:'';position:absolute;top:0;left:0;bottom:0;width:5px;background:linear-gradient(#0b9e77,#178ac8)}
+.official-uol-logo{max-width:177px!important;max-height:77px!important;object-fit:contain!important}
+.official-office-name{font-size:10px!important;letter-spacing:.09em;font-weight:800;color:#0c705c!important}
+.title-block{text-align:left}.page-number{font-size:10px;letter-spacing:.18em;color:#0a8b6c}
+.title-block h1{font-size:clamp(22px,2.2vw,35px);color:#092d49;letter-spacing:-.035em;line-height:1.14;margin:7px 0 5px;font-weight:850}
+.title-sub{font-size:13px;font-weight:600;color:#6a7c8e}.title-ribbon{background:#eaf6f2;color:#096f59;font-weight:700;font-size:10px;padding:7px 11px;margin-top:12px;border-radius:30px;letter-spacing:.04em}
+.status-box{padding:13px 15px;background:#f3f8fa;border:1px solid #e2ebef;border-radius:12px;text-align:left;max-width:174px}
+.status-label{font-size:10px;letter-spacing:.1em;color:#5d7183}.status-value{font-size:11px;color:#08765d;line-height:1.45}
+.tentative-section-nav{display:flex!important;gap:6px!important;margin:19px 0 0!important;padding:6px!important;background:#e8eef5!important;border:1px solid #e0e8ef!important;border-radius:12px!important;overflow-x:auto}
+.tentative-section-nav a{display:inline-flex;align-items:center;white-space:nowrap;text-decoration:none!important;font-size:12px!important;line-height:1.3!important;font-weight:700!important;color:#496078!important;padding:12px 17px!important;border-radius:8px!important;background:transparent!important;transition:.15s ease}
+.tentative-section-nav a:hover{color:#0b705c!important;background:#dcece8!important}
+.tentative-section-nav a.tnav-current,.tentative-section-nav a.active{color:#09684f!important;background:#fff!important;box-shadow:0 2px 8px rgba(12,35,56,.08)!important}
+.filter-strip{margin-top:19px;gap:11px;padding:17px 18px;border-radius:14px;border:1px solid #e1e9f1;box-shadow:0 4px 16px rgba(18,52,79,.03)}
+.filter-label{width:100%;font-size:11px;letter-spacing:.13em;color:#214c62;margin-bottom:3px}
+.filter-emoji{font-size:15px;color:#0b8e70;margin-right:7px}
+.filter{height:39px;min-width:140px;border-color:#d6e1eb;border-radius:8px;font-size:12px;padding:0 12px;color:#29435c;background:#fbfdff}
+.filter:focus{border-color:#178b79;box-shadow:0 0 0 3px rgba(16,151,122,.12)}
+#facultyFilter{min-width:180px}#departmentFilter{min-width:190px}
+.btn{min-height:39px;border-radius:8px!important;font-size:11px!important;font-weight:750!important;padding:0 15px!important;transition:filter .15s ease,transform .15s ease}.btn:hover{filter:brightness(1.05);transform:translateY(-1px)}
+.tentative-alert{display:flex!important;align-items:center;gap:12px!important;padding:13px 17px!important;margin:16px 0!important;border-radius:12px!important;border:1px solid #cde7e1!important;background:linear-gradient(90deg,#f2fbf7,#eff7fb)!important;color:#46677b!important;font-size:11px!important;line-height:1.6}
+.tentative-alert>div{display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex:1}.tentative-alert strong{color:#0b675a;font-size:12px}.notice-dot{height:9px;width:9px;flex:0 0 9px;background:#10a87a;border-radius:50%;box-shadow:0 0 0 4px #d6f3e9}.tentative-chip{border:1px solid #bbddd7;background:white;color:#167c6a;padding:5px 9px;border-radius:99px;font-size:9px;letter-spacing:.1em;font-weight:800}
+.kpi-grid{gap:15px!important;margin-top:15px!important}.kpi-card{border:1px solid #dfe8f0!important;background:#fff!important;border-radius:14px!important;padding:21px 19px!important;box-shadow:0 5px 22px rgba(7,41,65,.045)!important;position:relative;overflow:hidden;transition:box-shadow .15s,transform .15s}
+.kpi-card:before{content:'';width:34px;height:3px;position:absolute;top:0;left:19px;background:#0f9475;border-radius:0 0 5px 5px}.kpi-card:hover{box-shadow:0 12px 28px rgba(7,41,65,.09)!important;transform:translateY(-2px)}
+.kpi-label{font-size:11px!important;font-weight:700!important;color:#5f738a!important;letter-spacing:.02em}.kpi-value{font-size:clamp(26px,2.5vw,38px)!important;line-height:1.12!important;letter-spacing:-.04em;color:#092e4c!important;margin:12px 0 6px!important}.kpi-foot{font-size:10px!important;color:#8a99a8!important;line-height:1.5!important}.kpi-icon{border-radius:11px!important}
+.analytics-grid{gap:18px!important;margin-top:22px!important}.panel{background:#fff!important;border:1px solid #dfe8f0!important;box-shadow:0 4px 22px rgba(7,41,65,.04)!important;border-radius:15px!important;padding:20px!important;min-width:0}
+.panel-head{padding-bottom:13px!important;border-bottom:1px solid #eef2f6!important;margin-bottom:16px!important}.panel-head h3{color:#143951!important;font-size:13px!important;letter-spacing:.06em!important;font-weight:850!important}.panel-head p{font-size:11px!important;color:#72849a!important;line-height:1.5!important}.click-note{background:#f0f8f6!important;color:#147860!important;border-radius:20px!important;padding:5px 9px!important;font-size:9px!important}.dashboard-footer{color:#8293a3!important;font-size:11px!important;margin-top:26px!important;text-align:center;border-top:1px solid #dfe7ef;padding:18px}
+@media(max-width:1100px){.topbar{grid-template-columns:150px minmax(0,1fr)}.status-box{grid-column:1 / -1;justify-self:stretch;max-width:none}.main{padding:14px}.title-block h1{font-size:24px}}
+@media(max-width:760px){.topbar{display:flex;flex-direction:column;align-items:stretch}.title-block{text-align:left}.side{padding:12px}.nav-caption{display:none}.tentative-chip{display:none}.filter{flex:1 1 160px}.filter-strip .btn{flex:1 1 130px}}

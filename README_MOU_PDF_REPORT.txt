@@ -1,0 +1,1 @@
+Section 3 PDF report uses the browser print dialog without jsPDF. Open MoU Collaborations, select filters, then Generate PDF Report. A print-ready report opens in a new tab: choose Save as PDF as the destination. Pop-ups must be allowed for this site. The Excel source remains loaded automatically from the data folder. No Connect Excel button is used.

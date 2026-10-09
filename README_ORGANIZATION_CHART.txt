@@ -1,0 +1,1 @@
+Section 2 organization display: Select Top 10, Top 15 (default), Top 20, or All organizations (scroll). All organizations are retained in the complete ranked table. The faculty, department and organization filters affect both. No localhost server or .bat launcher is included. Deploy files on GitHub Pages or another static web host; browser fetch requires HTTP(S).

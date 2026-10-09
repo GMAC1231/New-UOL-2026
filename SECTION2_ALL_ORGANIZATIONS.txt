@@ -1,0 +1,1 @@
+Section 2 organization chart displays all distinct valid organization labels as separate bars, sorted by How Many, without Top 15 or Other Organizations aggregation. Faculty, department, and organization filters remain connected.

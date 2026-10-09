@@ -1,0 +1,23 @@
+/* Shared executive layout: Sections 1, 2 and 3 */
+:root{--uol-navy:#102b43;--uol-green:#0d9179;--uol-edge:#dce6ef}
+body.basic-modern{background:#edf3f8!important}
+.basic-modern .basic-shell{display:grid!important;grid-template-columns:252px minmax(0,1fr)!important;min-height:100vh!important;align-items:stretch}
+.basic-modern .uol-shared-sidebar{grid-column:1;grid-row:1;min-height:100vh!important;position:sticky!important;top:0;align-self:start;height:100vh;overflow-y:auto;background:linear-gradient(180deg,#102b43 0%,#12374f 52%,#07634f 100%)!important;padding:25px 14px!important}
+.basic-modern main.basic-content{grid-column:2;grid-row:1;display:block!important;padding:0!important;margin:0!important;width:100%!important;min-width:0!important;max-width:none!important}
+.basic-modern .uol-executive-header{margin:0!important;min-height:128px!important;padding:25px clamp(22px,3vw,46px)!important;background:linear-gradient(105deg,#fff 70%,#f3fbf8 100%)!important;border-bottom:1px solid #dce6ef!important}
+.basic-modern .uol-executive-header h1{font-size:clamp(24px,2.3vw,35px)!important;margin:12px 0 7px!important}
+.basic-modern .uol-executive-header p{font-size:12px!important}
+.basic-modern .uol-executive-status{flex:0 1 260px!important;max-width:300px!important;min-width:205px!important}
+.basic-modern .report-inner{padding:28px clamp(20px,3vw,46px) 32px!important;min-width:0}
+.basic-modern .page-intro{margin:0 0 21px!important;gap:20px!important}
+.basic-modern .page-intro h1{font-size:clamp(23px,2.3vw,32px)!important}
+.basic-modern .basic-filterbar{border-radius:14px!important;box-shadow:0 4px 18px rgba(15,38,60,.045)!important}
+.basic-modern .metrics{margin-top:18px!important;gap:16px!important}
+.basic-modern .metric{min-height:157px!important;border-radius:17px!important;box-shadow:0 8px 24px #102d470b!important}
+.basic-modern .charts{margin-top:20px!important;gap:17px!important}
+.basic-modern .charts .panel{border-radius:15px!important;box-shadow:0 5px 20px #102e470b!important}
+.basic-modern .charts .panel h3{font-size:15px!important;letter-spacing:-.015em!important}
+.basic-modern .uol-shared-sidebar .uol-nav-link{border-radius:10px!important}
+.basic-modern .uol-side-impact{margin-top:42px!important}
+@media(max-width:1050px){.basic-modern .basic-shell{grid-template-columns:1fr!important}.basic-modern .uol-shared-sidebar{position:relative!important;grid-column:1;grid-row:1;height:auto!important;min-height:0!important;padding:14px 18px!important}.basic-modern main.basic-content{grid-column:1;grid-row:2}.basic-modern .uol-side-impact{margin-top:8px!important}.basic-modern .report-inner{padding:23px 20px!important}}
+@media(max-width:720px){.basic-modern .uol-executive-header{flex-wrap:wrap!important;min-height:0!important}.basic-modern .uol-executive-status{width:100%!important;min-width:0!important;max-width:none!important;flex:auto!important}.basic-modern .report-inner{padding:20px 14px!important}.basic-modern .page-intro{align-items:flex-start!important;flex-direction:column!important}}

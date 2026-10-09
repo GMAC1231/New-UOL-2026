@@ -1,0 +1,1 @@
+Sections 2 and 3 use direct Excel connections and now feature premium KPI cards, refreshed filters, and readable scrollable ranked bars. The organization display remains Top 10 / 15 / 20. No upload buttons or submission directory were introduced.

@@ -1,0 +1,20 @@
+/* Consistent report workspace for Sections 2 and 3. */
+.section-modern .filter-items{grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:15px}
+.section-modern.mou-modern .filter-items{grid-template-columns:repeat(4,minmax(0,1fr)) auto}
+.section-modern .metrics{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+.section-modern .charts{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.section-modern .charts .panel{grid-column:auto!important;min-width:0}
+.section-modern .charts .panel.wide{grid-column:1/-1!important}
+.section-modern .charts .panel h3{color:#193c55!important;font-size:15px!important;font-weight:800!important}
+.section-modern .charts .panel .graph-wrap{max-height:780px;overflow:hidden}
+.section-modern .metric:nth-child(5){--metric-color:#0d9475}
+.section-modern .org-chart-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0 15px}
+.section-modern .org-chart-controls label{font-size:11px;font-weight:700;color:#506a7c}
+.section-modern .org-chart-controls select{height:37px;border-radius:8px;border:1px solid #d2e3ed;padding:0 12px;background:#f9fcff;color:#163a56}
+.section-modern .org-chart-hint{font-size:11px;color:#8295a5}
+.section-modern .metrics .metric{min-width:0}
+.section-modern .charts .panel.wide .graph-wrap{min-height:320px}
+@media(max-width:1450px){.section-modern .metrics{grid-template-columns:repeat(3,minmax(0,1fr))!important}.section-modern.mou-modern .filter-items{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:1100px){.section-modern .filter-items{grid-template-columns:repeat(2,minmax(0,1fr))!important}.section-modern .charts{grid-template-columns:1fr!important}.section-modern .charts .panel.wide{grid-column:auto!important}}
+@media(max-width:700px){.section-modern .metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}.section-modern .filter-items{grid-template-columns:1fr!important}}
+@media(max-width:480px){.section-modern .metrics{grid-template-columns:1fr!important}}

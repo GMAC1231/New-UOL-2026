@@ -1318,12 +1318,7 @@ function renderStudentSummary() {
         .toLocaleString();
   }
 
-  const slots =
-    [
-      "impactInternship",
-      "impactPlacement",
-      "impactPlanned"
-    ];
+  const slots = ["impactInternship"];
 
   slots.forEach(
     id =>
@@ -1589,7 +1584,7 @@ function barChart(
       .height =
       Math.max(
         280,
-        labels.length * 34
+        labels.length * 47
       ) +
       "px";
   }
@@ -1600,7 +1595,7 @@ function barChart(
       const { ctx } = chart;
       const meta = chart.getDatasetMeta(0);
       ctx.save();
-      ctx.font = "600 10px Inter, Segoe UI, Arial, sans-serif";
+      ctx.font = "700 12px Inter, Segoe UI, Arial, sans-serif";
       ctx.fillStyle = "#334155";
       ctx.textAlign = "left";
       ctx.textBaseline = "middle";
@@ -1766,16 +1761,13 @@ function barChart(
                         ? chartPercent(values[index])
                         : "0.0%";
 
-                    return wrapLabel(
-                      `${label} (${pct})`,
-                      30
-                    );
+                    return wrapLabel(label, 32);
                   },
 
                 font: {
 
                   size:
-                    9
+                    12
                 }
               },
 
@@ -1905,27 +1897,11 @@ function activityChart() {
         ]
     );
 
-  const visibleActivityPercentPlugin = {
-    id: "visibleActivityPercent",
-    afterDatasetsDraw(chart) {
-      const { ctx } = chart;
-      const meta = chart.getDatasetMeta(0);
-      ctx.save();
-      ctx.font = "700 10px Inter, Segoe UI, Arial, sans-serif";
-      ctx.fillStyle = "#ffffff";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-
-      meta.data.forEach((arc, index) => {
-        const value = Number(values[index] || 0);
-        const numericPct = activityTotal > 0 ? (value / activityTotal) * 100 : 0;
-        if (numericPct < 3) return;
-        const pos = arc.tooltipPosition();
-        ctx.fillText(`${numericPct.toFixed(1)}%`, pos.x, pos.y);
-      });
-      ctx.restore();
-    }
-  };
+  // Keep the ring uncluttered: use the central total and the detailed
+  // breakdown for numeric labels rather than putting text on narrow slices.
+  if ($("activityDonutTotal")) $("activityDonutTotal").textContent = activityTotal.toLocaleString();
+  if ($("activityDonutCategories")) $("activityDonutCategories").textContent =
+    `${labels.length} activity categories`;
 
   charts.activityChart =
     new Chart(
@@ -1935,7 +1911,6 @@ function activityChart() {
         type:
           "doughnut",
 
-        plugins: [visibleActivityPercentPlugin],
 
         data: {
 
@@ -1956,10 +1931,13 @@ function activityChart() {
                 "#ffffff",
 
               borderWidth:
-                2,
+                4,
+
+              borderRadius:
+                3,
 
               hoverOffset:
-                5
+                8
             }
           ]
         },
@@ -1973,7 +1951,7 @@ function activityChart() {
             false,
 
           cutout:
-            "60%",
+            "75%",
 
           onClick:
             (
@@ -2052,38 +2030,27 @@ function renderActivityLegend(
       ? ((Number(value || 0) / total) * 100).toFixed(1) + "%"
       : "0.0%";
 
-  legend.innerHTML =
-    labels.map(
-      (
-        label,
-        index
-      ) => `
-
-        <button
-          type="button"
-          class="activity-legend-item"
-          data-index="${index}"
-        >
-
-          <span
-            class="activity-legend-dot"
-            style="background:${colors[index]}"
-          ></span>
-
-          <span class="activity-legend-name">
-            ${esc(label)}
+  const peak = Math.max(1, ...values.map(value => Number(value || 0)));
+  legend.innerHTML = labels.map((label, index) => {
+    const value = Number(values[index] || 0);
+    const width = Math.max(1, value / peak * 100);
+    return `
+      <button type="button" class="activity-legend-item" data-index="${index}"
+        aria-label="View ${esc(label)}: ${value.toLocaleString()} activities">
+        <span class="activity-legend-rank">${String(index + 1).padStart(2, '0')}</span>
+        <span class="activity-legend-content">
+          <span class="activity-legend-title">
+            <span class="activity-legend-dot" style="background:${colors[index]}"></span>
+            <span class="activity-legend-name" title="${esc(label)}">${esc(label)}</span>
           </span>
-
-          <strong class="activity-legend-value">
-            ${Number(values[index] || 0).toLocaleString()} (${pct(values[index])})
-          </strong>
-
-        </button>
-      `
-    )
-      .join(
-        ""
-      );
+          <span class="activity-bar-track"><span class="activity-bar-fill" style="width:${width}%;background:${colors[index]}"></span></span>
+        </span>
+        <span class="activity-legend-metrics">
+          <strong class="activity-legend-value">${value.toLocaleString()}</strong>
+          <span class="activity-legend-share">${pct(value)}</span>
+        </span>
+      </button>`;
+  }).join("");
 
   legend
     .querySelectorAll(
@@ -2222,23 +2189,15 @@ function monthlyChart() {
     new Chart(
       canvas,
       {
-        type: "line",
+        type: "bar",
         data: {
           labels,
           datasets: [
             {
               data: labels.map(label => result[label]),
-              borderColor: "#0b6b3a",
-              backgroundColor: "#0b6b3a",
-              borderWidth: 4,
-              fill: false,
-              tension: 0,
-              spanGaps: true,
-              pointRadius: 7,
-              pointHoverRadius: 8,
-              pointBackgroundColor: "#ffffff",
-              pointBorderColor: "#0b6b3a",
-              pointBorderWidth: 3
+              backgroundColor: ["#0c896d", "#275dcc", "#8b5cf6", "#ed9a33"],
+              borderRadius: 12,
+              maxBarThickness: 90
             }
           ]
         },
@@ -2399,49 +2358,43 @@ function render() {
   if (totalActivitiesKpiCard) {
     // Show the overall total only when viewing all activity types.
     // Once a specific activity type is selected, this KPI is hidden.
-    totalActivitiesKpiCard.style.display =
-      selectedActivityType === "All" ? "" : "none";
+    totalActivitiesKpiCard.hidden = selectedActivityType !== "All";
   }
 
   const internshipKpiCard = $("internshipKpiCard");
   if (internshipKpiCard) {
-    internshipKpiCard.style.display =
-      selectedActivityType === "All" ||
-      selectedActivityType === "Internship / Placement"
-        ? ""
-        : "none";
-  }
-
-  // One activity-specific KPI: never repeat the existing Internship / Placement total.
-  const selectedCard = $("selectedActivityKpiCard");
-  if (selectedCard) {
-    const showSelected = selectedActivityType !== "All" &&
-      selectedActivityType !== "Internship / Placement";
-    selectedCard.style.display = showSelected ? "" : "none";
-    if (showSelected) {
+    const showActivityCard = selectedActivityType !== "All";
+    internshipKpiCard.hidden = !showActivityCard;
+    if (showActivityCard) {
       const activityIcons = {
-        "Alumni Talk / Mentoring": ["🎓", "#087c65"],
-        "Community Engagement": ["🤝", "#087c65"],
-        "Conference": ["🎤", "#3547ad"],
-        "Curriculum Feedback Session": ["📋", "#7d50b5"],
-        "Curriculum Feedback": ["📋", "#7d50b5"],
-        "Guest Lecture / GLIT": ["🎙", "#175dbb"],
-        "IAB / Industry Consultation": ["🏭", "#a25d1c"],
-        "Industrial Visit / IV": ["🚍", "#087c8d"],
-        "MoU / MoU Signing": ["✍", "#6f4bb5"],
-        "Others": ["✦", "#64748b"],
-        "Planned": ["📅", "#d16c23"],
-        "Remote": ["💻", "#197b9d"],
-        "Research Collaboration": ["🔬", "#4d67a8"],
-        "Seminar": ["📚", "#136e4d"],
-        "Workshop": ["🛠", "#ad641c"]
+        "Alumni Talk / Mentoring": ["🎓", "linear-gradient(90deg,#0a8a6b,#57c1a8)", "linear-gradient(135deg,#0a8a6b,#18a97a)", "Selected activity total for the current view"],
+        "Community Engagement": ["🤝", "linear-gradient(90deg,#0d8c75,#4cc9a6)", "linear-gradient(135deg,#0d8c75,#16b38e)", "Selected activity total for the current view"],
+        "Conference": ["🎤", "linear-gradient(90deg,#4f46e5,#818cf8)", "linear-gradient(135deg,#4f46e5,#6366f1)", "Selected activity total for the current view"],
+        "Curriculum Feedback Session": ["📝", "linear-gradient(90deg,#7c3aed,#c084fc)", "linear-gradient(135deg,#7c3aed,#a855f7)", "Selected activity total for the current view"],
+        "Curriculum Feedback": ["📝", "linear-gradient(90deg,#7c3aed,#c084fc)", "linear-gradient(135deg,#7c3aed,#a855f7)", "Selected activity total for the current view"],
+        "Guest Lecture / GLIT": ["🎙️", "linear-gradient(90deg,#1d4ed8,#60a5fa)", "linear-gradient(135deg,#1d4ed8,#3b82f6)", "Selected activity total for the current view"],
+        "IAB / Industry Consultation": ["🏭", "linear-gradient(90deg,#b45309,#f59e0b)", "linear-gradient(135deg,#b45309,#d97706)", "Selected activity total for the current view"],
+        "Industrial Visit / IV": ["🚌", "linear-gradient(90deg,#0f766e,#2dd4bf)", "linear-gradient(135deg,#0f766e,#14b8a6)", "Selected activity total for the current view"],
+        "Internship / Placement": ["💼", "linear-gradient(90deg,#7c3aed,#b084ff)", "linear-gradient(135deg,#7c3aed,#a855f7)", "IP + Internship/Placement"],
+        "MoU / MoU Signing": ["✍️", "linear-gradient(90deg,#6d28d9,#a78bfa)", "linear-gradient(135deg,#6d28d9,#8b5cf6)", "Selected activity total for the current view"],
+        "Others": ["✨", "linear-gradient(90deg,#475569,#94a3b8)", "linear-gradient(135deg,#475569,#64748b)", "Selected activity total for the current view"],
+        "Planned": ["📅", "linear-gradient(90deg,#c2410c,#fdba74)", "linear-gradient(135deg,#c2410c,#ea580c)", "Selected activity total for the current view"],
+        "Remote": ["💻", "linear-gradient(90deg,#0369a1,#67e8f9)", "linear-gradient(135deg,#0369a1,#0ea5e9)", "Selected activity total for the current view"],
+        "Research Collaboration": ["🔬", "linear-gradient(90deg,#1e40af,#93c5fd)", "linear-gradient(135deg,#1e40af,#3b82f6)", "Selected activity total for the current view"],
+        "Seminar": ["📘", "linear-gradient(90deg,#15803d,#86efac)", "linear-gradient(135deg,#15803d,#22c55e)", "Selected activity total for the current view"],
+        "Workshop": ["🛠️", "linear-gradient(90deg,#b45309,#fbbf24)", "linear-gradient(135deg,#b45309,#f59e0b)", "Selected activity total for the current view"]
       };
-      const [symbol, color] = activityIcons[selectedActivityType] || ["◆", "#175dbb"];
-      $("selectedActivityLabel").textContent = selectedActivityType;
-      $("selectedActivityTotal").textContent = totalActivities.toLocaleString("en-US");
-      const icon = $("selectedActivityIcon");
-      icon.textContent = symbol;
-      icon.style.backgroundColor = color;
+      const [symbol, gradient, iconBg, footText] = activityIcons[selectedActivityType] || ["📊", "linear-gradient(90deg,#2563eb,#60a5fa)", "linear-gradient(135deg,#2563eb,#3b82f6)", "Selected activity total for the current view"];
+      const labelNode = $("activityTypeKpiLabel");
+      const valueNode = $("activityTypeKpiValue");
+      const footNode = $("activityTypeKpiFoot");
+      const iconNode = $("activityTypeKpiIcon");
+      if (labelNode) labelNode.textContent = selectedActivityType;
+      if (valueNode) valueNode.textContent = totalActivities.toLocaleString("en-US");
+      if (footNode) footNode.textContent = footText;
+      if (iconNode) iconNode.textContent = symbol;
+      internshipKpiCard.style.setProperty("--activity-gradient", gradient);
+      internshipKpiCard.style.setProperty("--activity-icon-bg", iconBg);
     }
   }
 
@@ -2687,10 +2640,7 @@ async function loadActivityWorkbook() {
       "./UOL_Separated_All_Activity_Data_Cleaned.xlsx"
     ];
 
-  const result =
-    await fetchWorkbook(
-      paths
-    );
+  const result = await window.UOLExcel.load('activities', paths);
 
   const workbook =
     result.workbook;
@@ -2864,16 +2814,8 @@ async function loadExcel() {
     ) {
 
       $("connection")
-        .innerHTML = `
-          <span style="color:#16a34a">●</span>
-          Connected
-          • ${allRows.length.toLocaleString()} records
-          • ${totalActivities.toLocaleString()} activities
-          <br>
-          ${faculties.size.toLocaleString()} faculties
-          • ${departments.size.toLocaleString()} departments
-          • <strong>${ipSummary.total.toLocaleString()} Internship / Placement students</strong>
-        `;
+        .textContent = `Connected · ${allRows.length.toLocaleString()} records`;
+      $("connection").title = `${totalActivities.toLocaleString()} activities · ${faculties.size} faculties · ${departments.size} departments · ${ipSummary.total.toLocaleString()} Internship / Placement students`;
     }
 
   } catch (
@@ -2995,8 +2937,8 @@ function openPopup(
               </div>
 
               <div class="detail-field">
-                <small>Reporting Month</small>
-                <strong>${displayValue(row.month)}</strong>
+                <small>Semester</small>
+                <strong>${displayValue(semesterFromMonth(row.month))}</strong>
               </div>
 
               <div class="detail-field">
@@ -3715,9 +3657,11 @@ function addPdfExpectedOutcomesPage(doc, section, sectionIndex, sectionCount, lo
       if (y + needed > bottomLimit) {
         y = newContinuationPage();
       }
+      doc.setTextColor(0, 0, 0);
       doc.setFont("helvetica", "bold");
       doc.text("•", 19, y);
       doc.setFont("helvetica", "normal");
+      doc.setTextColor(0, 0, 0);
       doc.text(lines, 24, y, { lineHeightFactor: 1.35 });
       y += needed;
     });
@@ -3766,9 +3710,11 @@ function addPdfRemarksPage(doc, section, sectionIndex, sectionCount, logoDataUrl
       if (y + needed > bottomLimit) {
         y = newContinuationPage();
       }
+      doc.setTextColor(0, 0, 0);
       doc.setFont("helvetica", "bold");
       doc.text("•", 19, y);
       doc.setFont("helvetica", "normal");
+      doc.setTextColor(0, 0, 0);
       doc.text(lines, 24, y, { lineHeightFactor: 1.35 });
       y += needed;
     });
@@ -3804,80 +3750,43 @@ function addPdfLogo(doc, logoDataUrl, x, y, maxWidth, maxHeight) {
 }
 
 function addPdfCoverPage(doc, sections, logoDataUrl = "") {
-  const width = doc.internal.pageSize.getWidth();
-  const height = doc.internal.pageSize.getHeight();
-doc.setFillColor(255, 255, 255);
-  doc.rect(0, 0, width, height, "F");
-  doc.setFillColor(9, 31, 84);
-  doc.rect(0, 0, width, 13, "F");
-  doc.setFillColor(11, 107, 58);
-  doc.rect(0, 13, width, 4, "F");
+  const w = doc.internal.pageSize.getWidth();
+  const h = doc.internal.pageSize.getHeight();
+  doc.setFillColor(247, 250, 253); doc.rect(0, 0, w, h, "F");
+  // Elegant institutional masthead, consistent with the web dashboard.
+  doc.setFillColor(16, 40, 62); doc.rect(0, 0, w, 61, "F");
+  doc.setFillColor(12, 150, 121); doc.rect(0, 61, w, 3, "F");
+  doc.setFillColor(255, 255, 255); doc.roundedRect(15, 13, 75, 35, 3, 3, "F");
+  addPdfLogo(doc, logoDataUrl, 19, 16, 67, 29);
+  doc.setTextColor(167, 223, 208); doc.setFont("helvetica", "bold"); doc.setFontSize(8.4);
+  doc.text("OFFICE OF EXTERNAL LINKAGES  /  ANALYTICS", 101, 21);
+  doc.setTextColor(255, 255, 255); doc.setFontSize(21);
+  doc.text("INSTITUTIONAL ENGAGEMENT", 101, 35);
+  doc.setFontSize(16); doc.text("PERFORMANCE REPORT", 101, 45);
+  doc.setFontSize(8); doc.setTextColor(208, 228, 239);
+  doc.text("TENTATIVE  |  FILTERED PERFORMANCE INTELLIGENCE", 101, 53);
 
-  // Keep the official wordmark undistorted and let it carry the university name.
-  const logoW = 92;
-  const logoH = logoW / (793 / 336);
-  addPdfLogo(doc, logoDataUrl, (width - logoW) / 2, 27, logoW, logoH);
+  doc.setTextColor(16, 44, 68); doc.setFont("helvetica", "bold"); doc.setFontSize(12);
+  doc.text("REPORT SCOPE", 15, 81);
+  doc.setDrawColor(216, 227, 236); doc.line(15, 85, w - 15, 85);
+  if (sections && sections.length) addPdfFilterBanner(doc, sections[0], 92);
 
-  doc.setTextColor(11, 107, 58);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(15);
-  doc.text("OFFICE OF EXTERNAL LINKAGES", width / 2, 77, { align: "center" });
-
-  doc.setDrawColor(11, 107, 58);
-  doc.setLineWidth(0.8);
-  doc.line(width / 2 - 62, 83, width / 2 + 62, 83);
-
-  doc.setTextColor(9, 31, 84);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(22);
-  doc.text("External Linkages Intelligence Management System", width / 2, 97, { align: "center" });
-  const cardX = 40;
-  const cardW = width - 80;
-
-  // Report leadership / authority block
-  const authorityY = 116;
-  const authorityGap = 7;
-  const authorityW = (cardW - authorityGap) / 2;
-
-  doc.setFillColor(246, 251, 248);
-  doc.setDrawColor(189, 220, 202);
-  doc.roundedRect(cardX, authorityY, authorityW, 13, 2.5, 2.5, "FD");
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(7.6);
-  doc.setTextColor(11, 107, 58);
-  doc.text("DEAN OSA", cardX + 4, authorityY + 5);
-  doc.setFontSize(9.2);
-  doc.setTextColor(15, 23, 42);
-  doc.text("Ms. Ammara Awais Raoof", cardX + 4, authorityY + 10.2);
-
-  const authorityX2 = cardX + authorityW + authorityGap;
-  doc.setFillColor(246, 249, 253);
-  doc.setDrawColor(193, 207, 226);
-  doc.roundedRect(authorityX2, authorityY, authorityW, 13, 2.5, 2.5, "FD");
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(7.6);
-  doc.setTextColor(9, 31, 84);
-  doc.text("DIRECTOR OEL", authorityX2 + 4, authorityY + 5);
-  doc.setFontSize(9.2);
-  doc.setTextColor(15, 23, 42);
-  doc.text("Dr. Muhammad Shafique", authorityX2 + 4, authorityY + 10.2);
-
-  // Show the selected report filters only on the first PDF page.
-  if (sections && sections.length) {
-    addPdfFilterBanner(doc, sections[0], 141);
-  }
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(8.5);
-  doc.setTextColor(0, 0, 0);
-  doc.text(`Generated on: ${reportGeneratedOn()}`, width / 2, 180, { align: "center" });
-
-  doc.setFillColor(9, 31, 84);
-  doc.rect(0, height - 18, width, 18, "F");
-  doc.setTextColor(255, 255, 255);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9.5);
-  doc.text("CONNECT - COLLABORATE - CREATE IMPACT", width / 2, height - 7, { align: "center" });
+  const authorityY = 148; const cw = (w - 38) / 2;
+  [[15, "DEAN OSA", "Ms. Ammara Awais Raoof"], [23 + cw, "DIRECTOR OEL", "Dr. Muhammad Shafique"]].forEach(([x, role, name], i) => {
+    doc.setFillColor(255, 255, 255); doc.setDrawColor(218, 231, 240);
+    doc.roundedRect(x, authorityY, cw, 30, 3, 3, "FD");
+    doc.setFillColor(i ? 36 : 13, i ? 102 : 146, i ? 173 : 121);
+    doc.roundedRect(x, authorityY, 3, 30, 1, 1, "F");
+    doc.setTextColor(91, 120, 141); doc.setFontSize(8); doc.setFont("helvetica", "bold");
+    doc.text(role, x + 9, authorityY + 11);
+    doc.setTextColor(17, 48, 70); doc.setFontSize(11);
+    doc.text(name, x + 9, authorityY + 22);
+  });
+  doc.setTextColor(102, 125, 143); doc.setFontSize(8.5);
+  doc.text(`Generated: ${reportGeneratedOn()}`, 15, 192);
+  doc.setFillColor(16, 40, 62); doc.rect(0, h - 9, w, 9, "F");
+  doc.setTextColor(255, 255, 255); doc.setFontSize(7.5);
+  doc.text("THE UNIVERSITY OF LAHORE  |  CONNECT  -  COLLABORATE  -  CREATE IMPACT", w / 2, h - 3.6, { align: "center" });
 }
 
 function addFacultyDividerPage(doc, section, logoDataUrl = "") {
@@ -3939,54 +3848,27 @@ function addFacultyDividerPage(doc, section, logoDataUrl = "") {
 }
 
 function addPdfHeader(doc, section, sectionIndex, sectionCount, label = "ACTIVITY REPORT", logoDataUrl = "") {
-  const pageWidth = doc.internal.pageSize.getWidth();
-
-  // IMPORTANT: only paint the header band here. autoTable calls this function
-  // from didDrawPage after table rows have been rendered; painting the whole
-  // page here would erase the Faculty, Activity and Department tables.
-  doc.setFillColor(255, 255, 255);
-  doc.rect(0, 0, pageWidth, 35, "F");
-  doc.setFillColor(11, 107, 58);
-  doc.rect(0, 31.5, pageWidth, 3.5, "F");
-  doc.setDrawColor(219, 228, 240);
-  doc.line(0, 35, pageWidth, 35);
-
-  addPdfLogo(doc, logoDataUrl, 14, 4.5, 62, 25);
-
-  doc.setTextColor(9, 31, 84);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(12.5);
-  doc.text("OFFICE OF EXTERNAL LINKAGES", 84, 13);
-  doc.setFontSize(8.5);
-  doc.setTextColor(0, 0, 0);
-  doc.text("External Linkages Intelligence Management System", 84, 20.5);
-  doc.setFontSize(7.2);
-  doc.setTextColor(0, 0, 0);
-  doc.text("Dean OSA: Ms. Ammara Awais Raoof  |  Director OEL: Dr. Muhammad Shafique", 84, 26.5);
-
-  doc.setFillColor(9, 31, 84);
-  doc.roundedRect(pageWidth - 75, 7, 61, 15, 3, 3, "F");
-  doc.setTextColor(255, 255, 255);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9.8);
-  doc.text(label, pageWidth - 44.5, 16.5, { align: "center" });
-
-  doc.setTextColor(15, 23, 42);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-  const title = doc.splitTextToSize(section.title || "Report", 190);
-  doc.text(title.slice(0, 1), 14, 45);
-
-  doc.setFontSize(8.7);
-  doc.setTextColor(0, 0, 0);
-  doc.text(section.subtitle || "", 14, 51);
-
-  doc.setFontSize(8.2);
-  doc.setTextColor(0, 0, 0);
-  doc.text(`Section ${sectionIndex + 1} of ${sectionCount}`, pageWidth - 14, 44, { align: "right" });
-  doc.text(`Generated: ${reportGeneratedOn()}`, pageWidth - 14, 50.5, { align: "right" });
+  const w = doc.internal.pageSize.getWidth();
+  doc.setFillColor(255, 255, 255); doc.rect(0, 0, w, 57, "F");
+  doc.setFillColor(16, 40, 62); doc.rect(0, 0, w, 30, "F");
+  doc.setFillColor(12, 150, 121); doc.rect(0, 30, w, 2.2, "F");
+  doc.setFillColor(255, 255, 255); doc.roundedRect(12, 5, 57, 20, 2, 2, "F");
+  addPdfLogo(doc, logoDataUrl, 14.5, 6.2, 52, 17.5);
+  doc.setFont("helvetica", "bold"); doc.setTextColor(255, 255, 255);
+  doc.setFontSize(11.2); doc.text("INSTITUTIONAL ENGAGEMENT", 76, 12);
+  doc.setFontSize(7.7); doc.setTextColor(179, 220, 213);
+  doc.text("UNIVERSITY OF LAHORE  /  OFFICE OF EXTERNAL LINKAGES", 76, 20);
+  doc.setFontSize(7.1); doc.setTextColor(255, 255, 255);
+  doc.text(label, w - 12, 13, { align: "right" });
+  doc.setTextColor(23, 51, 76); doc.setFont("helvetica", "bold"); doc.setFontSize(14.5);
+  const title = doc.splitTextToSize(section.title || "Performance Report", 184);
+  doc.text(title.slice(0, 1), 14, 42);
+  doc.setFont("helvetica", "normal"); doc.setFontSize(8.2); doc.setTextColor(0, 0, 0);
+  doc.text(doc.splitTextToSize(section.subtitle || "", 190).slice(0, 1), 14, 49);
+  doc.text(`Report ${sectionIndex + 1} / ${sectionCount}`, w - 13, 41, { align: "right" });
+  doc.text(`Generated ${reportGeneratedOn()}`, w - 13, 48.5, { align: "right" });
+  doc.setDrawColor(221, 231, 239); doc.line(14, 53, w - 14, 53);
 }
-
 
 function addPdfFooter(doc) {
   const pages = doc.internal.getNumberOfPages();
@@ -3998,8 +3880,8 @@ function addPdfFooter(doc) {
     doc.line(14, height - 14, width - 14, height - 14);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(7.8);
-    doc.setTextColor(0, 0, 0);
-    doc.text("THE UNIVERSITY OF LAHORE - Office of External Linkages", 14, height - 9.5);
+    doc.setTextColor(16, 55, 80);
+    doc.text("THE UNIVERSITY OF LAHORE  |  Office of External Linkages", 14, height - 9.5);
     doc.setFontSize(6.8);
     doc.setTextColor(0, 0, 0);
     doc.text("Dean OSA: Ms. Ammara Awais Raoof  |  Director OEL: Dr. Muhammad Shafique", 14, height - 5.5);
@@ -4397,29 +4279,196 @@ function drawPdfDashboardGraphPair(doc, leftItem, rightItem, section, startY = 8
   }
 }
 
-function drawPdfChartPage(doc, item, title = "Graph", startY = 88) {
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const marginX = 14;
-  const cardWidth = pageWidth - marginX * 2;
-  const footerTop = pageHeight - 20;
-  const cardHeight = footerTop - startY;
-
-  doc.setFillColor(255, 255, 255);
-  doc.setDrawColor(193, 211, 203);
-  doc.setLineWidth(0.5);
-  doc.roundedRect(marginX, startY, cardWidth, cardHeight, 3, 3, "FD");
-
-  doc.setFillColor(244, 248, 246);
-  doc.roundedRect(marginX + 1.5, startY + 1.5, cardWidth - 3, 11, 2, 2, "F");
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(12.5);
-  doc.setTextColor(9, 31, 84);
-  doc.text(item.title || "Graph", marginX + 5, startY + 8.4);
-
-  addPdfImageContain(doc, item.image, marginX + 4, startY + 14, cardWidth - 8, cardHeight - 18);
+// Print-first, vector-based report graphs. All values are derived from the
+// exact rows belonging to the current report section (including active filters).
+// Unlike screenshots of dashboard canvases, these are sharp in saved PDFs.
+function pdfGraphEntries(section, title) {
+  const rows = section.rows || [];
+  if (title === "Faculty-wise Activities") return reportGroupBy(rows, "faculty");
+  if (title === "Department-wise Activities") return reportGroupBy(rows, "department");
+  if (title === "Activity Type Distribution") return activityBreakdown(rows);
+  if (title === "Semester Trend") return reportMonthBreakdown(rows);
+  return [];
 }
 
+function pdfGraphColor(index) {
+  const palette = [
+    [10, 112, 79], [29, 90, 184], [111, 63, 185], [229, 120, 43],
+    [15, 128, 145], [34, 58, 114], [198, 76, 110], [184, 137, 30],
+    [35, 124, 100], [74, 113, 206]
+  ];
+  return palette[index % palette.length];
+}
+
+function pdfGraphText(doc, value, x, y, opts = {}) {
+  doc.setFont("helvetica", opts.bold ? "bold" : "normal");
+  doc.setFontSize(opts.size || 9);
+  doc.setTextColor(...(opts.color || [30, 53, 76]));
+  doc.text(String(value), x, y, opts.align ? { align: opts.align } : undefined);
+}
+
+function drawPdfChartPage(doc, item, title = "Graph", startY = 58, section = null) {
+  const graphTitle = item?.title || title;
+  const rows = section?.rows || [];
+  const entries = pdfGraphEntries({ rows }, graphTitle);
+  const W = doc.internal.pageSize.getWidth();
+  const H = doc.internal.pageSize.getHeight();
+  const left = 16, right = W - 16;
+  const footer = H - 22;
+  const total = entries.reduce((sum, entry) => sum + Number(entry[1] || 0), 0);
+
+  pdfGraphText(doc, graphTitle, left, startY + 5, { size: 16, bold: true, color: [13, 45, 70] });
+  doc.setFillColor(16, 150, 118);
+  doc.roundedRect(left, startY + 9, 47, 1.6, .7, .7, "F");
+  pdfGraphText(doc, `${entries.length} ${graphTitle === "Semester Trend" ? "semesters" : graphTitle === "Activity Type Distribution" ? "activity categories" : "groups"}  |  ${total.toLocaleString("en-US")} reported activities`, right, startY + 5, { size: 9, color: [102, 123, 142], align: "right" });
+
+  if (!entries.length) {
+    pdfGraphText(doc, "No data for the selected report filters.", left, startY + 25, { size: 12 });
+    return;
+  }
+
+  if (graphTitle === "Semester Trend") {
+    // Separate bars, not a line connecting only two categorical semesters.
+    const max = Math.max(1, ...entries.map(v => Number(v[1]) || 0));
+    const chartY = startY + 31;
+    const chartH = Math.max(55, footer - chartY - 23);
+    const n = entries.length;
+    const plotW = right - left - 48;
+    const colW = plotW / n;
+    entries.forEach(([name, value], i) => {
+      const x = left + 23 + i * colW + colW / 2;
+      const height = Math.max(1.5, chartH * value / max);
+      const barW = Math.min(57, colW * .38);
+      doc.setFillColor(...pdfGraphColor(i));
+      doc.roundedRect(x - barW / 2, chartY + chartH - height, barW, height, 2, 2, "F");
+      pdfGraphText(doc, Number(value).toLocaleString("en-US"), x, chartY + chartH - height - 5, { size: 15, bold: true, align: "center" });
+      const lines = doc.splitTextToSize(String(name), Math.max(35, colW - 12));
+      doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(42, 65, 86);
+      doc.text(lines.slice(0, 2), x, chartY + chartH + 8, { align: "center" });
+    });
+    doc.setDrawColor(218, 227, 235); doc.setLineWidth(.4);
+    doc.line(left + 16, chartY + chartH, right - 16, chartY + chartH);
+    return;
+  }
+
+  if (graphTitle === "Activity Type Distribution") {
+    // A fully ranked list is far more legible in print than a tiny 15-color legend.
+    const top = startY + 22;
+    const rowH = Math.min(9.2, (footer - top - 4) / entries.length);
+    const max = Math.max(1, ...entries.map(v => Number(v[1]) || 0));
+    const labelW = 81, graphX = left + labelW + 3, graphW = right - graphX - 25;
+    entries.forEach(([name, value], i) => {
+      const y = top + i * rowH;
+      if (i % 2 === 0) { doc.setFillColor(246, 249, 252); doc.rect(left, y - 4.8, right - left, rowH, "F"); }
+      pdfGraphText(doc, String(name).length > 38 ? String(name).slice(0, 36) + "..." : name, left + 2, y + .6, { size: 8.6, bold: i < 3 });
+      doc.setFillColor(229, 236, 241); doc.roundedRect(graphX, y - 3.1, graphW, 4.2, 1, 1, "F");
+      doc.setFillColor(...pdfGraphColor(i)); doc.roundedRect(graphX, y - 3.1, Math.max(.6, graphW * value / max), 4.2, 1, 1, "F");
+      pdfGraphText(doc, Number(value).toLocaleString("en-US"), right - 1, y + .6, { size: 9, bold: true, align: "right" });
+    });
+    return;
+  }
+
+  // Horizontal report bars for faculty and department. Department entries
+  // are split into two printable columns rather than shrinking to tiny text.
+  const isDepartment = graphTitle === "Department-wise Activities";
+  const columns = isDepartment && entries.length > 14 ? 2 : 1;
+  const colGap = 10;
+  const colWidth = (right - left - colGap * (columns - 1)) / columns;
+  const perCol = Math.ceil(entries.length / columns);
+  const top = startY + 22;
+  const rowH = Math.min(isDepartment ? 10.8 : 12.2, (footer - top) / perCol);
+  const max = Math.max(1, ...entries.map(v => Number(v[1]) || 0));
+  entries.forEach(([name, value], i) => {
+    const col = Math.floor(i / perCol);
+    const ri = i % perCol;
+    const x = left + col * (colWidth + colGap);
+    const y = top + ri * rowH;
+    const labelArea = columns === 2 ? 43 : 82;
+    const barX = x + labelArea;
+    const barW = colWidth - labelArea - 17;
+    const fontSize = columns === 2 ? 6.6 : 8.8;
+    const maxChars = columns === 2 ? 25 : 48;
+    const label = String(name).length > maxChars ? String(name).slice(0, maxChars - 3) + "..." : String(name);
+    const lines = doc.splitTextToSize(label, labelArea - 4).slice(0, 2);
+    doc.setFont("helvetica", "normal");doc.setFontSize(fontSize);doc.setTextColor(48, 70, 90);
+    doc.text(lines, x + 1, y + (lines.length > 1 ? 0 : 1.6));
+    doc.setFillColor(235, 240, 245); doc.roundedRect(barX, y - 2.2, barW, 4.6, 1, 1, "F");
+    doc.setFillColor(...pdfGraphColor(i)); doc.roundedRect(barX, y - 2.2, Math.max(.6, barW * Number(value) / max), 4.6, 1, 1, "F");
+    pdfGraphText(doc, Number(value).toLocaleString("en-US"), x + colWidth - 1, y + 1.6, { size: 8, bold: true, align: "right" });
+  });
+}
+
+// Central table renderer: one consistent, print-friendly visual system for
+// faculty, department, activity and detailed-record pages.
+function addModernPdfTable(doc, config) {
+  if (typeof doc.autoTable !== "function") {
+    throw new Error("The PDF table library is missing (jspdf-autotable).");
+  }
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const usableWidth = pageWidth - 28;
+  const inputWidths = config.widths || [];
+  const widthTotal = inputWidths.reduce((a, b) => a + b, 0) || 1;
+  // Calculate widths from the available page width; avoid overflowing A4.
+  const columnStyles = Object.fromEntries(inputWidths.map((w, i) => [i, {
+    cellWidth: usableWidth * w / widthTotal,
+    halign: (config.numericColumns || []).includes(i) ? "right" : "left",
+    fontStyle: (config.numericColumns || []).includes(i) ? "bold" : "normal"
+  }]));
+  const compact = !!config.compact;
+  const count = config.rows.length;
+  const totalText = `${count.toLocaleString("en-US")} ${count === 1 ? "entry" : "entries"}`;
+  const header = config.onPage;
+  doc.autoTable({
+    startY: config.startY || 60,
+    head: [config.headers],
+    body: config.rows,
+    theme: "grid",
+    showHead: "everyPage",
+    rowPageBreak: "avoid",
+    margin: { left: 14, right: 14, top: 58, bottom: 18 },
+    tableWidth: usableWidth,
+    styles: {
+      font: "helvetica", fontSize: compact ? 7.4 : 9.2,
+      cellPadding: compact ? {top: 2.8, bottom: 2.8, left: 2.2, right: 2.2} : {top: 4.1, bottom: 4.1, left: 4, right: 4},
+      overflow: "linebreak", valign: "middle", textColor: [8, 25, 42],
+      lineColor: [218, 228, 235], lineWidth: 0.16
+    },
+    headStyles: {
+      fillColor: [12, 45, 69], textColor: [255, 255, 255],
+      fontStyle: "bold", fontSize: compact ? 7.3 : 9.1,
+      cellPadding: compact ? 3 : 4.5, lineColor: [12, 45, 69], lineWidth: .2,
+      minCellHeight: compact ? 12 : 14
+    },
+    bodyStyles: { minCellHeight: compact ? 10 : 13 },
+    alternateRowStyles: { fillColor: [245, 249, 251] },
+    columnStyles,
+    didParseCell: function (data) {
+      if (data.section === "body" && data.column.index === 0) {
+        data.cell.styles.fontStyle = "bold";
+      }
+    },
+    didDrawPage: function (data) {
+      if (typeof header === "function" && data.pageNumber > 1) header();
+      const W = doc.internal.pageSize.getWidth();
+      doc.setFont("helvetica", "normal"); doc.setFontSize(8);
+      doc.setTextColor(16, 39, 59);
+      doc.text(totalText, W - 14, doc.internal.pageSize.getHeight() - 12, {align:"right"});
+    }
+  });
+  // A small final summary below breakdown tables, if the page has space.
+  if (config.summaryLabel && doc.lastAutoTable) {
+    const y = doc.lastAutoTable.finalY + 8;
+    const H = doc.internal.pageSize.getHeight();
+    if (y + 11 < H - 17) {
+      doc.setFillColor(232, 246, 240);
+      doc.setDrawColor(191, 223, 209);
+      doc.roundedRect(14, y, usableWidth, 11, 2, 2, "FD");
+      doc.setFont("helvetica", "bold"); doc.setTextColor(10, 94, 71); doc.setFontSize(9);
+      doc.text(config.summaryLabel, 18, y + 7);
+      doc.text(config.summaryValue || "", pageWidth - 18, y + 7, {align:"right"});
+    }
+  }
+}
 
 async function generatePdfReport() {
   if (!window.jspdf || !window.jspdf.jsPDF) {
@@ -4459,161 +4508,52 @@ async function generatePdfReport() {
     addPdfHeader(doc, section, index, sections.length, "ACTIVITY REPORT", logoDataUrl);
     const summaryStartY = 58;
 
-    doc.autoTable({
-      startY: summaryStartY,
-      head: [["REPORT SUMMARY", "VALUE", "REPORT SUMMARY", "VALUE"]],
-      body: reportMetaTableRows(meta),
-      theme: "grid",
-      styles: {
-        fontSize: 9.4,
-        fontStyle: "bold",
-        cellPadding: 3.4,
-        lineColor: [193, 204, 218],
-        lineWidth: 0.25,
-        textColor: [15, 23, 42]
-      },
-      headStyles: {
-        fillColor: [9, 31, 84],
-        textColor: [255, 255, 255],
-        fontStyle: "bold",
-        fontSize: 9.8
-      },
-      alternateRowStyles: { fillColor: [248, 250, 252] },
-      columnStyles: {
-        0: { cellWidth: 83 },
-        1: { cellWidth: 30, halign: "right" },
-        2: { cellWidth: 83 },
-        3: { cellWidth: 30, halign: "right" }
-      },
-      margin: { left: 14, right: 14 }
+    // Executive KPI cards: the same metrics as the dashboard, without a crowded grid table.
+    const cardGap = 6;
+    const cardW = (doc.internal.pageSize.getWidth() - 28 - cardGap * 3) / 4;
+    const cards = [["ACTIVITY VOLUME", sectionTotal.toLocaleString(), "Current filtered selection"],
+      ...meta.filter(([label]) => label !== "Total Activities").map(([label, value]) => [label.toUpperCase(), String(value), "Current filtered selection"])];
+    cards.forEach(([label, value, caption], i) => {
+      const col = i % 4, row = Math.floor(i / 4);
+      const x = 14 + col * (cardW + cardGap), y = summaryStartY + row * 39;
+      doc.setFillColor(249, 252, 254); doc.setDrawColor(218, 228, 236);
+      doc.roundedRect(x, y, cardW, 33, 3, 3, "FD");
+      doc.setFillColor(col === 0 ? 15 : col === 1 ? 27 : col === 2 ? 66 : 16,
+                       col === 0 ? 146 : col === 1 ? 99 : col === 2 ? 91 : 128,
+                       col === 0 ? 115 : col === 1 ? 181 : col === 2 ? 173 : 171);
+      doc.rect(x, y, cardW, 2.4, "F");
+      doc.setFont("helvetica", "bold"); doc.setTextColor(98, 124, 144); doc.setFontSize(7.3);
+      doc.text(doc.splitTextToSize(label, cardW - 8).slice(0, 2), x + 4, y + 10);
+      doc.setFontSize(17.5); doc.setTextColor(16, 43, 67);
+      doc.text(String(value), x + 4, y + 24);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(6.7); doc.setTextColor(139, 158, 172);
+      doc.text(caption, x + 4, y + 30);
     });
 
-    // ---------- FACULTY-WISE BREAKDOWN PAGE ----------
-    if (facultyBreakdown.length) {
-      doc.addPage();
-      const facultyTableSection = { ...section, subtitle: `${section.subtitle || ""} - Faculty-wise Activities` };
-      addPdfHeader(doc, facultyTableSection, index, sections.length, "FACULTY-WISE ACTIVITIES", logoDataUrl);
-      const facultyStartY = 58;
-      doc.autoTable({
-        startY: facultyStartY,
-        head: [["FACULTY", "TOTAL ACTIVITIES", "PERCENTAGE"]],
-        body: facultyBreakdown.map(([faculty, total]) => [
-          faculty,
-          Number(total).toLocaleString(),
-          reportPercentage(total, sectionTotal)
-        ]),
-        theme: "grid",
-        styles: {
-          fontSize: 9.1,
-          fontStyle: "bold",
-          cellPadding: 3.2,
-          lineColor: [193, 204, 218],
-          lineWidth: 0.22,
-          overflow: "linebreak",
-          textColor: [15, 23, 42]
-        },
-        headStyles: {
-          fillColor: [9, 31, 84],
-          textColor: [255, 255, 255],
-          fontStyle: "bold",
-          fontSize: 9.5
-        },
-        alternateRowStyles: { fillColor: [248, 250, 252] },
-        columnStyles: {
-          0: { cellWidth: 176 },
-          1: { cellWidth: 38, halign: "right", fontStyle: "bold" },
-          2: { cellWidth: 38, halign: "right", fontStyle: "bold" }
-        },
-        margin: { left: 14, right: 14, top: facultyStartY, bottom: 18 },
-        didDrawPage: () => {
-          addPdfHeader(doc, facultyTableSection, index, sections.length, "FACULTY-WISE ACTIVITIES", logoDataUrl);
-        }
-      });
-    }
 
-    // ---------- ACTIVITY TYPE BREAKDOWN PAGE ----------
-    if (breakdown.length) {
+    // ---------- MODERN INSTITUTIONAL BREAKDOWN TABLES ----------
+    const breakdownTables = [
+      { title: "FACULTY-WISE ACTIVITIES", subtitle: "Faculty-wise activity summary", firstLabel: "FACULTY", entries: facultyBreakdown },
+      { title: "ACTIVITY BREAKDOWN", subtitle: "Activity type summary", firstLabel: "ACTIVITY TYPE", entries: breakdown },
+      { title: "DEPARTMENT-WISE ACTIVITIES", subtitle: "Department-wise activity summary", firstLabel: "DEPARTMENT", entries: departmentBreakdown }
+    ];
+    for (const spec of breakdownTables) {
+      if (!spec.entries.length) continue;
       doc.addPage();
-      const typeSection = { ...section, subtitle: `${section.subtitle || ""} - Activity Type Breakdown` };
-      addPdfHeader(doc, typeSection, index, sections.length, "ACTIVITY BREAKDOWN", logoDataUrl);
-      const typeStartY = 58;
-      doc.autoTable({
-        startY: typeStartY,
-        head: [["ACTIVITY TYPE", "TOTAL", "PERCENTAGE"]],
-        body: breakdown.map(([type, total]) => [
-          type,
-          total.toLocaleString(),
-          reportPercentage(total, sectionTotal)
+      const tableSection = { ...section, subtitle: spec.subtitle };
+      const header = () => addPdfHeader(doc, tableSection, index, sections.length, spec.title, logoDataUrl);
+      header();
+      addModernPdfTable(doc, {
+        startY: 60,
+        headers: [spec.firstLabel, "TOTAL ACTIVITIES", "SHARE"],
+        rows: spec.entries.map(([name, amount]) => [
+          name, Number(amount).toLocaleString("en-US"), reportPercentage(amount, sectionTotal)
         ]),
-        theme: "grid",
-        styles: {
-          fontSize: 9.1,
-          fontStyle: "bold",
-          cellPadding: 3.2,
-          lineColor: [193, 204, 218],
-          lineWidth: 0.22,
-          overflow: "linebreak",
-          textColor: [15, 23, 42]
-        },
-        headStyles: {
-          fillColor: [11, 107, 58],
-          textColor: [255, 255, 255],
-          fontStyle: "bold",
-          fontSize: 9.5
-        },
-        alternateRowStyles: { fillColor: [246, 251, 248] },
-        columnStyles: {
-          0: { cellWidth: 176 },
-          1: { cellWidth: 38, halign: "right", fontStyle: "bold" },
-          2: { cellWidth: 38, halign: "right", fontStyle: "bold" }
-        },
-        margin: { left: 14, right: 14, top: typeStartY, bottom: 18 },
-        didDrawPage: () => {
-          addPdfHeader(doc, typeSection, index, sections.length, "ACTIVITY BREAKDOWN", logoDataUrl);
-        }
-      });
-    }
-
-    // ---------- DEPARTMENT-WISE BREAKDOWN PAGE ----------
-    if (departmentBreakdown.length) {
-      doc.addPage();
-      const departmentTableSection = { ...section, subtitle: `${section.subtitle || ""} - Department-wise Activities` };
-      addPdfHeader(doc, departmentTableSection, index, sections.length, "DEPARTMENT-WISE ACTIVITIES", logoDataUrl);
-      const departmentStartY = 58;
-      doc.autoTable({
-        startY: departmentStartY,
-        head: [["DEPARTMENT", "TOTAL ACTIVITIES", "PERCENTAGE"]],
-        body: departmentBreakdown.map(([department, total]) => [
-          department,
-          Number(total).toLocaleString(),
-          reportPercentage(total, sectionTotal)
-        ]),
-        theme: "grid",
-        styles: {
-          fontSize: 9.0,
-          fontStyle: "bold",
-          cellPadding: 3.0,
-          lineColor: [193, 204, 218],
-          lineWidth: 0.22,
-          overflow: "linebreak",
-          textColor: [15, 23, 42]
-        },
-        headStyles: {
-          fillColor: [9, 31, 84],
-          textColor: [255, 255, 255],
-          fontStyle: "bold",
-          fontSize: 9.4
-        },
-        alternateRowStyles: { fillColor: [248, 250, 252] },
-        columnStyles: {
-          0: { cellWidth: 176 },
-          1: { cellWidth: 38, halign: "right", fontStyle: "bold" },
-          2: { cellWidth: 38, halign: "right", fontStyle: "bold" }
-        },
-        margin: { left: 14, right: 14, top: departmentStartY, bottom: 18 },
-        didDrawPage: () => {
-          addPdfHeader(doc, departmentTableSection, index, sections.length, "DEPARTMENT-WISE ACTIVITIES", logoDataUrl);
-        }
+        numericColumns: [1, 2],
+        widths: [164, 44, 61],
+        onPage: header,
+        summaryLabel: "TOTAL REPORTED",
+        summaryValue: sectionTotal.toLocaleString("en-US")
       });
     }
 
@@ -4625,15 +4565,14 @@ async function generatePdfReport() {
     doc.addPage();
     addPdfRemarksPage(doc, section, index, sections.length, logoDataUrl);
 
-    // ---------- GRAPH PAGES: ONE GRAPH PER PAGE FOR MAXIMUM VISIBILITY ----------
-    const sectionCharts = await buildSectionCharts(section);
-
-    const orderedCharts = [
-      sectionCharts.find(item => item.title === "Faculty-wise Activities"),
-      sectionCharts.find(item => item.title === "Activity Type Distribution"),
-      sectionCharts.find(item => item.title === "Department-wise Activities"),
-      sectionCharts.find(item => item.title === "Semester Trend")
-    ].filter(Boolean);
+    // ---------- VECTOR GRAPH PAGES: ONE GRAPH PER PAGE ----------
+    const graphTitles = [
+      "Faculty-wise Activities", "Activity Type Distribution",
+      "Department-wise Activities", "Semester Trend"
+    ];
+    const orderedCharts = graphTitles
+      .map(title => ({ title, entries: pdfGraphEntries(section, title) }))
+      .filter(item => item.entries.length);
 
     orderedCharts.forEach((chartItem, chartIndex) => {
       doc.addPage();
@@ -4642,8 +4581,7 @@ async function generatePdfReport() {
         subtitle: `Graph page ${chartIndex + 1} of ${orderedCharts.length}`
       };
       addPdfHeader(doc, graphSection, index, sections.length, "GRAPHICAL SUMMARY", logoDataUrl);
-      const graphStartY = 56;
-      drawPdfChartPage(doc, chartItem, chartItem.title || "Graph", graphStartY);
+      drawPdfChartPage(doc, chartItem, chartItem.title, 58, section);
     });
 
     // ---------- DETAILED RECORDS ----------
@@ -4652,42 +4590,14 @@ async function generatePdfReport() {
     addPdfHeader(doc, detailSection, index, sections.length, "DETAILED RECORDS", logoDataUrl);
     const detailsStartY = 58;
 
-    doc.autoTable({
-      startY: detailsStartY,
-      head: [["SEMESTER", "FACULTY", "DEPARTMENT", "ACTIVITY TYPE", "HOW MANY", "ORGANIZATION", "FOCAL PERSON", "DESIGNATION", "SCHEDULED"]],
-      body: detailRows(section.rows),
-      theme: "grid",
-      styles: {
-        fontSize: 7.9,
-        cellPadding: 2.6,
-        overflow: "linebreak",
-        lineColor: [190, 202, 216],
-        lineWidth: 0.22,
-        textColor: [15, 23, 42]
-      },
-      headStyles: {
-        fillColor: [9, 31, 84],
-        fontSize: 8.2,
-        fontStyle: "bold",
-        textColor: [255, 255, 255]
-      },
-      alternateRowStyles: { fillColor: [248, 250, 252] },
-      columnStyles: {
-        0: { cellWidth: 23, fontStyle: "bold" },
-        1: { cellWidth: 34 },
-        2: { cellWidth: 36 },
-        3: { cellWidth: 29, fontStyle: "bold" },
-        4: { cellWidth: 15, halign: "right", fontStyle: "bold" },
-        5: { cellWidth: 45 },
-        6: { cellWidth: 29 },
-        7: { cellWidth: 29 },
-        8: { cellWidth: 17, halign: "center" }
-      },
-      margin: { left: 14, right: 14, top: detailsStartY, bottom: 18 },
-      didDrawPage: () => {
-        // Repeat the report identity and filter context on every detail continuation page.
-        addPdfHeader(doc, detailSection, index, sections.length, "DETAILED RECORDS", logoDataUrl);
-      }
+    addModernPdfTable(doc, {
+      startY: 58,
+      headers: ["SEMESTER", "FACULTY", "DEPARTMENT", "ACTIVITY TYPE", "HOW MANY", "ORGANIZATION", "FOCAL PERSON", "DESIGNATION", "SCHEDULED"],
+      rows: detailRows(section.rows),
+      numericColumns: [4],
+      widths: [23, 34, 36, 29, 15, 45, 29, 29, 17],
+      compact: true,
+      onPage: () => addPdfHeader(doc, detailSection, index, sections.length, "DETAILED RECORDS", logoDataUrl)
     });
   }
 
@@ -4736,7 +4646,7 @@ async function printReport() {
   const logoDataUrl = await getReportLogoDataUrl();
   const sectionHtmlParts = [];
 
-  for (const section of sections) {
+  for (const [sectionIndex, section] of sections.entries()) {
     const meta = reportMeta(section.rows);
     const breakdown = activityBreakdown(section.rows);
     const facultyBreakdown = reportGroupBy(section.rows, "faculty");
@@ -4755,15 +4665,15 @@ async function printReport() {
               <div class="office">External Linkages Intelligence Management System</div>
             </div>
           </div>
-          <div class="report-label">ACTIVITY REPORT</div>
+          <div class="report-label">TENTATIVE ANALYTICS REPORT</div>
         </div>
         <h1>${esc(section.title)}</h1>
         <div class="subtitle">${esc(section.subtitle || "")}</div>
         <div class="generated-on">Generated on: ${esc(reportGeneratedOn())}</div>
 
-        <div class="print-filters">
-          ${reportFilterDetails(section).map(([label,value]) => `<div class="print-filter"><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`).join("")}
-        </div>
+        ${sectionIndex === 0 ? `<div class="print-filters">
+          ${reportFilterDetails(section).filter(([label]) => label !== "Organization").map(([label,value]) => `<div class="print-filter"><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`).join("")}
+        </div>` : ""}
 
         <div class="kpis">
           ${meta.map(item => `<div class="kpi"><span>${esc(item[0])}</span><strong>${esc(item[1])}</strong></div>`).join("")}
@@ -4822,6 +4732,21 @@ async function printReport() {
       .faculty-table th,.department-table th{background:#091f54}.activity-table th{background:#0b6b3a}
       .graph-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:10px 0 14px}.graph-card{border:1px solid #dbe4f0;border-radius:8px;padding:8px;background:#fff}.graph-title{font-size:11px;font-weight:700;margin-bottom:6px}.graph-card img{width:100%;height:250px;object-fit:contain;display:block;background:#fff}
       table{width:100%;border-collapse:collapse;font-size:8px;table-layout:fixed}th{background:#17365d;color:white;text-align:left;padding:5px;border:1px solid #dbe4f0}td{padding:4px;border:1px solid #dbe4f0;vertical-align:top;word-break:break-word}.small,.focal-table{width:100%;table-layout:auto}.small th{background:#7c3aed}.focal-table th{background:#0b6b3a}
+      /* UOL print-ready report: clean header, card metrics, tables and one chart per page */
+      @page{size:A4 landscape;margin:13mm 12mm}
+      body{font-family:Arial,Helvetica,sans-serif;color:#17324a;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .report-head{border-radius:0;background:#10314b;border-bottom:4px solid #159879;padding:16px 20px}
+      .report-label{border-radius:6px;font-size:9px;letter-spacing:.09em;padding:9px 12px}
+      .office{color:#c8e7e2}.university{font-size:17px;letter-spacing:.7px}
+      h1{font-size:23px;color:#0e3452;margin:18px 0 4px}h2{font-size:14px;color:#12354f;margin:12px 0 10px;border-left:4px solid #0b9278;padding:7px 10px;background:#f0f7f5}
+      .subtitle,.generated-on{color:#64748b;font-size:10px}
+      .print-filters{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}
+      .print-filter{border:1px solid #dbe8ec;border-top:3px solid #0b9278;border-radius:8px;background:#f8fcfb;padding:11px 12px;min-height:57px}
+      .print-filter span{color:#598274;font-size:9px;letter-spacing:.04em}.print-filter strong{font-size:11px;color:#0f2e46}
+      .kpis{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:10px 0 16px}.kpi{padding:13px;background:#f8fafc;border:1px solid #dde8ed;border-radius:9px;border-top:3px solid #2568b7}.kpi span{font-size:10px;color:#627b91}.kpi strong{display:block;font-size:22px;color:#10344f;margin-top:7px}
+      .page-section{break-before:page;page-break-before:always}.graph-grid{display:block!important}.graph-card{break-before:page;page-break-before:always;break-inside:avoid;border:0;padding:0;margin:0;background:white}.graph-title{font-size:17px;color:#0e344d;padding:11px 0;border-bottom:3px solid #0b9278;margin-bottom:16px}.graph-card img{width:100%;height:158mm;object-fit:contain}
+      table{font-size:9px;table-layout:auto}th{background:#123a57!important;color:#fff;padding:9px 8px;border:1px solid #d8e3ea}td{padding:7px 8px;border:1px solid #dce6ec;line-height:1.45;overflow-wrap:anywhere}tbody tr:nth-child(even){background:#f5f9fc}.small th,.faculty-table th,.department-table th,.activity-table th{background:#123a57!important}
+      thead{display:table-header-group}tr{break-inside:avoid}.report-section{page-break-after:always}
       @media print{button{display:none}}
     </style></head><body>${sectionHtmlParts.join("")}<script>window.onload=()=>{window.print();};<\/script></body></html>`);
   popup.document.close();

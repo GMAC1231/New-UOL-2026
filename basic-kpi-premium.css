@@ -1,0 +1,50 @@
+/* Basic Reporting: elevated executive-summary KPI cards, scoped to this page. */
+.basic-modern .metrics{
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:18px!important;margin:24px 0 8px!important;
+}
+.basic-modern .metrics .metric{
+  --kpi-accent:#0e937b;--kpi-soft:#e8f7f2;
+  position:relative!important;display:flex!important;flex-direction:column!important;
+  min-height:192px!important;padding:24px 24px 20px!important;
+  border-radius:20px!important;border:1px solid #dce6ee!important;
+  background:linear-gradient(145deg,#fff 40%,#f8fbfe 100%)!important;
+  box-shadow:0 8px 26px rgba(22,54,77,.07)!important;
+  transition:transform .2s ease,box-shadow .2s ease!important;
+  overflow:hidden!important;
+}
+.basic-modern .metrics .metric:nth-child(2){--kpi-accent:#2563cb;--kpi-soft:#ebf2ff}
+.basic-modern .metrics .metric:nth-child(3){--kpi-accent:#7455bc;--kpi-soft:#f1edfc}
+.basic-modern .metrics .metric:nth-child(4){--kpi-accent:#c27c20;--kpi-soft:#fff4e7}
+.basic-modern .metrics .metric::before{
+  content:''!important;position:absolute!important;top:0!important;left:0!important;
+  width:100%!important;height:5px!important;background:var(--kpi-accent)!important;
+}
+.basic-modern .metrics .metric::after{
+  content:'';position:absolute;right:-37px;bottom:-49px;width:135px;height:135px;
+  border-radius:50%;background:var(--kpi-soft);opacity:.65;pointer-events:none;
+}
+.basic-modern .metrics .metric:hover{transform:translateY(-3px);box-shadow:0 15px 32px rgba(22,54,77,.12)!important}
+.basic-modern .metrics .metric .metric-icon{
+  position:absolute!important;right:22px!important;top:22px!important;
+  width:48px!important;height:48px!important;margin:0!important;
+  border-radius:15px!important;background:var(--kpi-soft)!important;
+  border:1px solid color-mix(in srgb,var(--kpi-accent) 15%,transparent)!important;
+  box-shadow:none!important;font-size:23px!important;
+}
+.basic-modern .metrics .metric small{
+  max-width:calc(100% - 68px)!important;color:#5e7086!important;
+  font-size:11px!important;letter-spacing:.075em!important;font-weight:850!important;
+  text-transform:uppercase!important;line-height:1.5!important;
+}
+.basic-modern .metrics .metric strong{
+  position:relative;z-index:1;display:block!important;margin:30px 0 12px!important;
+  color:#102f49!important;letter-spacing:-.055em!important;
+  line-height:1!important;font-size:clamp(40px,3vw,51px)!important;font-weight:850!important;
+}
+.basic-modern .metrics .metric .metric-caption{
+  position:relative;z-index:1;display:block;color:#6c8193!important;
+  font-size:12px!important;font-weight:500;line-height:1.5;
+}
+@media(max-width:1250px){.basic-modern .metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:560px){.basic-modern .metrics{grid-template-columns:1fr!important;gap:12px!important}.basic-modern .metrics .metric{min-height:165px!important}}

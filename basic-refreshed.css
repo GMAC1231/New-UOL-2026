@@ -1,0 +1,37 @@
+/* UOL Basic Reporting refresh - only section 1 */
+.basic-modern{background:#edf3f8!important}
+.basic-modern .report-inner{max-width:1800px;margin:0 auto!important}
+.basic-modern .page-intro{padding:8px 0 3px!important}
+.basic-modern .section-overline{color:#098971!important;letter-spacing:.17em!important}
+.basic-modern .page-intro h1{font-size:clamp(27px,2.8vw,39px)!important;color:#102e47!important;letter-spacing:-.05em!important;margin:10px 0!important}
+.basic-modern .page-intro p{font-size:13px!important;color:#61798f!important}
+.basic-modern .tentative-label{background:#e9f6f1!important;border:1px solid #c9e9de!important;color:#087c64!important;letter-spacing:.08em;font-size:10px!important}
+.basic-modern .basic-filterbar{padding:24px 26px!important;border:1px solid #dde7ef!important;box-shadow:0 6px 24px #173b5009!important}
+.basic-modern .filterbar-heading strong{font-size:16px!important;color:#183b52!important}
+.basic-modern .filter-items select{height:48px!important;background:white!important;border-radius:10px!important}
+.basic-modern .filter-items button{height:48px!important;border-radius:10px!important}
+.basic-modern .metric{min-height:165px!important;border:1px solid #dce7ef!important;border-radius:18px!important;padding:23px 23px 20px!important;box-shadow:0 8px 23px #173b540c!important}
+.basic-modern .metric:before{height:5px!important}
+.basic-modern .metric strong{font-size:clamp(35px,3.5vw,48px)!important;margin:24px 0 10px!important}
+.basic-modern .metric small{font-size:11px!important;color:#6a8195!important}
+.basic-modern .metric-icon{width:47px!important;height:47px!important;border-radius:14px!important;background:#e9f7f1!important;font-size:22px!important}
+.basic-modern .charts{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;align-items:start!important;gap:20px!important}
+.basic-modern .charts .panel.basic-ranking-panel{padding:25px!important;border-radius:18px!important;min-width:0!important;box-shadow:0 7px 25px #123c590c!important}
+.basic-modern .ranking-heading{display:flex;justify-content:space-between;align-items:center;gap:15px;border-bottom:1px solid #e6edf3;padding-bottom:17px;margin-bottom:8px}
+.basic-modern .ranking-heading h3{font-size:17px!important;font-weight:800!important;margin:0 0 6px!important}
+.basic-modern .ranking-heading .chart-subtitle{margin:0!important;font-size:12px!important;color:#748a9c!important}
+.basic-modern .ranking-count{background:#edf8f4;color:#0b856d;border:1px solid #d0eee2;border-radius:100px;padding:7px 12px;font-weight:800;font-size:11px;white-space:nowrap}
+.basic-modern .ranking-rows{display:flex;flex-direction:column;gap:0;padding:4px 3px;max-height:660px;overflow:auto;scrollbar-color:#bed4df transparent;scrollbar-width:thin}
+.basic-modern .basic-department-panel .ranking-rows{max-height:660px}
+.basic-modern .ranking-item{display:flex;gap:13px;padding:12px 4px;border-bottom:1px solid #edf2f6;align-items:flex-start}
+.basic-modern .ranking-item:last-child{border-bottom:0}
+.basic-modern .ranking-number{font-size:11px;color:#92a5b5;font-weight:800;width:24px;flex:0 0 24px;padding-top:2px}
+.basic-modern .ranking-detail{min-width:0;flex:1}
+.basic-modern .ranking-line{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:9px}
+.basic-modern .ranking-name{font-size:12px;color:#304d65;font-weight:650;line-height:1.45;overflow-wrap:anywhere}
+.basic-modern .ranking-value{font-size:13px;color:#12344f;font-variant-numeric:tabular-nums;white-space:nowrap}
+.basic-modern .ranking-track{height:9px;background:#eef3f6;border-radius:100px;overflow:hidden}
+.basic-modern .ranking-fill{height:100%;border-radius:100px;min-width:2px}
+@media(max-width:1150px){.basic-modern .charts{grid-template-columns:1fr!important}.basic-modern .ranking-rows{max-height:470px}}
+@media(max-width:700px){.basic-modern .metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}.basic-modern .charts .panel.basic-ranking-panel{padding:17px!important}}
+@media(max-width:440px){.basic-modern .metrics{grid-template-columns:1fr!important}}

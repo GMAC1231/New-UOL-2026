@@ -12,6 +12,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
 
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="powerbi.css">
 </head>
 
 <body>
@@ -23,7 +24,7 @@
 
       <div>
         <div class="brand-title">UOL Analytics</div>
-        <div class="brand-sub">External Linkages Intelligence</div>
+        <div class="brand-sub">External Linkages · Analytics</div>
       </div>
     </div>
 
@@ -33,13 +34,20 @@
     </button>
 
     <div class="mobile-nav-menu" id="navMenu">
-
+      <div class="nav-caption">WORKSPACE</div>
+      <a class="nav-link active" href="index.html"><span class="nav-glyph">▦</span> Executive Overview</a>
+      <a class="nav-link" href="basic-reporting.html"><span class="nav-glyph">▤</span> Basic Reporting</a>
+      <a class="nav-link" href="internship-placement.html"><span class="nav-glyph">◎</span> Internship &amp; Placement</a>
+      <a class="nav-link" href="mou-collaborations.html"><span class="nav-glyph">◇</span> MoU &amp; Collaborations</a>
+      <div class="nav-caption secondary-caption">REPORTING</div>
+      <a class="nav-link" href="#analytics-section"><span class="nav-glyph">▥</span> Activity Insights</a>
+      <a class="nav-link" href="#top-filters"><span class="nav-glyph">☷</span> Filters &amp; Export</a>
     </div>
 
     <div class="side-overview">
-      <div class="side-overview-title">Tentative Overview</div>
+      <div class="side-overview-title">STUDENT ENGAGEMENT</div>
       <div class="side-mini-row">
-        <span>IP Students</span>
+        <span>Internship / Placement</span>
         <strong id="sideStudents">—</strong>
       </div>
     </div>
@@ -57,22 +65,22 @@
       </div>
 
       <div class="title-block">
-        <div class="page-number">TENTATIVE</div>
+        <div class="page-number"><span class="header-kicker-dot"></span> OFFICE OF EXTERNAL LINKAGES <span class="header-kicker-divider">/</span> PERFORMANCE ANALYTICS</div>
 
-        <h1>EXTERNAL LINKAGES DASHBOARD</h1>
+        <h1>Institutional Engagement <span class="header-title-accent">Dashboard</span></h1>
 
         <div class="title-sub">
-          OEL Activity Intelligence
+          The University of Lahore · Tentative Institutional Performance Report
         </div>
 
         <div class="title-ribbon">
-          Connect • Collaborate • Create Impact
+          Connect  ·  Collaborate  ·  Create Impact
         </div>
       </div>
 
       <div class="status-box">
         <div class="status-label">
-          Excel Connection
+          <span class="connection-dot"></span> Data source status
         </div>
 
         <div id="connection" class="status-value">
@@ -83,10 +91,11 @@
     </header>
 
 
-    <nav class="tentative-section-nav" aria-label="Tentative dashboard pages"><a href="index.html" class="tnav-current">Overview</a><a href="basic-reporting.html">01 · Basic Reporting (56)</a><a href="internship-placement.html">02 · Internship / Placement</a><a href="mou-collaborations.html">03 · MoU Collaborations</a></nav>
-<section class="filter-strip">
 
-      <div class="filter-label">Filter By</div>
+<div class="pbi-toolbar"><div><div class="pbi-toolbar-title">Performance intelligence</div><div class="pbi-toolbar-note">Interactive institutional reporting · Select any slicer to explore the connected data</div></div><div class="pbi-toolbar-right"><span class="pbi-indicator">Connected workbook</span><span class="pbi-view-tag">TENTATIVE REPORT</span></div></div>
+<section class="filter-strip" id="top-filters">
+
+      <div class="filter-label"><span class="filter-emoji">⚙</span> EXPLORE DATA</div>
 
       <select id="monthFilter" class="filter" title="1. Semester">
         <option value="All">All Semesters</option>
@@ -128,48 +137,39 @@
     </section>
 
 
-    <div class="tentative-alert">
-      <strong>Tentative Dashboard:</strong>
-      activity figures are calculated from the same cleaned Excel workbook.
-      Internship/Placement student totals appear only when relevant to the selected activity type.
-    </div>
+    <div class="tentative-alert"><span class="notice-dot"></span><div><strong>Reporting overview</strong><span>Figures reflect the connected cleaned Excel workbook. Internship / placement student totals are displayed in relevant views only.</span></div><span class="tentative-chip">TENTATIVE</span></div>
 <section class="kpi-grid">
-      <div class="kpi-card" id="totalActivitiesKpiCard">
-        <div class="kpi-icon blue">▤</div>
+      <div class="kpi-card kpi-activities" id="totalActivitiesKpiCard">
+        <div class="kpi-icon blue">◫</div>
         <div class="kpi-label">Total Activities</div>
         <div id="kActivities" class="kpi-value">0</div>
         <div class="kpi-foot">Overall total for the current view</div>
       </div>
 
-      <div class="kpi-card selected-activity-card" id="selectedActivityKpiCard" style="display:none" aria-live="polite">
-        <div class="kpi-icon selected-activity-icon" id="selectedActivityIcon" aria-hidden="true">★</div>
-        <div class="kpi-label" id="selectedActivityLabel">Selected Activity</div>
-        <div class="kpi-value" id="selectedActivityTotal">0</div>
-        <div class="kpi-foot">Total for selected activity and filters</div>
-      </div>
 
-      <div class="kpi-card emphasized" id="internshipKpiCard">
-        <div class="kpi-icon purple">◉</div>
-        <div class="kpi-label">Internship / Placement Students</div>
-        <div id="kInternshipStudents" class="kpi-value">—</div>
-        <div class="kpi-foot">IP + Internship/Placement</div>
+
+      <div class="kpi-card kpi-dynamic-activity emphasized" id="internshipKpiCard" hidden>
+        <div class="kpi-icon" id="activityTypeKpiIcon">◎</div>
+        <div class="kpi-label" id="activityTypeKpiLabel">Selected Activity</div>
+        <div id="activityTypeKpiValue" class="kpi-value">—</div>
+        <div class="kpi-foot" id="activityTypeKpiFoot">Selected activity total for the current view</div>
       </div>
-<div class="kpi-card">
+<div class="kpi-card kpi-faculties">
         <div class="kpi-icon teal">◫</div>
         <div class="kpi-label">Faculties</div>
         <div id="kFaculties" class="kpi-value">0</div>
         <div class="kpi-foot">Participating faculties</div>
       </div>
 
-      <div class="kpi-card">
-        <div class="kpi-icon navy">♙</div>
+      <div class="kpi-card kpi-departments">
+        <div class="kpi-icon navy">▣</div>
         <div class="kpi-label">Departments</div>
         <div id="kDepartments" class="kpi-value">0</div>
         <div class="kpi-foot">Participating departments</div>
       </div>
 
-      <div class="kpi-card">
-        <div class="kpi-icon green">◌</div>
+      <div class="kpi-card kpi-types">
+        <div class="kpi-icon green">◍</div>
         <div class="kpi-label">Activity Types</div>
         <div id="kTypes" class="kpi-value">0</div>
         <div class="kpi-foot">Combined categories</div>
@@ -178,7 +178,7 @@
     </section>
 
 
-    <section class="analytics-grid">
+    <section class="analytics-grid" id="analytics-section">
 
       <div class="panel panel-faculty">
 
@@ -205,17 +205,28 @@
         <div class="panel-head">
           <div>
             <h3>ACTIVITY TYPE DISTRIBUTION</h3>
-            <p>Combined activity categories</p>
+            <p>Explore the mix of university engagement activities</p>
           </div>
         </div>
 
         <div class="activity-chart-layout">
 
-          <div class="activity-canvas-wrap">
-            <canvas id="activityChart"></canvas>
+          <div class="activity-visual">
+            <div class="activity-canvas-wrap">
+              <canvas id="activityChart" aria-label="Activity type distribution interactive chart"></canvas>
+              <div class="activity-donut-center" aria-hidden="true">
+                <span class="activity-total-label">TOTAL ACTIVITIES</span>
+                <strong id="activityDonutTotal">—</strong>
+                <span class="activity-total-sub" id="activityDonutCategories">Across categories</span>
+              </div>
+            </div>
+            <p class="activity-tip">Select a segment to explore activity records</p>
           </div>
 
-          <div id="activityLegend" class="activity-legend"></div>
+          <div class="activity-breakdown">
+            <div class="activity-breakdown-head"><span>ACTIVITY BREAKDOWN</span><span>COUNT · SHARE</span></div>
+            <div id="activityLegend" class="activity-legend"></div>
+          </div>
 
         </div>
 
@@ -226,8 +237,8 @@
 
         <div class="panel-head">
           <div>
-            <h3>SEMESTER TREND</h3>
-            <p>Activities by semester</p>
+            <h3>SEMESTER COMPARISON</h3>
+            <p>Spring and Fall reporting volume</p>
           </div>
         </div>
 
@@ -269,25 +280,13 @@
 
         <div class="impact-box">
 
-          <div class="impact-main" id="impactStudents">—</div>
+          <div class="impact-banner"><div class="impact-banner-icon">🎓</div><div><div class="impact-overline">EXPERIENTIAL LEARNING</div><div class="impact-main" id="impactStudents">—</div><div class="impact-caption">Students reached through internship / placement</div></div></div>
 
-          <div class="impact-label">
-            TOTAL STUDENTS
-          </div>
+          
 
           <div class="impact-row">
-            <span>IP Students</span>
+            <span>Internship / Placement</span>
             <strong id="impactInternship">—</strong>
-          </div>
-
-          <div class="impact-row">
-            <span>Internship/Placement Students</span>
-            <strong id="impactPlacement">—</strong>
-          </div>
-
-          <div class="impact-row">
-            <span>Additional Category</span>
-            <strong id="impactPlanned">—</strong>
           </div>
 
           <div class="impact-row">
@@ -314,27 +313,25 @@
 
         <div class="panel-head">
           <div>
-            <h3>TENTATIVE STATUS OVERVIEW</h3>
-            <p>Current activity readiness</p>
+            <h3>REPORTING PIPELINE</h3>
+            <p>Reported activities and planning pipeline</p>
           </div>
         </div>
 
-        <div class="status-flow">
-
-          <div>
-            <span>1</span>
-            <strong>Reported</strong>
+        <div class="status-flow" aria-label="Reporting pipeline summary">
+          <div class="pipeline-stage pipeline-reported">
+            <div class="pipeline-stage-top"><span class="pipeline-icon" aria-hidden="true">▤</span><span class="pipeline-badge">01 · REPORTED</span></div>
+            <strong>Reported Activities</strong>
             <small id="flowReported">0</small>
+            <p>Total activities in the current report selection</p>
           </div>
-
-          <b>→</b>
-
-          <div>
-            <span>2</span>
-            <strong>Planned</strong>
+          <div class="pipeline-connector" aria-hidden="true"><span>→</span></div>
+          <div class="pipeline-stage pipeline-planned">
+            <div class="pipeline-stage-top"><span class="pipeline-icon" aria-hidden="true">◷</span><span class="pipeline-badge">02 · PIPELINE</span></div>
+            <strong>Planned Pipeline</strong>
             <small id="flowPlanned">0</small>
+            <p>Planning volume reported in the current selection</p>
           </div>
-
         </div>
 
       </div>
@@ -357,7 +354,7 @@
 
         <div>
           <div class="detail-kicker">
-            Activity Details
+            UNIVERSITY ACTIVITY EXPLORER
           </div>
 
           <h2 id="detailModalTitle">
@@ -378,7 +375,7 @@
   </div>
 
 
-  <script src="app.js"></script>
+  <script src="excel-connection.js"></script><script src="app.js"></script>
 
 </body>
 </html>

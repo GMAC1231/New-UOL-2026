@@ -1,0 +1,1 @@
+Sections 1, 2, and 3 now use the same sidebar-left/header-content-right structure, spacing, UOL branding, metric panels, and visual language as Executive Overview. No Connect Excel buttons were added. Existing automatic Excel paths and section-specific filters remain unchanged. Publish this folder on a web server/GitHub Pages.

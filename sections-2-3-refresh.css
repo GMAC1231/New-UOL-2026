@@ -1,0 +1,36 @@
+/* Section 02 + 03: UOL executive report design refresh */
+.section-modern .report-inner{max-width:1680px;margin:auto;padding:28px clamp(18px,3vw,48px) 36px}
+.section-modern .page-intro{margin:8px 0 22px;gap:18px;align-items:center}
+.section-modern .page-intro h1{font-size:clamp(26px,2.25vw,37px)!important;letter-spacing:-.045em!important;line-height:1.16!important}
+.section-modern .page-intro p{font-size:13px!important;line-height:1.6!important;color:#73869a!important}
+.section-modern .basic-filterbar{padding:24px!important;border-radius:19px!important;border:1px solid #dbe7ed!important;box-shadow:0 8px 26px #173d560b!important;background:#fff!important}
+.section-modern .filter-items label{font-size:11px!important;font-weight:800!important;letter-spacing:.035em!important;color:#61768a!important}
+.section-modern .filter-items select{height:46px!important;background:#fbfdff!important;border:1px solid #d5e3ec!important;border-radius:10px!important;font-size:12px!important}
+.section-modern .filter-items button{min-height:46px!important;padding:0 20px!important;border-radius:10px!important;background:#0b8c74!important;color:#fff!important;font-weight:750!important}
+.section-modern .metrics{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:15px!important;margin:23px 0 8px!important}
+.section-modern .metrics .metric{--kpi-accent:#0b8c74;--kpi-soft:#e8f8f2;min-height:178px!important;padding:22px 18px 18px!important;border-radius:18px!important;background:linear-gradient(148deg,#fff 45%,#f8fbfd)!important;border:1px solid #dfe9f0!important;box-shadow:0 9px 25px #102f4a0a!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;text-align:left!important;position:relative!important;overflow:hidden!important}
+.section-modern .metrics .metric:nth-child(2){--kpi-accent:#285fd2;--kpi-soft:#eaf1ff}
+.section-modern .metrics .metric:nth-child(3){--kpi-accent:#7856c6;--kpi-soft:#f2edff}
+.section-modern .metrics .metric:nth-child(4){--kpi-accent:#df8b31;--kpi-soft:#fff3e7}
+.section-modern .metrics .metric:nth-child(5){--kpi-accent:#168a9c;--kpi-soft:#e4f5f7}
+.section-modern .metrics .metric:before{content:''!important;position:absolute!important;top:0!important;left:0!important;width:100%!important;height:5px!important;background:var(--kpi-accent)!important}
+.section-modern .metrics .metric .metric-icon{position:absolute!important;top:18px!important;right:17px!important;display:grid!important;place-items:center!important;width:46px!important;height:46px!important;margin:0!important;border-radius:14px!important;background:var(--kpi-soft)!important;font-size:23px!important}
+.section-modern .metrics .metric small{font-size:10px!important;line-height:1.5!important;letter-spacing:.065em!important;font-weight:850!important;text-transform:uppercase!important;max-width:calc(100% - 54px)!important;color:#60758b!important;min-height:35px!important}
+.section-modern .metrics .metric strong{font-size:clamp(28px,2.6vw,42px)!important;font-weight:850!important;letter-spacing:-.055em!important;line-height:1.04!important;color:#12314e!important;margin:15px 0 9px!important}
+.section-modern .metrics .metric .metric-caption{font-size:11px!important;line-height:1.45!important;color:#8297aa!important;margin-top:auto!important}
+.section-modern .charts{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:19px!important;margin-top:22px!important}
+.section-modern .charts .panel{padding:24px!important;border:1px solid #dfe9f0!important;border-radius:18px!important;background:#fff!important;box-shadow:0 7px 24px #112e4709!important}
+.section-modern .charts .panel h3{font-size:16px!important;color:#123654!important;letter-spacing:-.02em!important}
+.section-modern .charts .panel.basic-ranking-panel{grid-column:auto!important}
+.section-modern .charts .panel.basic-ranking-panel .ranking-rows{max-height:560px!important;overflow-y:auto!important;scrollbar-color:#b6cbd3 transparent!important}
+.section-modern .ranking-item{padding:12px 7px!important}
+.section-modern .ranking-name{white-space:normal!important;overflow-wrap:anywhere!important;font-size:12px!important}
+.section-modern .ranking-value{font-variant-numeric:tabular-nums!important;color:#153a55!important}
+.section-modern .ranking-track{height:8px!important;border-radius:12px!important}
+.section-modern .org-chart-controls{padding:12px 13px;background:#f4f9fc;border-radius:10px;margin:10px 0}
+.section-modern .org-chart-controls select{background:#fff;color:#173c57;min-width:145px}
+.section-modern .graph-wrap{max-height:600px!important}
+@media(max-width:1400px){.section-modern .metrics{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:1000px){.section-modern .charts{grid-template-columns:1fr!important}.section-modern .charts .panel.basic-ranking-panel{grid-column:1/-1!important}.section-modern .filter-items{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:650px){.section-modern .metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}.section-modern .filter-items{grid-template-columns:1fr!important}.section-modern .report-inner{padding:16px!important}}
+@media(max-width:450px){.section-modern .metrics{grid-template-columns:1fr!important}}

@@ -1,0 +1,1 @@
+Selected activity KPI no longer shares the internship summary DOM ID. Its count is calculated from the active Activity Type selection and existing filtered totalActivities; internship summary remains available in other panels.
