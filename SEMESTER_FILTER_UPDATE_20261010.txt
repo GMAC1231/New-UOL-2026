@@ -1,0 +1,2 @@
+Removed Unassigned from semester dropdown on Basic Reporting, Internship/Placement and MoU. No data has been deleted. All Semesters includes undated rows. Executive Overview already excludes an Unassigned dropdown option.
+Internship/Placement (source sheet, deduplicated): 1,087. Planned - Section 4: 353. Combined including planned: 1,440.

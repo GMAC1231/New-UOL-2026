@@ -241,13 +241,15 @@ function standardizeActivityType(value) {
     return "Industrial Visit / IV";
   }
 
+  if (type === "remote") return "Internship / Placement";
+
   if (
     type === "planned" ||
     type.includes(
       "planned activity"
     )
   ) {
-    return "Planned";
+    return "Internship / Placement";
   }
 
   if (
@@ -523,10 +525,7 @@ function buildIpBreakdownFromActivities() {
           "IP";
       }
 
-      const semester =
-        semesterFromMonth(
-          row.month
-        );
+      const semester = semesterForActivity(row);
 
       const key =
         [
@@ -660,7 +659,7 @@ function rowsForSemester(rows = allRows) {
   }
 
   return rows.filter(
-    row => semesterFromMonth(row.month) === semester
+    row => semesterForActivity(row) === semester
   );
 }
 
@@ -676,7 +675,7 @@ function updateFacultyFilter() {
 
   setSelectOptions(
     "facultyFilter",
-    rows.map(row => row.faculty),
+    [...rows.map(row => row.faculty), ...uolInstitutionalRoster.map(r => r.faculty)],
     "All Faculties", optionTotals(rows, "faculty"), rows.reduce((n,r)=>n+rowAmount(r),0)
   );
 }
@@ -687,6 +686,17 @@ function updateFacultyFilter() {
    Depends on Semester + Faculty
    ========================================================= */
 
+let uolInstitutionalRoster=[];
+async function loadInstitutionalRoster(){
+ try{
+  const response=await fetch('data/64_Submissions_Source.xlsx',{cache:'no-store'});
+  if(!response.ok)throw Error('Submission workbook could not load');
+  const book=XLSX.read(await response.arrayBuffer(),{type:'array'});
+  uolInstitutionalRoster=XLSX.utils.sheet_to_json(book.Sheets['All Submissions'],{defval:'',raw:false})
+   .filter(r=>!isInvalidLabel(r.Department))
+   .map(r=>({department:clean(r.Department),faculty:clean(r.Faculty)}));
+ }catch(err){console.warn('Institutional department roster unavailable',err);}
+}
 function updateDepartmentFilter() {
 
   const faculty =
@@ -702,7 +712,7 @@ function updateDepartmentFilter() {
 
   setSelectOptions(
     "departmentFilter",
-    rows.map(row => row.department),
+    [...rows.map(row => row.department),...uolInstitutionalRoster.filter(r=>faculty==='All'||r.faculty===faculty).map(r=>r.department)],
     "All Departments", optionTotals(rows, "department"), rows.reduce((n,r)=>n+rowAmount(r),0)
   );
 }
@@ -737,8 +747,7 @@ function updateActivityFilter() {
 
   setSelectOptions(
     "activityFilter",
-    rows
-      .map(row => row.type)
+    [...rows.map(row => row.type), ...allRows.map(row => row.type)]
       .filter(type => norm(type) !== "total activities"),
     "All Activity Types", optionTotals(rows.filter(r=>norm(r.type)!=="total activities"), "type"), rows.filter(r=>norm(r.type)!=="total activities").reduce((n,r)=>n+rowAmount(r),0)
   );
@@ -756,6 +765,8 @@ function semesterFromMonth(value) {
   const lower = text.toLowerCase();
   const yearMatch = text.match(/\b(20\d{2})\b/);
   const explicitYear = yearMatch ? yearMatch[1] : "";
+  // Only 2026 semesters are available in this reporting dashboard.
+  if (explicitYear && explicitYear !== "2026") return "";
 
   if (lower.includes("spring")) {
     return explicitYear ? `Spring Semester ${explicitYear}` : "Spring Semester";
@@ -802,20 +813,48 @@ function semesterFromMonth(value) {
     }
   }
 
-  if (!month) return text;
+  if (!month) return "";
+  if (year && year !== "2026") return "";
 
   const semester = month <= 6 ? "Spring Semester" : "Fall Semester";
   return year ? `${semester} ${year}` : semester;
+}
+
+// Respect the original progress report semester for this July-dated Urdu submission.
+// Its Reporting Month remains 2026-07-17; its Year field explicitly specifies Spring 2026.
+// Provisional assignments from activity dates in the original 64-submission report.
+// These do not alter blank Reporting Month fields or confirm completion of planned events.
+const SEMESTER_FROM_ACTIVITY_EVIDENCE = Object.freeze({
+  'PRPSTFPT50': 'Spring Semester 2026',
+  'PRPSTFPT48': 'Spring Semester 2026',
+  'PRPSTFPT47': 'Spring Semester 2026',
+  'PRPSTFPT45': 'Spring Semester 2026',
+  'PRPSTFPT39': 'Spring Semester 2026',
+  'PRPSTFPT38': 'Spring Semester 2026',
+  'PRPSTFPT37': 'Spring Semester 2026',
+  'PRPSTFPT36': 'Spring Semester 2026',
+  'PRPSTFPT35': 'Spring Semester 2026',
+  'PRPSTFPT26': 'Spring Semester 2026',
+  'PRPSTFPT103': 'Fall Semester 2026',
+  'PRPSTFPT86': 'Fall Semester 2026',
+  'PRPSTFPT85': 'Fall Semester 2026',
+  'PRPSTFPT82': 'Fall Semester 2026',
+});
+
+function semesterForActivity(row) {
+  if (typeof row === 'string') return semesterFromMonth(row);
+  const ref = String(row?.ref || row?.['Ref #'] || '').trim();
+  if (ref === 'PRPSTFPT34') return 'Spring Semester 2026';
+  if (SEMESTER_FROM_ACTIVITY_EVIDENCE[ref]) return SEMESTER_FROM_ACTIVITY_EVIDENCE[ref];
+  return semesterFromMonth(row?.month || row?.['Reporting Month']);
 }
 
 function updateMonthFilter() {
 
   setSelectOptions(
     "monthFilter",
-    allRows
-      .map(row => semesterFromMonth(row.month))
-      .filter(Boolean),
-    "All Semesters", (()=>{const map=new Map();for(const r of allRows){const k=semesterFromMonth(r.month);if(k&&!isInvalidLabel(k))map.set(k,(map.get(k)||0)+rowAmount(r));}return map;})(), allRows.reduce((n,r)=>n+rowAmount(r),0)
+    [...allRows.map(row => semesterForActivity(row)).filter(Boolean), "Spring Semester 2026", "Fall Semester 2026"],
+    "All Semesters", (()=>{const map=new Map();for(const r of allRows){const k=semesterForActivity(r);if(k&&!isInvalidLabel(k))map.set(k,(map.get(k)||0)+rowAmount(r));}return map;})(), allRows.reduce((n,r)=>n+rowAmount(r),0)
   );
 }
 
@@ -928,7 +967,7 @@ function applyFilters() {
       activity === "All" || row.type === activity;
 
     const monthMatch =
-      month === "All" || semesterFromMonth(row.month) === month;
+      month === "All" || semesterForActivity(row) === month;
 
     const organizationMatch =
       organization === "All" || row.organization === organization;
@@ -944,7 +983,7 @@ function applyFilters() {
         row.organization,
         row.remarks,
         row.month,
-        semesterFromMonth(row.month)
+        semesterForActivity(row)
       ].some(value =>
         String(value || "")
           .toLowerCase()
@@ -2159,7 +2198,7 @@ function monthlyChart() {
   const result = {};
 
   filteredRows.forEach(row => {
-    const semester = semesterFromMonth(row.month);
+    const semester = semesterForActivity(row);
 
     if (!semester || isInvalidLabel(semester)) {
       return;
@@ -2177,6 +2216,9 @@ function monthlyChart() {
     return year * 10 + half;
   };
 
+  for (const semester of ["Spring Semester 2026", "Fall Semester 2026"]) {
+    if (!(semester in result)) result[semester] = 0;
+  }
   const labels = Object.keys(result).sort((a, b) => semesterSortKey(a) - semesterSortKey(b));
 
   const semesterTotal = Object.values(result).reduce((sum, value) => sum + Number(value || 0), 0);
@@ -2336,6 +2378,19 @@ function render() {
         )
     );
 
+  // The institutional roster is independent of the selected reporting semester.
+  // A semester with zero activities still contains the university's faculties and departments.
+  const selectedFacultyForRoster = $("facultyFilter")?.value || "All";
+  const selectedDepartmentForRoster = $("departmentFilter")?.value || "All";
+  const rosterFacultyCount = new Set(uolInstitutionalRoster
+    .filter(r => selectedFacultyForRoster === "All" || r.faculty === selectedFacultyForRoster)
+    .filter(r => selectedDepartmentForRoster === "All" || r.department === selectedDepartmentForRoster)
+    .map(r => r.faculty)).size;
+  const rosterDepartmentCount = new Set(uolInstitutionalRoster
+    .filter(r => selectedFacultyForRoster === "All" || r.faculty === selectedFacultyForRoster)
+    .filter(r => selectedDepartmentForRoster === "All" || r.department === selectedDepartmentForRoster)
+    .map(r => r.department)).size;
+
   const setText =
     (
       id,
@@ -2405,15 +2460,13 @@ function render() {
   );
 setText(
     "kFaculties",
-    faculties
-      .size
+    rosterFacultyCount
       .toLocaleString()
   );
 
   setText(
     "kDepartments",
-    departments
-      .size
+    rosterDepartmentCount
       .toLocaleString()
   );
 
@@ -2439,18 +2492,25 @@ renderStudentSummary();
 
   barChart(
     "facultyChart",
-    group(
-      "faculty"
-    ),
+    (() => {
+      const result = new Map(Object.entries(group("faculty")));
+      const selectedFaculty = $("facultyFilter")?.value || "All";
+      for (const item of uolInstitutionalRoster) {
+        if (selectedFaculty === "All" || item.faculty === selectedFaculty) {
+          if (!result.has(item.faculty)) result.set(item.faculty, 0);
+        }
+      }
+      return Object.fromEntries([...result.entries()].sort((a,b) => b[1]-a[1] || a[0].localeCompare(b[0])));
+    })(),
     "faculty",
     "facultyWrap"
   );
 
   barChart(
     "departmentChart",
-    group(
-      "department"
-    ),
+    (()=>{const groups=group("department");const asMap=new Map(Object.entries(groups));const faculty=$("facultyFilter")?.value||"All";
+      for(const r of uolInstitutionalRoster)if(faculty==="All"||r.faculty===faculty)if(!asMap.has(r.department))asMap.set(r.department,0);
+      return Object.fromEntries([...asMap.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])));})(),
     "department",
     "departmentWrap"
   );
@@ -2679,16 +2739,17 @@ async function loadActivityWorkbook() {
       activityRows
     );
 
-  // Keep Remote activities as a separate dashboard category.
-  // A record is treated as Remote when its source remarks explicitly say Mode: Remote.
+  // Combine Planned and Remote under Internship / Placement for reporting.
+  // Preserve the original type and remarks for record-level auditing.
   allRows = allRows.map(row => {
-    const isRemote = /\bmode\s*:\s*remote\b/i.test(clean(row.remarks));
-    return isRemote ? { ...row, type: "Remote" } : row;
+    const original = norm(row.originalType);
+    const remote = /\bmode\s*:\s*remote\b/i.test(clean(row.remarks));
+    const merge = remote || row.type === "Planned" || original === "planned" || original === "remote";
+    return merge ? { ...row, type: "Internship / Placement" } : row;
   });
 
-  // Planned is stored separately in the 56-submission workbook.
-  // Add it to the dashboard as its own activity category instead of
-  // mixing it with Internship / Placement.
+  // Planned section-4 records join Internship / Placement after duplicate checks.
+  // Their source classification remains available in originalType and remarks.
   const plannedSheetName = workbook.SheetNames.find(name =>
     ["Planned Activities", "Planned - Section 4"].includes(name)
   );
@@ -2701,8 +2762,7 @@ async function loadActivityWorkbook() {
 
     const plannedRows = parseActivities(plannedRowsRaw)
       .map(row => {
-        const isRemote = /\bmode\s*:\s*remote\b/i.test(clean(row.remarks));
-        return { ...row, type: isRemote ? "Remote" : "Planned" };
+        return { ...row, type: "Internship / Placement" };
       });
 
     const seen = new Set(allRows.map(row => [
@@ -2720,6 +2780,17 @@ async function loadActivityWorkbook() {
       }
     });
   }
+
+  // Match Section 2's validated Internship/Placement reporting rule.
+  // PRPSTFPT39 contains a quantity-one record with no named organization.
+  // Keep the record in the embedded source workbook for audit, but do not
+  // include it in dashboard activity counts or semester/faculty distributions.
+  allRows = allRows.filter(row => !(
+    clean(row.ref).toUpperCase() === 'PRPSTFPT39' &&
+    row.type === 'Internship / Placement' &&
+    Number(row.events) === 1 &&
+    isInvalidLabel(clean(row.organization))
+  ));
 
   // Separate section dashboards provide the reporting and MoU charts.
 
@@ -2758,7 +2829,7 @@ async function loadExcel() {
 
   try {
 
-    await loadActivityWorkbook();
+    await Promise.all([loadActivityWorkbook(),loadInstitutionalRoster()]);
 
     populateFilters();
 
@@ -2938,7 +3009,7 @@ function openPopup(
 
               <div class="detail-field">
                 <small>Semester</small>
-                <strong>${displayValue(semesterFromMonth(row.month))}</strong>
+                <strong>${displayValue(semesterForActivity(row))}</strong>
               </div>
 
               <div class="detail-field">
@@ -3499,7 +3570,7 @@ function reportDisplayValue(value) {
 
 function detailRows(rows) {
   return rows.map(row => [
-    semesterFromMonth(row.month) || "-",
+    semesterForActivity(row) || "-",
     reportDisplayValue(row.faculty),
     reportDisplayValue(row.department),
     reportDisplayValue(row.type),
@@ -3516,8 +3587,6 @@ function expectedOutcomeBullets(rows) {
   const present = new Set(rows.map(row => clean(row.type)).filter(Boolean));
   const rules = [
     ["Internship / Placement", "Internship / Placement: Improve student employability and workplace readiness by expanding structured opportunities for practical training, professional exposure and recruitment. Expected results include stronger employer networks, improved job-readiness, better understanding of workplace standards and a clearer pathway from academic learning to employment."],
-    ["Planned", "Planned Activities: Establish a forward-looking pipeline of external-linkage opportunities with clear partner organizations, student participation targets, timelines, delivery modes and responsible departments. Expected results include improved semester planning, earlier coordination with external partners, better conversion of planned opportunities into executed internships, placements, visits or collaborations, and stronger evidence-based monitoring of progress."],
-    ["Remote", "Remote Activities: Expand access to external-linkage opportunities through virtual or remote participation where physical attendance is not required. Expected results include broader student participation, flexible engagement with external organizations, improved accessibility, documented remote delivery, and measurable academic or professional outcomes from online placements, collaborations or planned activities."],
     ["Alumni Talk / Mentoring", "Alumni Talk / Mentoring: Strengthen alumni participation in student development through career guidance, mentoring, networking and sharing of professional experience. Expected results include improved career awareness, stronger alumni-student connections and access to sector-specific advice and opportunities."],
     ["Industrial Visit / IV", "Industrial Visit / IV: Provide direct exposure to operational environments, technologies, professional practices and organizational systems. Expected results include improved understanding of industry processes, stronger application of classroom learning and increased awareness of workplace expectations."],
     ["Seminar", "Seminar: Enhance knowledge exchange by connecting students and faculty with external experts, practitioners and current developments in relevant disciplines. Expected results include improved professional awareness, updated subject knowledge and opportunities for academic and industry networking."],
@@ -3933,7 +4002,7 @@ function reportMonthBreakdown(rows) {
   const grouped = {};
 
   rows.forEach(row => {
-    const label = semesterFromMonth(row.month);
+    const label = semesterForActivity(row);
     if (!label || isInvalidLabel(label)) return;
     grouped[label] = (grouped[label] || 0) + rowAmount(row);
   });

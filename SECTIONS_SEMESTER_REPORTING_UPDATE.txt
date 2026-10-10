@@ -1,0 +1,7 @@
+Spring/Fall 2026 section reporting update
+Basic Reporting, Internship/Placement, and MoU & Collaboration now show the number of classified institution-wide submissions in their semester dropdowns.
+Spring 2026: 19 including 10 provisional activity-date assignments and PRPSTFPT34 Dept Urdu explicitly Spring.
+Fall 2026: 33 including 4 provisional activity-date assignments.
+Unclassified: 12, visible in All Semesters totals but not offered as a semester filter.
+All 64 source submissions, underlying activity quantities, 29-department roster and dashboard styling remain unchanged.
+The 14 activity-date-based assignments are provisional and may involve planned dates.

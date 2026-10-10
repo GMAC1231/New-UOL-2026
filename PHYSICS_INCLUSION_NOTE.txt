@@ -1,0 +1,4 @@
+Basic Reporting now includes Department of Physics in department KPI, dropdown and submission rankings.
+Physics submissions: PRPSTFPT72, PRPSTFPT57, PRPSTFPT10.
+All three remain in the 64-submission source with their original rejected status.
+This change does not add rejected records into the activity or MoU totals.

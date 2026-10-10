@@ -1,0 +1,7 @@
+Fall 2025 display correction (2026-10-10)
+
+Cause: PRPSTFPT100 had Reporting Month 2025-12 in the activity workbook, while the 64-submission master lists its Reporting Month as 2026-08-31, Year 2026. The Executive Overview constructed a Fall 2025 option from that stale activity date.
+
+Fixed PRPSTFPT100 on both All Separated Activities and Guest Lecture - GLIT sheets to 2026-08-31, matching the master source. Dashboard semester parsing now rejects non-2026 years rather than creating erroneous semester options.
+
+No entry was removed. Spring 2026 and Fall 2026 remain the only dated semester options. Unassigned dates are still unassigned.

@@ -1,0 +1,1 @@
+Executive Overview was counting one unnamed quantity-1 Internship/Placement entry from PRPSTFPT39 that Section 2 already excludes. Updated Executive Overview app.js to exclude the same invalid entry in all filters, charts and grand total. Internship/Placement: 1440 in both locations; overall activities: 2633 (previously 2634). Embedded Excel rows are unchanged for audit.

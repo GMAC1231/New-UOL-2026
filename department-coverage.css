@@ -1,0 +1,7 @@
+/* Keep submission coverage distinct from approved activity KPIs. */
+.uol-coverage-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:15px 0;background:#f6fbfa;border:1px solid #cde8e0;border-left:4px solid #0c9278;border-radius:12px;padding:14px 19px;box-shadow:0 4px 16px rgba(13,54,76,.04)}
+.uol-coverage-main{display:flex;flex-direction:column;gap:4px}
+.uol-coverage-main span{font-size:10px;font-weight:800;letter-spacing:.1em;color:#477a77}
+.uol-coverage-main strong{font-size:22px;color:#133d50;letter-spacing:-.03em}
+.uol-coverage-note{font-size:12px;font-weight:600;color:#3b596a;max-width:610px;line-height:1.5}
+@media(max-width:650px){.uol-coverage-banner{align-items:flex-start}.uol-coverage-main strong{font-size:20px}}

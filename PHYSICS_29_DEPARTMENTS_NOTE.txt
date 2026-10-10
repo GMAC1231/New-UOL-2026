@@ -1,0 +1,1 @@
+Basic Reporting: Physics is included (3 rejected submissions) under Faculty of Sciences. The department count is 29 when all faculties are selected. The department filter places Physics first; the department chart visually highlights it so it is not buried in a scroll list. Approved activity totals are unchanged.

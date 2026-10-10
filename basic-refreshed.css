@@ -35,3 +35,10 @@
 @media(max-width:1150px){.basic-modern .charts{grid-template-columns:1fr!important}.basic-modern .ranking-rows{max-height:470px}}
 @media(max-width:700px){.basic-modern .metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}.basic-modern .charts .panel.basic-ranking-panel{padding:17px!important}}
 @media(max-width:440px){.basic-modern .metrics{grid-template-columns:1fr!important}}
+
+/* Physics included in the 29-department submission coverage */
+.physics-coverage-note{grid-column:1/-1;display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:#eff8f6;border:1px solid #c9e8df;border-left:4px solid #0a876a;border-radius:12px;padding:14px 18px;color:#123c50}
+.physics-coverage-note strong{font-size:13px}
+.physics-coverage-note span{font-size:12px;color:#376879}
+.physics-ranking-item{background:#eff9f6!important;border:1px solid #cbe9df!important;border-radius:10px;padding:10px!important}
+.physics-ranking-item .ranking-name{font-weight:800!important;color:#0b6e56!important}

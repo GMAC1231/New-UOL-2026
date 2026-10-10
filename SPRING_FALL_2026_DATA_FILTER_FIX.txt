@@ -1,0 +1,6 @@
+Executive Overview semester filter repaired: source activity row (including Ref #) now passed to semesterForActivity.
+Both Spring Semester 2026 and Fall Semester 2026 now classify activity rows from their Reporting Month.
+PRPSTFPT34 remains Spring Semester 2026 by original Year/Semester designation; actual July reporting date unchanged.
+Sections 1, 2 and 3 already use original submission reporting month via reference joins; their selected-period data and faculty/department filters are retained.
+No activity rows or quantities added or altered; missing-date records remain accessible under All Semesters.
+Browser script URLs refreshed to prevent stale browser cache.

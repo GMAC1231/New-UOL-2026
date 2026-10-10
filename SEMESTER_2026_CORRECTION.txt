@@ -1,0 +1,6 @@
+PRPSTFPT25 Reporting Month 2026-02-06 and Year corrected from 2025 to 2026 in data/64_Submissions_Source.xlsx.
+All 64 submissions retained (29 named departments, 3 missing department names).
+Executive Overview and Sections 1-3 use the common department/faculty roster and Spring/Fall 2026 semester filters.
+Section faculty and department charts show 0 for non-reporting units.
+Internship and MoU totals still reflect only their recorded activity datasets and must not be interpreted as newly entered records for all departments.
+Blank reporting months remain Unassigned.

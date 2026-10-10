@@ -1,0 +1,7 @@
+All dashboard pages now share the 64-submission reporting roster, containing 29 named departments.
+Overview: category activity records retained; full institutional roster appears in department filter/chart.
+Section 1: all 64 submission records, 29 named departments.
+Section 2: existing verified internship, planned, remote records; department and semester scope from 64 source.
+Section 3: existing MoU country records; department and semester scope from 64 source.
+Unassigned reporting months are not silently counted under Spring or Fall 2026.
+No records are fabricated for departments without activity in a specific semester.

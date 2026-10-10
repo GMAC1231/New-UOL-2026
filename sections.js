@@ -13,6 +13,61 @@ const normalizeOrg=x=>{
  return valid(s)?s:'';
 };
 let basic=[],ip=[],mou=[],charts=[];
+let roster=[],departmentRoster=[],facultyRoster=[],submissionByRef=new Map();
+const semesterOf = value => {
+ const v=clean(value).toLowerCase();
+ if(!v) return 'Unassigned';
+ if(v.includes('spring')) return 'Spring 2026';
+ if(v.includes('fall') || v.includes('autumn')) return 'Fall 2026';
+ const year=v.match(/20\d{2}/)?.[0];
+ const month=v.match(/(?:20\d{2})[-/](\d{1,2})/)?.[1];
+ if(year==='2026'&&month){const n=Number(month);return n<=6&&n>=1?'Spring 2026':n<=12?'Fall 2026':'Unassigned';}
+ const names=['january','february','march','april','may','june','july','august','september','october','november','december'];
+ const m=names.findIndex(name=>v.includes(name));
+ return year==='2026' && m>=0?(m<6?'Spring 2026':'Fall 2026'):'Unassigned';
+};
+// Provisional semester classification from dated activities where Reporting Month is blank.
+const SEMESTER_FROM_ACTIVITY_EVIDENCE = Object.freeze({
+ 'PRPSTFPT50':'Spring 2026',
+ 'PRPSTFPT48':'Spring 2026',
+ 'PRPSTFPT47':'Spring 2026',
+ 'PRPSTFPT45':'Spring 2026',
+ 'PRPSTFPT39':'Spring 2026',
+ 'PRPSTFPT38':'Spring 2026',
+ 'PRPSTFPT37':'Spring 2026',
+ 'PRPSTFPT36':'Spring 2026',
+ 'PRPSTFPT35':'Spring 2026',
+ 'PRPSTFPT26':'Spring 2026',
+ 'PRPSTFPT103':'Fall 2026',
+ 'PRPSTFPT86':'Fall 2026',
+ 'PRPSTFPT85':'Fall 2026',
+ 'PRPSTFPT82':'Fall 2026',
+});
+
+const selectedSemester=()=> $('semester')?.value||'All';
+const semesterMatches=r=>selectedSemester()==='All'||r.semester===selectedSemester();
+// Show the institution-wide submission counts in each section's semester menu.
+// All Semesters keeps unclassified reports in totals; no unassigned filter is exposed.
+function updateSemesterLabels(){
+ const el=$('semester');if(!el)return;
+ const counts={'All':roster.length,'Spring 2026':0,'Fall 2026':0};
+ for(const row of roster){const period=semesterForSubmission(row);if(period in counts)counts[period]++;}
+ for(const opt of el.options){if(opt.value in counts){
+  const label=opt.value==='All'?'All Semesters':opt.value;
+  opt.textContent=`${label} (${fmt(counts[opt.value])} submissions)`;
+ }}
+}
+function semesterForSubmission(row){
+ const ref=clean(row['Ref #']||row.ref||row['Submission Ref']);
+ if(ref==='PRPSTFPT34')return 'Spring 2026';
+ if(SEMESTER_FROM_ACTIVITY_EVIDENCE[ref])return SEMESTER_FROM_ACTIVITY_EVIDENCE[ref];
+ return semesterOf(row['Reporting Month']);
+}
+const coverageDepartments=faculty=>uniq(departmentRoster.filter(r=>faculty==='All'||r.Faculty===faculty).map(r=>r.Department));
+const coverageFaculties=()=>facultyRoster;
+const rosterFacultyCount=()=>uniq(departmentRoster.filter(r=>$('faculty')?.value==='All'||r.Faculty===$('faculty')?.value).filter(r=>$('department')?.value==='All'||r.Department===$('department')?.value).map(r=>r.Faculty)).length;
+const rosterDepartmentCount=()=>coverageDepartments($('faculty')?.value||'All').filter(x=>$('department')?.value==='All'||x===$('department')?.value).length;
+
 let organizationChartLimit='15';
 const sheet=(book,name)=>book.Sheets[name]?XLSX.utils.sheet_to_json(book.Sheets[name],{defval:'',raw:false}):[];
 async function workbook(path){
@@ -21,7 +76,6 @@ async function workbook(path){
  if(!response.ok)throw Error('Unable to load '+path+' (HTTP '+response.status+')');
  return XLSX.read(await response.arrayBuffer(),{type:'array'});
 }
-const noPhysics=x=>clean(x).toLowerCase()!=='department of physics';
 function select(id,values,label,rows=[],key='',weighted=false){
  const el=$(id);if(!el)return;
  const prev=el.value,items=uniq(values),counts=new Map();
@@ -50,20 +104,20 @@ function parseIp(rows){
 }
 const matches=r=>($('faculty').value==='All'||r.Faculty===$('faculty').value)&&($('department').value==='All'||r.Department===$('department').value);
 function updateFilters(changed){
- if(changed==='faculty'&&$('department'))$('department').value='All';
- const base=page==='basic'?basic:page==='ip'?ip:mou;
+ if((changed==='faculty'||changed==='semester')&&$('department'))$('department').value='All';
+ const base=(page==='basic'?basic:page==='ip'?ip:mou).filter(semesterMatches);
  const weighted=page==='ip';
- select('faculty',base.map(r=>r.Faculty),'All Faculties',base,'Faculty',weighted);
+ select('faculty',facultyRoster,'All Faculties',base,'Faculty',weighted);
  const sub=base.filter(r=>$('faculty').value==='All'||r.Faculty===$('faculty').value);
- const dept=sub.filter(r=>page!=='basic'||noPhysics(r.Department));
- select('department',dept.map(r=>r.Department),'All Departments',dept,'Department',weighted);
+ const dept=sub;
+ select('department',coverageDepartments($('faculty').value),'All Departments',dept,'Department',weighted);
  if(page==='ip'){
-  const relevant=ip.filter(matches);
+  const relevant=ip.filter(semesterMatches).filter(matches);
   const named=relevant.filter(r=>valid(r.org));
   select('organization',named.map(r=>r.org),'All Organizations',named,'org',true);
  }
  if(page==='mou'){
-  const relevant=mou.filter(matches);
+  const relevant=mou.filter(semesterMatches).filter(matches);
   select('country',relevant.map(r=>r.Country),'All Countries',relevant,'Country');
   const countries=relevant.filter(r=>$('country').value==='All'||r.Country===$('country').value);
   select('moutype',countries.map(r=>r['MoU Type']),'All MoU Types',countries,'MoU Type');
@@ -143,12 +197,12 @@ function organizationGraph(entries,selectedOrg){
 
 }
 function drawBasic(){
- const rows=basic.filter(matches);
+ const rows=basic.filter(semesterMatches).filter(matches);
  const metrics=[
   ['Submission Records',rows.length,'Registered reports in selection','📑'],
   ['Campuses',uniq(rows.map(r=>r.Campus)).length,'Campuses represented','🏛️'],
-  ['Faculties',uniq(rows.map(r=>r.Faculty)).length,'Participating faculties','🎓'],
-  ['Departments',uniq(rows.map(r=>r.Department).filter(noPhysics)).length,'Reporting departments','🏢']
+  ['Faculties',rosterFacultyCount(),'Faculties in reporting roster','🎓'],
+  ['Departments',rosterDepartmentCount(),'Departments in reporting roster','🏢']
  ];
  const target=$('metrics');target.replaceChildren();
  for(const [label,count,caption,emoji] of metrics){
@@ -159,7 +213,11 @@ function drawBasic(){
   const sub=document.createElement('span');sub.className='metric-caption';sub.textContent=caption;
   el.append(icon,small,strong,sub);target.append(el);
  }
- const f=tally(rows,'Faculty'),d=tally(rows.filter(r=>noPhysics(r.Department)),'Department');
+ const f=tally(rows,'Faculty'),d=tally(rows,'Department');
+ for(const name of coverageFaculties())if(($('faculty').value==='All'||$('faculty').value===name)&&!f.some(v=>v[0]===name))f.push([name,0]);
+ f.sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
+ for(const name of coverageDepartments($('faculty').value))if(($('department').value==='All'||$('department').value===name)&&!d.some(v=>v[0]===name))d.push([name,0]);
+ d.sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
  basicBarPanel('Submissions by Faculty','Participation by faculty · number of submitted reports',f);
  basicBarPanel('Submissions by Department','Reporting coverage across departments',d);
  // Submission Directory has been removed; only KPI cards and charts are displayed.
@@ -178,7 +236,8 @@ function basicBarPanel(title,subtitle,entries){
  if(!entries.length){rows.textContent='No matching submissions';panel.append(rows);$('charts').append(panel);return;}
  const largest=Math.max(...entries.map(v=>v[1]),1);
  const colors=['#0b8f76','#2563be','#7660c8','#e69c3b','#1684a2','#285399'];
- entries.forEach(([name,value],i)=>{
+ const displayEntries=entries;
+ displayEntries.forEach(([name,value],i)=>{
   const item=document.createElement('div');item.className='ranking-item';
   const number=document.createElement('span');number.className='ranking-number';number.textContent=String(i+1).padStart(2,'0');
   const detail=document.createElement('div');detail.className='ranking-detail';
@@ -195,65 +254,93 @@ function basicBarPanel(title,subtitle,entries){
 function draw(){charts.forEach(c=>c.destroy());charts=[];$('metrics').replaceChildren();$('charts').replaceChildren();
  if(page==='basic'){drawBasic();return;}
  if(page==='ip'){
-  let rows=ip.filter(matches);
+  let rows=ip.filter(semesterMatches).filter(matches);
   const selectedOrg=$('organization')&&$('organization').value!=='All';
   if(selectedOrg)rows=rows.filter(r=>r.org===$('organization').value);
   const orgRows=rows.filter(r=>valid(r.org));const orgTally=tally(orgRows,'org',true);
-  metric('Internship / Placement Students',rows.reduce((a,b)=>a+b.number,0),'💼','Combined student participation');
-  metric('Faculties',uniq(rows.map(r=>r.Faculty)).length,'🎓','Faculties represented');
-  metric('Departments',uniq(rows.map(r=>r.Department)).length,'🏢','Participating departments');
+  metric('Total Internship / Placement — Including Planned & Remote',rows.reduce((a,b)=>a+b.number,0),'💼','Reported quantities including planned opportunities; not all are completed placements');
+  metric('Faculties',rosterFacultyCount(),'🎓','Faculties in reporting roster');
+  metric('Departments',rosterDepartmentCount(),'🏢','Departments in reporting roster');
   metric('Partner Organizations',uniq(orgRows.map(r=>r.org)).length,'🤝','Named external organizations');
   metric('Reporting Submissions',new Set(rows.map(r=>r.ref)).size,'📑','Source reports represented');
   organizationGraph(orgTally,selectedOrg);
-  basicBarPanel('Student Participation by Faculty','Reported students by faculty',tally(rows,'Faculty',true));
-  basicBarPanel('Student Participation by Department','Reported students by department',tally(rows,'Department',true));
+  const ipFac=tally(rows,'Faculty',true);for(const name of coverageFaculties())if(($('faculty').value==='All'||$('faculty').value===name)&&!ipFac.some(v=>v[0]===name))ipFac.push([name,0]);
+  ipFac.sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
+  basicBarPanel('Student Participation by Faculty','Reported students by faculty',ipFac);
+  const deptEntries=tally(rows,'Department',true);
+  for(const name of coverageDepartments($('faculty').value))if(($('department').value==='All'||$('department').value===name)&&!deptEntries.some(item=>item[0]===name))deptEntries.push([name,0]);
+  deptEntries.sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
+  basicBarPanel('Student Participation by Department','Reported students by department',deptEntries);
   return;
  }
- let rows=mou.filter(matches);
+ let rows=mou.filter(semesterMatches).filter(matches);
  if($('country').value!=='All')rows=rows.filter(r=>r.Country===$('country').value);
  if($('moutype').value!=='All')rows=rows.filter(r=>r['MoU Type']===$('moutype').value);
  metric('MoU Records',rows.length,'📄','Records in selection');
  metric('Countries',uniq(rows.map(r=>r.Country)).length,'🌍','Countries represented');
  metric('Partner Institutions',uniq(rows.map(r=>r['Partner Institution'])).length,'🤝','External institutions');
- metric('Faculties',uniq(rows.map(r=>r.Faculty)).length,'🎓','Faculties involved');
+ metric('Faculties',rosterFacultyCount(),'🎓','Faculties in reporting roster');
+ metric('Departments',rosterDepartmentCount(),'🏢','Departments in reporting roster');
  metric('Reporting Submissions',new Set(rows.map(r=>r['Submission Ref'])).size,'📑','Source reports represented');
  mouInsightPanel('MoU Partnerships by Country','Geographic distribution of institutional collaborations',tally(rows,'Country'),'countries');
  mouInsightPanel('Collaboration Type Breakdown','Academic, industry and other partnership types',tally(rows,'MoU Type'),'types');
  mouInsightPanel('MoU Progress & Status','Current completion and processing stages',tally(rows,'Status'),'status');
  basicBarPanel('Partner Institutions','Collaborating institutions ranked by recorded MoUs',tally(rows,'Partner Institution'));
- basicBarPanel('MoUs by Faculty','Collaboration activity by faculty',tally(rows,'Faculty'));
- basicBarPanel('MoUs by Department','Collaboration activity by department',tally(rows,'Department'));
+ const mouFac=tally(rows,'Faculty');for(const name of coverageFaculties())if(($('faculty').value==='All'||$('faculty').value===name)&&!mouFac.some(v=>v[0]===name))mouFac.push([name,0]);
+ mouFac.sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
+ basicBarPanel('MoUs by Faculty','Collaboration activity by faculty',mouFac);
+ const mouDept=tally(rows,'Department');
+ for(const name of coverageDepartments($('faculty').value))if(($('department').value==='All'||$('department').value===name)&&!mouDept.some(item=>item[0]===name))mouDept.push([name,0]);
+ mouDept.sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
+ basicBarPanel('MoUs by Department','Collaboration activity by department',mouDept);
 }
-function reset(){for(const id of ['faculty','department','organization','country','moutype'])if($(id))$(id).value='All';updateFilters();draw();}
+function reset(){for(const id of ['semester','faculty','department','organization','country','moutype'])if($(id))$(id).value='All';updateFilters();draw();}
 async function boot(){
  try{
   if(typeof XLSX==='undefined')throw Error('Excel library did not load. Check internet access or local library.');
   if(typeof Chart==='undefined')throw Error('Chart.js did not load. Check internet access or local library.');
+  const source=await workbook('data/64_Submissions_Source.xlsx');
+  roster=sheet(source,'All Submissions').filter(r=>valid(r['Ref #']));
+  submissionByRef=new Map(roster.map(r=>[clean(r['Ref #']),r]));
+  departmentRoster=roster.filter(r=>valid(r.Department)).map(r=>({Department:clean(r.Department),Faculty:clean(r.Faculty)}));
+  facultyRoster=uniq(roster.map(r=>r.Faculty));
+   updateSemesterLabels();
+  const tagSemester=r=>{
+  const ref=clean(r.ref||r['Submission Ref']||r['Ref #']);
+  const master=submissionByRef.get(ref);
+  // PRPSTFPT34's original semester field is Spring 2026 although submitted in July.
+  // Use the department's explicit semester selection for this report in every section.
+  const sourcePeriod=master ? semesterForSubmission(master) : semesterOf(r['Reporting Month']);
+  return {...r,semester:sourcePeriod};
+};
   if(page==='basic'){
-   const a=await workbook('data/56_Submissions_Source.xlsx');
-   basic=sheet(a,'All Submissions');
+   basic=roster.map(tagSemester);
    if(!basic.length)throw Error('No records found in the All Submissions sheet');
   }else if(page==='ip'){
    const b=await workbook('data/UOL_Separated_All_Activity_Data_Cleaned.xlsx');
-   ip=parseIp(sheet(b,'Internship - Placement'));
-   if(!ip.length)throw Error('No records found in Internship - Placement sheet');
+   // Keep all source categories intact in Excel; merge only for dashboard reporting.
+   const internship=sheet(b,'Internship - Placement');
+   const planned=sheet(b,'Planned - Section 4'); // Structured sheet with correct headers; planned quantities are deduplicated in parseIp.
+   const remote=sheet(b,'Remote Activities');
+   ip=parseIp([...internship, ...planned, ...remote]).filter(r=>submissionByRef.has(r.ref)).map(tagSemester);
+   if(!ip.length)throw Error('No records found in Internship / Placement, Planned or Remote sheets');
   }else if(page==='mou'){
    const c=await workbook('data/UOL_MoU_Country_Previous.xlsx');
-   mou=sheet(c,'MoU Country (No Nulls)').filter(r=>valid(r.Country));
+   mou=sheet(c,'MoU Country (No Nulls)').filter(r=>valid(r.Country)&&submissionByRef.has(clean(r['Submission Ref']))).map(tagSemester);
    if(!mou.length)throw Error('No valid country records found in MoU country sheet');
   }
   $('connection').textContent=`Excel Connected · ${page==='basic'?basic.length:page==='ip'?ip.length:mou.length} records`;
   updateFilters();
-  for(const id of ['faculty','department','organization','country','moutype'])$(id)?.addEventListener('change',()=>{
-   if(id==='faculty'||id==='department'||id==='country')updateFilters(id);
+  for(const id of ['semester','faculty','department','organization','country','moutype'])$(id)?.addEventListener('change',()=>{
+   if(id==='faculty'||id==='department'||id==='country'||id==='semester')updateFilters(id);
    draw();
   });
   $('reset')?.addEventListener('click',reset);
   if(page==='mou' && $('generateMouPdf')){
    const pdfButton=$('generateMouPdf');pdfButton.disabled=false;
    pdfButton.addEventListener('click',async()=>{
-    const rows=mou.filter(matches).filter(r=>($('country').value==='All'||r.Country===$('country').value)&&($('moutype').value==='All'||r['MoU Type']===$('moutype').value));
-    const filters={faculty:$('faculty').value,department:$('department').value,country:$('country').value,type:$('moutype').value};
+    const rows=mou.filter(semesterMatches).filter(matches).filter(r=>($('country').value==='All'||r.Country===$('country').value)&&($('moutype').value==='All'||r['MoU Type']===$('moutype').value));
+    const filters={semester:selectedSemester(),faculty:$('faculty').value,department:$('department').value,country:$('country').value,type:$('moutype').value};
     pdfButton.disabled=true;pdfButton.textContent='Preparing PDF…';
     try{await window.generateMouPdf({rows,filters});}catch(error){console.error('MoU PDF export failed:',error);alert('Could not generate PDF: '+error.message);}
     finally{pdfButton.disabled=false;pdfButton.textContent='⬇ Generate PDF Report';}
@@ -273,7 +360,8 @@ async function boot(){
 async function loadSidebarEngagement(){
  const target=$('sideStudents');if(!target)return;
  try{
-  const rows=page==='ip'&&ip.length?ip:parseIp(sheet(await workbook('data/UOL_Separated_All_Activity_Data_Cleaned.xlsx'),'Internship - Placement'));
+  const b=await workbook('data/UOL_Separated_All_Activity_Data_Cleaned.xlsx');
+  const rows=page==='ip'&&ip.length?ip:(()=>{const main=sheet(b,'Internship - Placement'),planned=sheet(b,'Planned - Section 4');return parseIp([...main,...planned]).filter(r=>submissionByRef.has(r.ref));})();
   const total=rows.reduce((sum,row)=>sum+num(row.number),0);
   target.textContent=fmt(total);
  }catch(err){console.warn('Student engagement sidebar could not load:',err);target.textContent='—';}
