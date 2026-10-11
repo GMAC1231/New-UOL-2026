@@ -1,0 +1,25 @@
+/* Mobile layout for the individual activity dashboards. */
+.activity-mobile-menu-button{display:none;}
+@media(max-width:1050px){
+ .side {position:sticky!important;top:0!important;inset:auto!important;display:block!important;width:100%!important;height:auto!important;max-height:none!important;overflow:visible!important;z-index:1100!important;padding:10px 12px!important;}
+ .activity-mobile-menu-button {display:flex!important;align-items:center!important;justify-content:space-between!important;min-height:44px!important;width:100%!important;border:1px solid #ffffff55!important;border-radius:9px!important;background:#ffffff1b!important;color:#fff!important;padding:10px 13px!important;font-size:13px!important;font-weight:750!important;cursor:pointer!important;}
+ .activity-mobile-navigation {display:none!important;max-height:65dvh!important;overflow:auto!important;overscroll-behavior:contain!important;padding:10px 0!important;}
+ .side.activity-mobile-open .activity-mobile-navigation {display:block!important;}
+ .side .nav-link {display:flex!important;width:100%!important;min-height:42px!important;align-items:center!important;}
+ .main {margin-left:0!important;width:100%!important;max-width:100%!important;min-width:0!important;padding:13px!important;}
+ .main > *, .main section, .main article {min-width:0!important;max-width:100%;}
+ .kpi-grid {grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+ .charts, .charts-grid, .analytics-grid, .grid-charts {grid-template-columns:minmax(0,1fr)!important;}
+ .chart-card, .panel, .chart-wrap {min-width:0!important;max-width:100%!important;}
+ .main select,.main input {max-width:100%!important;min-width:0!important;}
+ .main canvas {max-width:100%!important;}
+ .table-scroll, .table-wrap, .overflow-x-auto {max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch!important;}
+}
+@media(max-width:600px){
+ .main {padding:9px!important;}
+ .kpi-grid {grid-template-columns:minmax(0,1fr)!important;}
+ .main select,.main input,.main button {min-height:42px;}
+ .main select,.main input {font-size:16px!important;}
+ .main h1 {font-size:clamp(22px,6vw,30px)!important;overflow-wrap:anywhere;}
+}
+@media print{.activity-mobile-menu-button{display:none!important}.activity-mobile-navigation{display:block!important}}

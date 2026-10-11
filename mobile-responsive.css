@@ -1,0 +1,80 @@
+/* Final overrides: consistent phones/tablets across all four reporting screens. */
+html { -webkit-text-size-adjust:100%; }
+body { min-width:0; }
+img, svg, canvas { max-width:100%; }
+.main, .basic-content, .report-inner, .analytics-grid, .panel, .charts, .metric, .kpi-card { min-width:0; }
+.uol-mobile-menu-button {display:none;}
+@media (max-width:1050px) {
+  .basic-modern .basic-shell {display:block!important;grid-template-columns:minmax(0,1fr)!important;min-width:0!important;}
+  .basic-modern .uol-shared-sidebar {position:sticky!important;top:0!important;z-index:1100!important;display:block!important;width:100%!important;min-height:0!important;padding:10px 14px!important;box-sizing:border-box!important;box-shadow:0 5px 18px #102f4a25!important;}
+  .uol-shared-sidebar .uol-side-brand {display:flex!important;flex-direction:row!important;align-items:center!important;gap:9px!important;padding:0!important;}
+  .uol-shared-sidebar .uol-side-brand img {width:92px!important;height:42px!important;padding:5px!important;}
+  .uol-shared-sidebar .uol-side-brand strong {font-size:15px!important;margin:0!important;}
+  .uol-shared-sidebar .uol-side-brand small {font-size:9px!important;}
+  .uol-mobile-menu-button {display:flex!important;align-items:center!important;justify-content:space-between!important;width:100%!important;min-height:44px!important;margin-top:8px!important;padding:10px 13px!important;border:1px solid #ffffff49!important;border-radius:9px!important;background:#ffffff17!important;color:#fff!important;font:700 13px Inter,Arial,sans-serif!important;cursor:pointer!important;text-align:left!important;}
+  .uol-mobile-navigation {display:none!important;max-height:min(65dvh,540px)!important;overflow-y:auto!important;overscroll-behavior:contain!important;padding:9px 0 13px!important;}
+  .uol-shared-sidebar.uol-mobile-open .uol-mobile-navigation {display:block!important;}
+  .uol-shared-sidebar .uol-side-nav {display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:4px!important;}
+  .uol-shared-sidebar a.uol-nav-link {width:100%!important;min-height:44px!important;font-size:13px!important;}
+  .uol-shared-sidebar .uol-side-caption {display:block!important;margin:12px 8px 7px!important;}
+  .uol-shared-sidebar .uol-report-caption {margin-top:15px!important;}
+  .uol-shared-sidebar .uol-side-impact {width:100%!important;margin:12px 0 0!important;padding:12px!important;}
+  .basic-modern main.basic-content {width:100%!important;min-width:0!important;margin:0!important;padding:12px!important;}
+  .basic-modern .uol-executive-header {margin:0!important;min-width:0!important;flex-wrap:wrap!important;gap:12px!important;padding:16px!important;}
+  .basic-modern .uol-executive-status {min-width:0!important;width:100%!important;max-width:100%!important;}
+  .basic-modern .report-inner {min-width:0!important;max-width:100%!important;padding:16px 0!important;}
+  .basic-modern .metrics, .section-modern .metrics {grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  .basic-modern .charts, .section-modern .charts {grid-template-columns:minmax(0,1fr)!important;}
+  .basic-modern .charts > .panel, .basic-modern .charts > .panel:nth-child(3), .section-modern .charts > .panel, .section-modern .charts .panel.wide {grid-column:1/-1!important;min-width:0!important;}
+  .basic-modern .filter-items, .section-modern .filter-items, .section-modern.mou-modern .filter-items {grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  .filter-items > label, .filter-items > button {min-width:0!important;max-width:100%!important;}
+  .basic-modern .page-intro, .basic-modern .records-header {flex-wrap:wrap!important;}
+  .table-scroll, .org-chart-scroll {width:100%!important;max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch!important;}
+  .basic-modern .graph-wrap, .section-modern .graph-wrap {max-width:100%!important;min-width:0!important;}
+  .basic-modern .graph-wrap canvas, .section-modern .graph-wrap canvas {max-width:100%!important;}
+  /* Overview: final desktop Power BI overrides used to force a sidebar width. */
+  .side {position:sticky!important;top:0!important;z-index:1100!important;width:100%!important;height:auto!important;max-height:none!important;overflow:visible!important;padding:10px 12px!important;}
+  .side .brand-wrap {padding:0!important;margin:0 0 7px!important;}
+  .side .mobile-nav-toggle {display:flex!important;align-items:center!important;justify-content:space-between!important;min-height:44px!important;width:100%!important;color:#fff!important;cursor:pointer!important;}
+  .side .mobile-nav-menu {display:none!important;overflow-y:auto!important;max-height:65dvh!important;overscroll-behavior:contain!important;}
+  .side.mobile-open .mobile-nav-menu {display:block!important;}
+  .side .side-overview {display:none!important;}
+  .main {margin-left:0!important;width:100%!important;max-width:100%!important;min-width:0!important;padding:0 12px 24px!important;}
+  .topbar {margin:0 -12px!important;padding:16px!important;display:flex!important;flex-wrap:wrap!important;gap:12px!important;}
+  .filter-strip {grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  .filter-strip > * {min-width:0!important;}
+  .filter-strip .search-box {grid-column:1/-1!important;}
+  .kpi-grid {grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  .analytics-grid, .panel-activity .activity-chart-layout {grid-template-columns:minmax(0,1fr)!important;}
+  .analytics-grid > *, .panel-activity .activity-chart-layout > * {min-width:0!important;}
+  .detail-dialog {max-width:calc(100vw - 24px)!important;max-height:calc(100dvh - 24px)!important;overflow:auto!important;}
+}
+@media (max-width:600px) {
+  .basic-modern main.basic-content {padding:8px!important;}
+  .basic-modern .uol-executive-header {padding:14px!important;}
+  .basic-modern .uol-executive-header h1 {font-size:clamp(21px,6vw,28px)!important;overflow-wrap:anywhere;}
+  .basic-modern .report-inner {padding:12px 2px!important;}
+  .basic-modern .basic-filterbar {padding:15px 12px!important;}
+  .basic-modern .filter-items, .section-modern .filter-items, .section-modern.mou-modern .filter-items {grid-template-columns:minmax(0,1fr)!important;gap:12px!important;}
+  .filter-items select, .filter-items button, .records-actions input {width:100%!important;max-width:100%!important;min-width:0!important;min-height:44px!important;font-size:16px!important;}
+  .filter-items > button {width:100%!important;}
+  .basic-modern .metrics, .section-modern .metrics {grid-template-columns:minmax(0,1fr)!important;gap:10px!important;}
+  .basic-modern .metric, .section-modern .metric {min-height:140px!important;padding:18px!important;}
+  .basic-modern .charts .panel, .section-modern .charts .panel {padding:14px!important;}
+  .basic-modern .graph-wrap, .section-modern .graph-wrap {height:auto!important;min-height:235px!important;}
+  .page-intro {flex-direction:column!important;align-items:flex-start!important;gap:10px!important;}
+  .basic-footer, .records-actions, .filterbar-heading {flex-wrap:wrap!important;gap:10px!important;}
+  .main {padding:0 9px 20px!important;}
+  .topbar {margin:0 -9px!important;padding:13px!important;}
+  .title-block h1 {font-size:clamp(22px,7vw,30px)!important;}
+  .pbi-toolbar, .tentative-alert {flex-wrap:wrap!important;gap:9px!important;}
+  .filter-strip {grid-template-columns:minmax(0,1fr)!important;padding:12px!important;}
+  .filter-strip .search-box {grid-column:auto!important;}
+  .filter-strip .filter, .filter-strip button {width:100%!important;min-width:0!important;min-height:44px!important;font-size:16px!important;}
+  .kpi-grid {grid-template-columns:minmax(0,1fr)!important;gap:10px!important;}
+  .analytics-grid > .panel {padding:13px!important;}
+  .panel-activity .activity-chart-layout {grid-template-columns:minmax(0,1fr)!important;}
+  .panel-activity .activity-canvas-wrap {width:min(100%,300px)!important;max-width:100%!important;margin-inline:auto!important;}
+  .panel-activity .activity-legend {min-width:0!important;max-width:100%!important;}
+}
+@media print { .uol-mobile-menu-button {display:none!important;} .uol-mobile-navigation {display:block!important;} }

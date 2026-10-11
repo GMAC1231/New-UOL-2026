@@ -36,9 +36,9 @@ body{color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;background:rad
 @media(min-width:1200px){.kpi-grid{grid-template-columns:repeat(6,minmax(0,1fr))!important}}
 @media(max-width:768px){.side{position:sticky;top:0;width:100%;height:auto;padding:10px 12px;overflow:visible}.main{margin-left:0;width:100%;padding:12px}.brand-wrap{padding:5px 5px 9px;margin-bottom:8px;border-bottom:0}.mobile-nav-toggle{display:flex;width:100%;align-items:center;justify-content:space-between;padding:12px 14px;border:1px solid rgba(255,255,255,.15);border-radius:14px;background:rgba(255,255,255,.10);color:#fff;font-weight:800}.mobile-nav-menu{display:none;margin-top:8px;padding:8px;max-height:65vh;overflow-y:auto;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(2,6,23,.98)}.side.mobile-open .mobile-nav-menu{display:block}.hero{min-height:auto;padding:20px;border-radius:18px}.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.chart-box{height:300px}.detail-summary,.detail-grid{grid-template-columns:1fr}}
 </style>
-</head>
+<link rel="stylesheet" href="../activity-mobile.css?v=20261011"></head>
 <body>
-<aside class="side" id="sidebar">
+<aside class="side" id="sidebar"><button type="button" class="activity-mobile-menu-button" aria-controls="activityMobileNavigation" aria-expanded="false" aria-label="Open activity dashboard navigation">☰ &nbsp; Activity navigation <span aria-hidden="true">⌄</span></button><div class="activity-mobile-navigation" id="activityMobileNavigation">
 <div class="brand-wrap"><div class="brand-title">🏛 UOL Analytics</div><div class="brand-sub">Performance Intelligence</div></div>
 <button class="mobile-nav-toggle" id="mobileNavToggle"><span>🌍 Community Engagement</span><span>▼</span></button>
 <div class="mobile-nav-menu">
@@ -170,7 +170,7 @@ body{color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;background:rad
 </div>
 <div class="text-blue-100" style="margin:18px 5px 4px;padding:13px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.07)">
 <div class="text-xs uppercase tracking-widest font-black">Data source</div><div class="text-sm font-bold mt-1">UOL_Community_Engagement.xlsx</div><div class="text-xs mt-2 text-blue-200">Community Engagement data</div>
-</div></aside>
+</div></div></aside>
 <main class="main">
 <section class="hero mb-7"><div class="relative z-10 flex flex-wrap items-end justify-between gap-5"><div><div class="text-blue-100 text-xs uppercase tracking-[.22em] font-black">UNIVERSITY OF LAHORE</div><h1 class="text-4xl md:text-5xl font-black mt-2">Community Engagement Analytics</h1><p class="text-blue-100 mt-3">Live analytics from <strong>UOL_Community_Engagement.xlsx</strong>.</p></div><div class="bg-white/15 backdrop-blur px-5 py-4 rounded-2xl"><div class="text-xs text-blue-100 uppercase font-bold">Excel connection</div><div id="connection" class="font-black mt-1">Loading Excel…</div></div></div></section>
 <section class="card p-5 mb-7"><div class="mb-4"><h2 class="text-xl font-black">Community Engagement Filters</h2><p class="muted text-sm mt-1">Filter Community Engagement data by faculty, department, person and status.</p></div>
@@ -219,4 +219,4 @@ function exportData(){const ws=XLSX.utils.json_to_sheet(filtered.map(r=>({"Perso
 function processWorkbook(buffer){const wb=XLSX.read(buffer,{type:"array"});const name=wb.SheetNames.find(n=>nh(n)==="community engagement")||wb.SheetNames[0];const data=XLSX.utils.sheet_to_json(wb.Sheets[name],{defval:"",raw:false});rows=parse(data);filtered=rows.slice();populate();render();$("connection").innerHTML=`<span style="color:#86efac">●</span> Connected • ${rows.length} records • ${rows.reduce((s,r)=>s+r.count,0)} total`}
 async function loadExcel(){const paths=["../data/UOL_Community_Engagement.xlsx","./data/UOL_Community_Engagement.xlsx","data/UOL_Community_Engagement.xlsx","../UOL_Community_Engagement.xlsx","./UOL_Community_Engagement.xlsx"];for(const url of paths){try{const res=await fetch(url,{cache:"no-store"});if(!res.ok)continue;processWorkbook(await res.arrayBuffer());return}catch(e){}}$("connection").innerHTML=`<span style="color:#f87171">●</span> Excel connection failed`}
 ["facultyFilter","departmentFilter","personFilter","plannedFilter","scheduledFilter"].forEach(id=>$(id).addEventListener("change",apply));$("searchFilter").addEventListener("input",apply);$("resetBtn").addEventListener("click",reset);$("exportBtn").addEventListener("click",exportData);$("mobileNavToggle").addEventListener("click",()=>$("sidebar").classList.toggle("mobile-open"));$("detailClose").addEventListener("click",closeDetail);$("detailModal").addEventListener("click",e=>{if(e.target===$("detailModal"))closeDetail()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDetail()});loadExcel();
-</script></body></html>
+</script><script src="../activity-mobile.js?v=20261011" defer></script></body></html>
