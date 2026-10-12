@@ -4478,6 +4478,31 @@ function drawPdfChartPage(doc, item, title = "Graph", startY = 58, section = nul
 
 // Central table renderer: one consistent, print-friendly visual system for
 // faculty, department, activity and detailed-record pages.
+// jsPDF's standard Helvetica font does not support arbitrary Unicode text.
+// Keep original activity data untouched; make a readable export copy and stop
+// damaged/non-Latin sequences from escaping a PDF table cell.
+function pdfSafeCellText(value) {
+  if (value === null || value === undefined) return "-";
+  let text = String(value)
+    .replace(/&amp;/gi, "&").replace(/&nbsp;/gi, " ")
+    .replace(/\r\n?/g, "\n")
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/[\u2013\u2014]/g, "-")
+    .replace(/\u2026/g, "...")
+    .replace(/\u00A0/g, " ");
+  // Corrupted encoding commonly starts with these sequences; don't print it as
+  // stray Latin characters, and avoid silently altering the source workbook.
+  text = text.replace(/(?:[\u00C2-\u00FF][\u0080-\u00BF]|[ØÙÐ][^\s,;:.]{1,})(?:\s*(?:[\u00C2-\u00FF][\u0080-\u00BF]|[ØÙÐ][^\s,;:.]{1,}))*/g,
+    " [Text encoding unsupported; see source data] ");
+  text = text.replace(/[^\x09\x0A\x0D\x20-\x7E\u00A1-\u00FF]+/g,
+    " [Non-Latin text; see source data] ");
+  // Force breaks for URL-like or damaged long words that autotable cannot wrap.
+  text = text.replace(/\S{48,}/g, token => token.match(/.{1,38}/g).join(" "));
+  return text.replace(/[ \t]{2,}/g, " ").trim() || "-";
+}
+
 function addModernPdfTable(doc, config) {
   if (typeof doc.autoTable !== "function") {
     throw new Error("The PDF table library is missing (jspdf-autotable).");
@@ -4499,16 +4524,16 @@ function addModernPdfTable(doc, config) {
   doc.autoTable({
     startY: config.startY || 60,
     head: [config.headers],
-    body: config.rows,
+    body: config.rows.map(row => row.map(pdfSafeCellText)),
     theme: "grid",
     showHead: "everyPage",
-    rowPageBreak: "avoid",
+    rowPageBreak: "auto",
     margin: { left: 14, right: 14, top: 58, bottom: 18 },
     tableWidth: usableWidth,
     styles: {
       font: "helvetica", fontSize: compact ? 7.4 : 9.2,
       cellPadding: compact ? {top: 2.8, bottom: 2.8, left: 2.2, right: 2.2} : {top: 4.1, bottom: 4.1, left: 4, right: 4},
-      overflow: "linebreak", valign: "middle", textColor: [8, 25, 42],
+      overflow: "linebreak", valign: "top", textColor: [8, 25, 42],
       lineColor: [218, 228, 235], lineWidth: 0.16
     },
     headStyles: {
