@@ -619,10 +619,9 @@ function setSelectOptions(id, values, allLabel, counts = null, total = null) {
     option.textContent = label;
     select.appendChild(option);
   };
-  // Values remain unchanged: only visible text contains totals.
-  const allCount = total ?? (counts ? [...counts.values()].reduce((a,b)=>a+b,0) : items.length);
-  makeOption('All', `${allLabel} (${Number(allCount).toLocaleString()})`);
-  items.forEach(item => makeOption(item, `${item} (${Number(counts?.get(item) ?? values.filter(v=>v===item).length).toLocaleString()})`));
+  // Keep dropdowns clean; totals remain in KPI cards and activity distribution charts.
+  makeOption('All', allLabel);
+  items.forEach(item => makeOption(item, item));
   select.value = previous !== 'All' && items.includes(previous) ? previous : 'All';
 }
 
@@ -747,8 +746,10 @@ function updateActivityFilter() {
 
   setSelectOptions(
     "activityFilter",
-    [...rows.map(row => row.type), ...allRows.map(row => row.type)]
-      .filter(type => norm(type) !== "total activities"),
+    // Keep all 13 named activity types available in Spring and Fall, even at zero.
+    // Do not show the data-quality placeholder "Unclassified" as an activity type.
+    allRows.map(row => row.type)
+      .filter(type => !isInvalidLabel(type) && norm(type) !== "total activities"),
     "All Activity Types", optionTotals(rows.filter(r=>norm(r.type)!=="total activities"), "type"), rows.filter(r=>norm(r.type)!=="total activities").reduce((n,r)=>n+rowAmount(r),0)
   );
 }
@@ -1847,30 +1848,14 @@ function activityChart() {
       "type"
     );
 
-  const entries =
-    Object.entries(
-      grouped
-    )
-      .filter(
-        (
-          [
-            label,
-            value
-          ]
-        ) =>
-          value > 0 &&
-          !isInvalidLabel(
-            label
-          )
-      )
-      .sort(
-        (
-          a,
-          b
-        ) =>
-          b[1] -
-          a[1]
-      );
+  // Always display the full institutional activity-type roster in the distribution.
+  // Filtering by Spring/Fall changes each count, not the list of activity categories.
+  const availableTypes = unique(allRows.map(row => row.type).filter(type =>
+    !isInvalidLabel(type) && norm(type) !== "total activities"
+  ));
+  const entries = availableTypes
+    .map(type => [type, Number(grouped[type] || 0)])
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 
   const labels =
     entries.map(

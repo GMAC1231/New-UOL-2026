@@ -54,7 +54,7 @@ function updateSemesterLabels(){
  for(const row of roster){const period=semesterForSubmission(row);if(period in counts)counts[period]++;}
  for(const opt of el.options){if(opt.value in counts){
   const label=opt.value==='All'?'All Semesters':opt.value;
-  opt.textContent=`${label} (${fmt(counts[opt.value])} submissions)`;
+  opt.textContent=label;
  }}
 }
 function semesterForSubmission(row){
@@ -78,11 +78,10 @@ async function workbook(path){
 }
 function select(id,values,label,rows=[],key='',weighted=false){
  const el=$(id);if(!el)return;
- const prev=el.value,items=uniq(values),counts=new Map();
- for(const r of rows){const v=clean(r[key]);if(!valid(v))continue;counts.set(v,(counts.get(v)||0)+(weighted?num(r.number):1));}
- const overall=rows.reduce((sum,r)=>sum+(weighted?num(r.number):1),0);
- el.replaceChildren(new Option(`${label} (${fmt(overall)})`,'All'));
- for(const x of items)el.add(new Option(`${x} (${fmt(counts.get(x)||0)})`,x));
+ const prev=el.value,items=uniq(values);
+ // Dropdown labels intentionally contain names only; charts and KPI cards show totals.
+ el.replaceChildren(new Option(label,'All'));
+ for(const x of items)el.add(new Option(x,x));
  el.value=[...el.options].some(o=>o.value===prev)?prev:'All';
 }
 function parseIp(rows){
