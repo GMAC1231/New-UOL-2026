@@ -3349,8 +3349,7 @@ function reportFilterDetails(section = null) {
     ["Semester", current.month === "All" ? "All Semesters" : current.month],
     ["Faculty", current.faculty === "All" ? "All Faculties" : current.faculty],
     ["Department", current.department === "All" ? "All Departments" : current.department],
-    ["Activity Type", current.activity === "All" ? "All Activity Types" : current.activity],
-    ["Organization", current.organization === "All" ? "All Organizations" : current.organization]
+    ["Activity Type", current.activity === "All" ? "All Activity Types" : current.activity]
   ];
 }
 
@@ -3361,15 +3360,14 @@ function addPdfFilterBanner(doc, section, startY = 57) {
   const right = 14;
   const gap = 3;
   const available = width - left - right;
-  const boxW = (available - gap * 4) / 5;
+  const boxW = (available - gap * 3) / 4;
   const boxH = 30;
 
   const boxes = [
     ["SEMESTER", items["Semester"], left, startY, boxW],
     ["FACULTY", items["Faculty"], left + (boxW + gap), startY, boxW],
     ["DEPARTMENT", items["Department"], left + (boxW + gap) * 2, startY, boxW],
-    ["ACTIVITY TYPE", items["Activity Type"], left + (boxW + gap) * 3, startY, boxW],
-    ["ORGANIZATION", items["Organization"], left + (boxW + gap) * 4, startY, boxW]
+    ["ACTIVITY TYPE", items["Activity Type"], left + (boxW + gap) * 3, startY, boxW]
   ];
 
   boxes.forEach(([label, value, x, y, w]) => {
