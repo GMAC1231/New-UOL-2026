@@ -619,9 +619,17 @@ function setSelectOptions(id, values, allLabel, counts = null, total = null) {
     option.textContent = label;
     select.appendChild(option);
   };
-  // Keep dropdowns clean; totals remain in KPI cards and activity distribution charts.
-  makeOption('All', allLabel);
-  items.forEach(item => makeOption(item, item));
+
+  // Show bracket counts directly inside the visible filter labels.
+  // Example: All Faculties (10), All Departments (28)
+  const allCount = items.length;
+  makeOption('All', `${allLabel} (${allCount})`);
+
+  items.forEach(item => {
+    const itemCount = counts instanceof Map ? (counts.get(item) || 0) : null;
+    makeOption(item, itemCount !== null ? `${item} (${itemCount})` : item);
+  });
+
   select.value = previous !== 'All' && items.includes(previous) ? previous : 'All';
 }
 
@@ -685,7 +693,125 @@ function updateFacultyFilter() {
    Depends on Semester + Faculty
    ========================================================= */
 
-let uolInstitutionalRoster=[];
+const UOL_SOURCE_DEPARTMENT_ROSTER = [
+  {
+    "department": "School of Creative Arts",
+    "faculty": "Faculty of Arts and Architecture"
+  },
+  {
+    "department": "University Institute of Medical Lab Technology",
+    "faculty": "Faculty of Allied Health Sciences"
+  },
+  {
+    "department": "School of Integrated Social Science",
+    "faculty": "Faculty of Social Sciences"
+  },
+  {
+    "department": "Department of Technology",
+    "faculty": "Faculty of Engineering & Technology"
+  },
+  {
+    "department": "School of Architecture",
+    "faculty": "Faculty of Arts and Architecture"
+  },
+  {
+    "department": "Department of Islamic Studies",
+    "faculty": "Faculty of Social Sciences"
+  },
+  {
+    "department": "Department of Economics",
+    "faculty": "Faculty of Management Sciences"
+  },
+  {
+    "department": "Lahore School of Nursing",
+    "faculty": "Faculty of Allied Health Sciences"
+  },
+  {
+    "department": "University Institute of Diet & Nutritional Sciences",
+    "faculty": "Faculty of Allied Health Sciences"
+  },
+  {
+    "department": "University Institute of Food Science & Technology",
+    "faculty": "Faculty of Allied Health Sciences"
+  },
+  {
+    "department": "University College of Dentistry",
+    "faculty": "Faculty of Medicine & Dentistry"
+  },
+  {
+    "department": "Department of Physics",
+    "faculty": "Faculty of Sciences"
+  },
+  {
+    "department": "Department of Computer Sciences & IT",
+    "faculty": "Faculty of Information Technology"
+  },
+  {
+    "department": "Department of Environmental Sciences",
+    "faculty": "Faculty of Sciences"
+  },
+  {
+    "department": "Lahore School of Behavioural Sciences",
+    "faculty": "Faculty of Social Sciences"
+  },
+  {
+    "department": "Deptartment of English Language and Literature",
+    "faculty": "Faculty of Languages & Literature"
+  },
+  {
+    "department": "Lahore School of Aviation",
+    "faculty": "Faculty of Management Sciences"
+  },
+  {
+    "department": "Department of Health Professional Technologies",
+    "faculty": "Faculty of Allied Health Sciences"
+  },
+  {
+    "department": "Department of Optometry & Vision Science",
+    "faculty": "Faculty of Allied Health Sciences"
+  },
+  {
+    "department": "Department of Information Management",
+    "faculty": "Faculty of Management Sciences"
+  },
+  {
+    "department": "Department of Software Engineering",
+    "faculty": "Faculty of Information Technology"
+  },
+  {
+    "department": "Institute of Molecular Biology & Biotechnology",
+    "faculty": "Faculty of Sciences"
+  },
+  {
+    "department": "Department of Urdu",
+    "faculty": "Faculty of Languages & Literature"
+  },
+  {
+    "department": "Department of Education",
+    "faculty": "Faculty of Social Sciences"
+  },
+  {
+    "department": "Department of Mathematics and Statistics",
+    "faculty": "Faculty of Sciences"
+  },
+  {
+    "department": "Department of Chemistry",
+    "faculty": "Faculty of Sciences"
+  },
+  {
+    "department": "Department of Civil Engineering",
+    "faculty": "Faculty of Engineering & Technology"
+  },
+  {
+    "department": "M.A Raoof College of Law",
+    "faculty": "Faculty of Law"
+  },
+  {
+    "department": "Lahore Business School",
+    "faculty": "Faculty of Management Sciences"
+  }
+];
+let uolInstitutionalRoster=[...UOL_SOURCE_DEPARTMENT_ROSTER];
 async function loadInstitutionalRoster(){
  try{
   const response=await fetch('data/64_Submissions_Source.xlsx',{cache:'no-store'});
@@ -694,7 +820,10 @@ async function loadInstitutionalRoster(){
   uolInstitutionalRoster=XLSX.utils.sheet_to_json(book.Sheets['All Submissions'],{defval:'',raw:false})
    .filter(r=>!isInvalidLabel(r.Department))
    .map(r=>({department:clean(r.Department),faculty:clean(r.Faculty)}));
- }catch(err){console.warn('Institutional department roster unavailable',err);}
+ }catch(err){console.warn('Institutional department roster unavailable; retaining verified 29-department source roster',err);}
+ // Preserve the complete source roster even if a later workbook omits a department.
+ const seen=new Set(uolInstitutionalRoster.map(r=>r.department));
+ for(const entry of UOL_SOURCE_DEPARTMENT_ROSTER){if(!seen.has(entry.department)){uolInstitutionalRoster.push(entry);seen.add(entry.department);}}
 }
 function updateDepartmentFilter() {
 
@@ -2263,7 +2392,21 @@ function monthlyChart() {
    RENDER
    ========================================================= */
 
+function renderFilterStats() {
+  const countUnique = key => new Set(filteredRows.map(row => String(row[key] || '').trim()).filter(value => value && !/^(n\/?a|not available|unclassified|blank|null|undefined)$/i.test(value))).size;
+  const values = {
+    filterStatActivities: filteredRows.reduce((sum, row) => sum + rowAmount(row), 0),
+    filterStatFaculties: countUnique('faculty'),
+    filterStatDepartments: countUnique('department'),
+    filterStatTypes: countUnique('type'),
+    filterStatOrganizations: countUnique('organization'),
+    filterStatRecords: filteredRows.length
+  };
+  Object.entries(values).forEach(([id, value]) => { const el = $(id); if (el) el.textContent = Number(value).toLocaleString(); });
+}
+
 function render() {
+  renderFilterStats();
 
   const totalActivities =
     filteredRows.reduce(
