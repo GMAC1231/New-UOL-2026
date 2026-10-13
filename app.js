@@ -619,12 +619,9 @@ function setSelectOptions(id, values, allLabel, counts = null, total = null) {
     option.textContent = label;
     select.appendChild(option);
   };
-  // Counts are visible in the closed select and in each dropdown option.
-  makeOption('All', `${allLabel} (${items.length.toLocaleString('en-US')})`);
-  items.forEach(item => {
-    const count = counts instanceof Map ? (counts.get(item) || 0) : 0;
-    makeOption(item, `${item} (${count.toLocaleString('en-US')})`);
-  });
+  const totalChoices = items.length.toLocaleString('en-US');
+  makeOption('All', `${allLabel} (${totalChoices})`);
+  items.forEach(item => makeOption(item, item));
   select.value = previous !== 'All' && items.includes(previous) ? previous : 'All';
 }
 
@@ -689,13 +686,17 @@ function updateFacultyFilter() {
    ========================================================= */
 
 let uolInstitutionalRoster=[];
+let uolSubmissionRoster=[];
 async function loadInstitutionalRoster(){
  try{
   const response=await fetch('data/65_Submissions_Source.xlsx',{cache:'no-store'});
   if(!response.ok)throw Error('Submission workbook could not load');
   const book=XLSX.read(await response.arrayBuffer(),{type:'array'});
-  uolInstitutionalRoster=XLSX.utils.sheet_to_json(book.Sheets['All Submissions'],{defval:'',raw:false})
-   .filter(r=>window.UOLSnapshots.contains(r['Ref #'])&&!isInvalidLabel(r.Department))
+  const submissionRows=XLSX.utils.sheet_to_json(book.Sheets['All Submissions'],{defval:'',raw:false})
+   .filter(r=>window.UOLSnapshots.contains(r['Ref #']));
+  uolSubmissionRoster=submissionRows.map(r=>({ref:clean(r['Ref #']),faculty:clean(r.Faculty),department:clean(r.Department),month:clean(r['Reporting Month'])}));
+  uolInstitutionalRoster=submissionRows
+   .filter(r=>!isInvalidLabel(r.Department))
    .map(r=>({department:clean(r.Department),faculty:clean(r.Faculty)}));
  }catch(err){console.warn('Institutional department roster unavailable',err);}
 }
@@ -2266,29 +2267,7 @@ function monthlyChart() {
    RENDER
    ========================================================= */
 
-function renderVisibleFilterStats(){
- const root=$("uolFilterStats");if(!root)return;
- const countUnique=key=>new Set(filteredRows.map(r=>clean(r[key])).filter(v=>!isInvalidLabel(v))).size;
- const values=[
-  ['Activities',filteredRows.reduce((sum,r)=>sum+rowAmount(r),0)],
-  ['Records',filteredRows.length],
-  ['Faculties',countUnique('faculty')],
-  ['Departments',countUnique('department')],
-  ['Activity Types',countUnique('type')],
-  ['Organizations',countUnique('organization')]
- ];
- root.replaceChildren(...values.map(([label,count])=>{
-  const el=document.createElement('span');el.className='uol-stat';
-  const name=document.createElement('span');name.textContent=label;
-  const value=document.createElement('strong');value.textContent=Number(count).toLocaleString('en-US');
-  el.append(name,value);return el;
- }));
-}
-
-
-
 function render() {
-  renderVisibleFilterStats();
 
   const totalActivities =
     filteredRows.reduce(
@@ -2416,6 +2395,27 @@ function render() {
           value;
       }
     };
+
+  // Count DISTINCT submission references, rather than activity quantities.
+  // Keep reports with no activities in the count when no activity/organization/search
+  // is selected. All options use the same historical reference snapshot.
+  const submissionCountLabel = $("matchedSubmissionCount");
+  if (submissionCountLabel) {
+    const monthSelection = $("monthFilter")?.value || "All";
+    const facultySelection = $("facultyFilter")?.value || "All";
+    const departmentSelection = $("departmentFilter")?.value || "All";
+    const activitySelection = $("activityFilter")?.value || "All";
+    const organizationSelection = $("organizationFilter")?.value || "All";
+    const searchSelection = clean($("searchFilter")?.value || "");
+    const baseRefs = uolSubmissionRoster.filter(row =>
+      (monthSelection === "All" || semesterForActivity(row) === monthSelection) &&
+      (facultySelection === "All" || row.faculty === facultySelection) &&
+      (departmentSelection === "All" || row.department === departmentSelection)
+    ).map(row => row.ref);
+    const requireActivities = activitySelection !== "All" || organizationSelection !== "All" || Boolean(searchSelection);
+    const matchedRefs = requireActivities ? new Set(filteredRows.map(row => row.ref)) : new Set(baseRefs);
+    submissionCountLabel.textContent = `Matching submissions: ${matchedRefs.size.toLocaleString("en-US")} / ${window.UOLSnapshots.cohorts[window.UOLSnapshots.active].length}`;
+  }
 
   const selectedActivityType = $("activityFilter")?.value || "All";
 

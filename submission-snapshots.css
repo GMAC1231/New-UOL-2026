@@ -3,3 +3,5 @@
 .uol-snapshot-label{display:flex;flex-direction:column;gap:5px;min-width:170px;font-size:12px;font-weight:700;color:#334155}
 .uol-snapshot-label select{width:100%;min-width:0}
 @media(max-width:700px){.uol-snapshot-label{width:100%;min-width:0}.uol-snapshot-label select{width:100%}.filter-items>label{min-width:0}}
+
+.uol-submission-match{align-self:end;display:flex;align-items:center;min-height:42px;padding:9px 13px;border:1px solid #cbdde9;border-radius:9px;background:#f5fafc;color:#14344d;font-weight:750;font-size:12px;white-space:nowrap}@media(max-width:700px){.uol-submission-match{width:100%;min-height:38px}}

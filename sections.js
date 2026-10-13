@@ -12,7 +12,7 @@ const normalizeOrg=x=>{
  s=s.replace(/^[.\-_,;:]+|[.\-_,;:]+$/g,'').replace(/\s+/g,' ').trim();
  return valid(s)?s:'';
 };
-let basic=[],ip=[],mou=[],charts=[];
+let basic=[],ip=[],mou=[],charts=[],basicActivities=[];
 let roster=[],departmentRoster=[],facultyRoster=[],submissionByRef=new Map();
 const semesterOf = value => {
  const v=clean(value).toLowerCase();
@@ -50,11 +50,11 @@ const semesterMatches=r=>selectedSemester()==='All'||r.semester===selectedSemest
 // All Semesters keeps unclassified reports in totals; no unassigned filter is exposed.
 function updateSemesterLabels(){
  const el=$('semester');if(!el)return;
- const counts={'All':roster.length,'Spring 2026':0,'Fall 2026':0};
+ const counts={'All':2,'Spring 2026':0,'Fall 2026':0};
  for(const row of roster){const period=semesterForSubmission(row);if(period in counts)counts[period]++;}
  for(const opt of el.options){if(opt.value in counts){
   const label=opt.value==='All'?'All Semesters':opt.value;
-  opt.textContent=`${label} (${fmt(counts[opt.value])})`;
+  opt.textContent=opt.value==='All' ? `${label} (${counts.All})` : label;
  }}
 }
 function semesterForSubmission(row){
@@ -79,16 +79,8 @@ async function workbook(path){
 function select(id,values,label,rows=[],key='',weighted=false){
  const el=$(id);if(!el)return;
  const prev=el.value,items=uniq(values);
- // The closed select displays its available distinct option count; each entry
- // displays the volume from the current report/semester and upstream filters.
- el.replaceChildren(new Option(`${label} (${fmt(items.length)})`,'All'));
- const totals=new Map();
- for(const row of rows){
-  const value=clean(row[key]);
-  if(!valid(value))continue;
-  totals.set(value,(totals.get(value)||0)+(weighted?num(row.number):1));
- }
- for(const x of items)el.add(new Option(`${x} (${fmt(totals.get(x)||0)})`,x));
+ el.replaceChildren(new Option(`${label} (${items.length.toLocaleString('en-US')})`,'All'));
+ for(const x of items)el.add(new Option(x,x));
  el.value=[...el.options].some(o=>o.value===prev)?prev:'All';
 }
 function parseIp(rows){
@@ -109,26 +101,43 @@ function parseIp(rows){
  return out;
 }
 const matches=r=>($('faculty').value==='All'||r.Faculty===$('faculty').value)&&($('department').value==='All'||r.Department===$('department').value);
+const basicActivityMatches=r=>($('activitytype')?.value==='All'||r.type===$('activitytype').value)&&($('organization')?.value==='All'||r.org===$('organization').value);
+const visibleBasic=()=>{
+ const rows=basic.filter(semesterMatches).filter(matches);
+ if(($('activitytype')?.value||'All')==='All'&&($('organization')?.value||'All')==='All')return rows;
+ const refs=new Set(basicActivities.filter(r=>semesterMatches(r)&&matches(r)&&basicActivityMatches(r)).map(r=>r.ref));
+ return rows.filter(r=>refs.has(clean(r['Ref #'])));
+};
+
 function updateFilters(changed){
  if((changed==='faculty'||changed==='semester')&&$('department'))$('department').value='All';
+ if(['faculty','department','semester'].includes(changed)){
+  for(const id of ['activitytype','organization','country','moutype'])if($(id))$(id).value='All';
+ }
  const base=(page==='basic'?basic:page==='ip'?ip:mou).filter(semesterMatches);
- const weighted=page==='ip';
- select('faculty',facultyRoster,'All Faculties',base,'Faculty',weighted);
- const sub=base.filter(r=>$('faculty').value==='All'||r.Faculty===$('faculty').value);
- const dept=sub;
- select('department',coverageDepartments($('faculty').value),'All Departments',dept,'Department',weighted);
+ select('faculty',facultyRoster,'All Faculties',base,'Faculty',page==='ip');
+ select('department',coverageDepartments($('faculty')?.value||'All'),'All Departments',base,'Department',page==='ip');
+ if(page==='basic'){
+  const rows=basicActivities.filter(semesterMatches).filter(matches);
+  select('activitytype',basicActivities.map(r=>r.type),'All Activity Types');
+  const matched=rows.filter(r=>$('activitytype').value==='All'||r.type===$('activitytype').value);
+  select('organization',matched.map(r=>r.org),'All Organizations');
+ }
  if(page==='ip'){
+  select('activitytype',['Internship / Placement'],'All Activity Types');
   const relevant=ip.filter(semesterMatches).filter(matches);
-  const named=relevant.filter(r=>valid(r.org));
-  select('organization',named.map(r=>r.org),'All Organizations',named,'org',true);
+  select('organization',relevant.map(r=>r.org),'All Organizations');
  }
  if(page==='mou'){
+  select('activitytype',['MoU / Collaboration'],'All Activity Types');
   const relevant=mou.filter(semesterMatches).filter(matches);
-  select('country',relevant.map(r=>r.Country),'All Countries',relevant,'Country');
+  select('organization',relevant.map(r=>r['Partner Institution']),'All Organizations');
+  select('country',relevant.map(r=>r.Country),'All Countries');
   const countries=relevant.filter(r=>$('country').value==='All'||r.Country===$('country').value);
-  select('moutype',countries.map(r=>r['MoU Type']),'All MoU Types',countries,'MoU Type');
+  select('moutype',countries.map(r=>r['MoU Type']),'All MoU Types');
  }
 }
+
 function tally(rows,key,weighted=false){const m=new Map();for(const r of rows){const k=clean(r[key]);if(!valid(k))continue;m.set(k,(m.get(k)||0)+(weighted?num(r.number):1));}return [...m].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));}
 function metric(label,value,emoji='📊',caption='Current filtered selection'){const node=document.createElement('div');node.className='metric';const icon=document.createElement('span');icon.className='metric-icon';icon.textContent=emoji;const small=document.createElement('small');small.textContent=label;const strong=document.createElement('strong');strong.textContent=typeof value==='number'?fmt(value):value;const foot=document.createElement('span');foot.className='metric-caption';foot.textContent=caption;const index=document.createElement('span');index.className='metric-index';index.textContent='METRIC '+String($('metrics').children.length+1).padStart(2,'0');node.append(index,icon,small,strong,foot);$('metrics').append(node);}
 function graph(title,entries,kind='horizontal',wide=false){const panel=document.createElement('article');panel.className='panel'+(wide?' wide':'');const heading=document.createElement('h3');heading.textContent=title;panel.append(heading);$('charts').append(panel);if(!entries.length)return;const wrap=document.createElement('div');wrap.className='graph-wrap';if(kind!=='doughnut')wrap.style.height=Math.max(310,entries.length*34+90)+'px';const canvas=document.createElement('canvas');wrap.append(canvas);panel.append(wrap);const labels=entries.map(x=>x[0]),values=entries.map(x=>x[1]);const colors=['#2667d7','#13a78d','#805bd3','#f0a64b','#3aa0d4','#e4677c','#4366a5','#7fbd70'];const pie=kind==='doughnut',horizontal=kind==='horizontal';charts.push(new Chart(canvas,{type:pie?'doughnut':'bar',data:{labels,datasets:[{data:values,backgroundColor:entries.map((_,i)=>colors[i%colors.length]),borderRadius:pie?0:5,maxBarThickness:38}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:horizontal?'y':'x',plugins:{legend:{display:pie,position:'bottom'},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmt(ctx.raw)}`}}},scales:pie?{}:horizontal?{x:{beginAtZero:true,ticks:{precision:0}},y:{ticks:{autoSkip:false}}}:{x:{ticks:{autoSkip:false}},y:{beginAtZero:true,ticks:{precision:0}}}}}));}
@@ -203,7 +212,7 @@ function organizationGraph(entries,selectedOrg){
 
 }
 function drawBasic(){
- const rows=basic.filter(semesterMatches).filter(matches);
+ const rows=visibleBasic();
  const metrics=[
   ['Submission Records',rows.length,'Registered reports in selection','📑'],
   ['Campuses',uniq(rows.map(r=>r.Campus)).length,'Campuses represented','🏛️'],
@@ -257,31 +266,7 @@ function basicBarPanel(title,subtitle,entries){
  });
  panel.append(rows);$('charts').append(panel);
 }
-function renderSectionFilterStats(){
- const root=$('uolFilterStats');if(!root)return;
- let rows=(page==='basic'?basic:page==='ip'?ip:mou).filter(semesterMatches).filter(matches);
- if(page==='ip'&&$('organization')?.value!=='All')rows=rows.filter(r=>r.org===$('organization').value);
- if(page==='mou'){
-  if($('country')?.value!=='All')rows=rows.filter(r=>r.Country===$('country').value);
-  if($('moutype')?.value!=='All')rows=rows.filter(r=>r['MoU Type']===$('moutype').value);
- }
- const distinct=key=>uniq(rows.map(r=>r[key])).length;
- const values=[
-  [page==='ip'?'Opportunities':page==='mou'?'MoU Records':'Submissions',page==='ip'?rows.reduce((n,r)=>n+num(r.number),0):rows.length],
-  ['Records',rows.length],
-  ['Faculties',distinct('Faculty')],
-  ['Departments',distinct('Department')],
-  ...(page==='ip'?[['Organizations',distinct('org')]]:page==='mou'?[['Countries',distinct('Country')],['MoU Types',distinct('MoU Type')]]:[])
- ];
- root.replaceChildren(...values.map(([label,count])=>{
-  const chip=document.createElement('span');chip.className='uol-stat';
-  const title=document.createElement('span');title.textContent=label;
-  const value=document.createElement('strong');value.textContent=fmt(count);
-  chip.append(title,value);return chip;
- }));
-}
-
-function draw(){renderSectionFilterStats();charts.forEach(c=>c.destroy());charts=[];$('metrics').replaceChildren();$('charts').replaceChildren();
+function draw(){charts.forEach(c=>c.destroy());charts=[];$('metrics').replaceChildren();$('charts').replaceChildren();
  if(page==='basic'){drawBasic();return;}
  if(page==='ip'){
   let rows=ip.filter(semesterMatches).filter(matches);
@@ -304,6 +289,7 @@ function draw(){renderSectionFilterStats();charts.forEach(c=>c.destroy());charts
   return;
  }
  let rows=mou.filter(semesterMatches).filter(matches);
+ if($('organization')?.value!=='All')rows=rows.filter(r=>r['Partner Institution']===$('organization').value);
  if($('country').value!=='All')rows=rows.filter(r=>r.Country===$('country').value);
  if($('moutype').value!=='All')rows=rows.filter(r=>r['MoU Type']===$('moutype').value);
  metric('MoU Records',rows.length,'📄','Records in selection');
@@ -324,7 +310,7 @@ function draw(){renderSectionFilterStats();charts.forEach(c=>c.destroy());charts
  mouDept.sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
  basicBarPanel('MoUs by Department','Collaboration activity by department',mouDept);
 }
-function reset(){for(const id of ['semester','faculty','department','organization','country','moutype'])if($(id))$(id).value='All';updateFilters();draw();}
+function reset(){for(const id of ['semester','faculty','department','activitytype','organization','country','moutype'])if($(id))$(id).value='All';updateFilters();draw();}
 async function boot(){
  try{
   if(typeof XLSX==='undefined')throw Error('Excel library did not load. Check internet access or local library.');
@@ -344,6 +330,8 @@ async function boot(){
   return {...r,semester:sourcePeriod};
 };
   if(page==='basic'){
+   const activityBook=await workbook('data/UOL_Separated_All_Activity_Data_Cleaned.xlsx');
+   basicActivities=sheet(activityBook,'All Separated Activities').filter(r=>submissionByRef.has(clean(r['Ref #']))).map(r=>tagSemester({ref:clean(r['Ref #']),Faculty:clean(r.Faculty),Department:clean(r.Department),type:clean(r['Separated Activity Type']),org:normalizeOrg(r['Organization / Activity Title'])}));
    basic=roster.map(tagSemester);
    if(!basic.length)throw Error('No records found in the All Submissions sheet');
   }else if(page==='ip'){
@@ -361,7 +349,7 @@ async function boot(){
   }
   $('connection').textContent=`Excel Connected · ${page==='basic'?basic.length:page==='ip'?ip.length:mou.length} records`;
   updateFilters();
-  for(const id of ['semester','faculty','department','organization','country','moutype'])$(id)?.addEventListener('change',()=>{
+  for(const id of ['semester','faculty','department','activitytype','organization','country','moutype'])$(id)?.addEventListener('change',()=>{
    if(id==='faculty'||id==='department'||id==='country'||id==='semester')updateFilters(id);
    draw();
   });
@@ -369,7 +357,7 @@ async function boot(){
   if(page==='mou' && $('generateMouPdf')){
    const pdfButton=$('generateMouPdf');pdfButton.disabled=false;
    pdfButton.addEventListener('click',async()=>{
-    const rows=mou.filter(semesterMatches).filter(matches).filter(r=>($('country').value==='All'||r.Country===$('country').value)&&($('moutype').value==='All'||r['MoU Type']===$('moutype').value));
+    const rows=mou.filter(semesterMatches).filter(matches).filter(r=>($('organization')?.value==='All'||r['Partner Institution']===$('organization').value)&&($('country').value==='All'||r.Country===$('country').value)&&($('moutype').value==='All'||r['MoU Type']===$('moutype').value));
     const filters={semester:selectedSemester(),faculty:$('faculty').value,department:$('department').value,country:$('country').value,type:$('moutype').value};
     pdfButton.disabled=true;pdfButton.textContent='Preparing PDF…';
     try{await window.generateMouPdf({rows,filters});}catch(error){console.error('MoU PDF export failed:',error);alert('Could not generate PDF: '+error.message);}
