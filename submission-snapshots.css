@@ -1,0 +1,5 @@
+
+/* Shared submission snapshot selector */
+.uol-snapshot-label{display:flex;flex-direction:column;gap:5px;min-width:170px;font-size:12px;font-weight:700;color:#334155}
+.uol-snapshot-label select{width:100%;min-width:0}
+@media(max-width:700px){.uol-snapshot-label{width:100%;min-width:0}.uol-snapshot-label select{width:100%}.filter-items>label{min-width:0}}

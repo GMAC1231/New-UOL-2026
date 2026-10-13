@@ -13,10 +13,7 @@
 
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="powerbi.css">
-<link rel="stylesheet" href="mobile-responsive.css?v=20261011"><style>
-.filter-inline-summary{font-size:12px;color:#40516a;white-space:nowrap;padding:6px 9px;background:#f7faff;border:1px solid #dce5ef;border-radius:8px}.filter-inline-summary strong{color:#153d70;font-variant-numeric:tabular-nums}
-
-</style></head>
+<link rel="stylesheet" href="mobile-responsive.css?v=20261011"><link rel="stylesheet" href="submission-snapshots.css"><link rel="stylesheet" href="filter-visible-stats.css?v=20261013b"></head>
 
 <body>
 
@@ -100,6 +97,7 @@
 
       <div class="filter-label"><span class="filter-emoji">⚙</span> EXPLORE DATA</div>
 
+      <label class="uol-snapshot-label">Submission Dataset<select id="snapshotFilter" class="filter" aria-label="Submission dataset"><option value="65">65 Submissions (Latest)</option></select></label>
       <select id="monthFilter" class="filter" title="1. Semester">
         <option value="All">All Semesters</option>
       </select>
@@ -137,7 +135,7 @@
         📄 PDF Report
       </button>
 
-      <span class="filter-inline-summary" aria-live="polite">Activities (<strong id="filterStatActivities">0</strong>) · Records (<strong id="filterStatRecords">0</strong>)</span>
+      <div class="uol-filter-stats" id="uolFilterStats" role="status" aria-live="polite"></div>
     </section>
 
 
@@ -379,7 +377,7 @@
   </div>
 
 
-  <script src="excel-connection.js"></script><script src="app.js?v=activity-evidence-20261010"></script>
+  <script src="excel-connection.js"></script><script src="submission-snapshots.js"></script><script src="app.js?v=activity-evidence-20261010"></script>
 
 <script src="mobile-navigation.js?v=20261011" defer></script></body>
 </html>

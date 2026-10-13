@@ -54,7 +54,7 @@ function updateSemesterLabels(){
  for(const row of roster){const period=semesterForSubmission(row);if(period in counts)counts[period]++;}
  for(const opt of el.options){if(opt.value in counts){
   const label=opt.value==='All'?'All Semesters':opt.value;
-  opt.textContent=`${label} (${opt.value==='All'?2:counts[opt.value]})`;
+  opt.textContent=`${label} (${fmt(counts[opt.value])})`;
  }}
 }
 function semesterForSubmission(row){
@@ -79,9 +79,9 @@ async function workbook(path){
 function select(id,values,label,rows=[],key='',weighted=false){
  const el=$(id);if(!el)return;
  const prev=el.value,items=uniq(values);
- // Counts are displayed in the selected filter as well as its open dropdown.
- // All-option counts reflect the available distinct choices, including roster departments.
- el.replaceChildren(new Option(`${label} (${items.length})`,'All'));
+ // The closed select displays its available distinct option count; each entry
+ // displays the volume from the current report/semester and upstream filters.
+ el.replaceChildren(new Option(`${label} (${fmt(items.length)})`,'All'));
  const totals=new Map();
  for(const row of rows){
   const value=clean(row[key]);
@@ -257,7 +257,31 @@ function basicBarPanel(title,subtitle,entries){
  });
  panel.append(rows);$('charts').append(panel);
 }
-function draw(){charts.forEach(c=>c.destroy());charts=[];$('metrics').replaceChildren();$('charts').replaceChildren();
+function renderSectionFilterStats(){
+ const root=$('uolFilterStats');if(!root)return;
+ let rows=(page==='basic'?basic:page==='ip'?ip:mou).filter(semesterMatches).filter(matches);
+ if(page==='ip'&&$('organization')?.value!=='All')rows=rows.filter(r=>r.org===$('organization').value);
+ if(page==='mou'){
+  if($('country')?.value!=='All')rows=rows.filter(r=>r.Country===$('country').value);
+  if($('moutype')?.value!=='All')rows=rows.filter(r=>r['MoU Type']===$('moutype').value);
+ }
+ const distinct=key=>uniq(rows.map(r=>r[key])).length;
+ const values=[
+  [page==='ip'?'Opportunities':page==='mou'?'MoU Records':'Submissions',page==='ip'?rows.reduce((n,r)=>n+num(r.number),0):rows.length],
+  ['Records',rows.length],
+  ['Faculties',distinct('Faculty')],
+  ['Departments',distinct('Department')],
+  ...(page==='ip'?[['Organizations',distinct('org')]]:page==='mou'?[['Countries',distinct('Country')],['MoU Types',distinct('MoU Type')]]:[])
+ ];
+ root.replaceChildren(...values.map(([label,count])=>{
+  const chip=document.createElement('span');chip.className='uol-stat';
+  const title=document.createElement('span');title.textContent=label;
+  const value=document.createElement('strong');value.textContent=fmt(count);
+  chip.append(title,value);return chip;
+ }));
+}
+
+function draw(){renderSectionFilterStats();charts.forEach(c=>c.destroy());charts=[];$('metrics').replaceChildren();$('charts').replaceChildren();
  if(page==='basic'){drawBasic();return;}
  if(page==='ip'){
   let rows=ip.filter(semesterMatches).filter(matches);
@@ -305,8 +329,8 @@ async function boot(){
  try{
   if(typeof XLSX==='undefined')throw Error('Excel library did not load. Check internet access or local library.');
   if(typeof Chart==='undefined')throw Error('Chart.js did not load. Check internet access or local library.');
-  const source=await workbook('data/64_Submissions_Source.xlsx');
-  roster=sheet(source,'All Submissions').filter(r=>valid(r['Ref #']));
+  const source=await workbook('data/65_Submissions_Source.xlsx');
+  roster=sheet(source,'All Submissions').filter(r=>valid(r['Ref #']) && window.UOLSnapshots.contains(r['Ref #']));
   submissionByRef=new Map(roster.map(r=>[clean(r['Ref #']),r]));
   departmentRoster=roster.filter(r=>valid(r.Department)).map(r=>({Department:clean(r.Department),Faculty:clean(r.Faculty)}));
   facultyRoster=uniq(roster.map(r=>r.Faculty));

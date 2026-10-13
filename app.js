@@ -619,17 +619,12 @@ function setSelectOptions(id, values, allLabel, counts = null, total = null) {
     option.textContent = label;
     select.appendChild(option);
   };
-
-  // Show bracket counts directly inside the visible filter labels.
-  // Example: All Faculties (10), All Departments (28)
-  const allCount = items.length;
-  makeOption('All', `${allLabel} (${allCount})`);
-
+  // Counts are visible in the closed select and in each dropdown option.
+  makeOption('All', `${allLabel} (${items.length.toLocaleString('en-US')})`);
   items.forEach(item => {
-    const itemCount = counts instanceof Map ? (counts.get(item) || 0) : null;
-    makeOption(item, itemCount !== null ? `${item} (${itemCount})` : item);
+    const count = counts instanceof Map ? (counts.get(item) || 0) : 0;
+    makeOption(item, `${item} (${count.toLocaleString('en-US')})`);
   });
-
   select.value = previous !== 'All' && items.includes(previous) ? previous : 'All';
 }
 
@@ -693,137 +688,16 @@ function updateFacultyFilter() {
    Depends on Semester + Faculty
    ========================================================= */
 
-const UOL_SOURCE_DEPARTMENT_ROSTER = [
-  {
-    "department": "School of Creative Arts",
-    "faculty": "Faculty of Arts and Architecture"
-  },
-  {
-    "department": "University Institute of Medical Lab Technology",
-    "faculty": "Faculty of Allied Health Sciences"
-  },
-  {
-    "department": "School of Integrated Social Science",
-    "faculty": "Faculty of Social Sciences"
-  },
-  {
-    "department": "Department of Technology",
-    "faculty": "Faculty of Engineering & Technology"
-  },
-  {
-    "department": "School of Architecture",
-    "faculty": "Faculty of Arts and Architecture"
-  },
-  {
-    "department": "Department of Islamic Studies",
-    "faculty": "Faculty of Social Sciences"
-  },
-  {
-    "department": "Department of Economics",
-    "faculty": "Faculty of Management Sciences"
-  },
-  {
-    "department": "Lahore School of Nursing",
-    "faculty": "Faculty of Allied Health Sciences"
-  },
-  {
-    "department": "University Institute of Diet & Nutritional Sciences",
-    "faculty": "Faculty of Allied Health Sciences"
-  },
-  {
-    "department": "University Institute of Food Science & Technology",
-    "faculty": "Faculty of Allied Health Sciences"
-  },
-  {
-    "department": "University College of Dentistry",
-    "faculty": "Faculty of Medicine & Dentistry"
-  },
-  {
-    "department": "Department of Physics",
-    "faculty": "Faculty of Sciences"
-  },
-  {
-    "department": "Department of Computer Sciences & IT",
-    "faculty": "Faculty of Information Technology"
-  },
-  {
-    "department": "Department of Environmental Sciences",
-    "faculty": "Faculty of Sciences"
-  },
-  {
-    "department": "Lahore School of Behavioural Sciences",
-    "faculty": "Faculty of Social Sciences"
-  },
-  {
-    "department": "Deptartment of English Language and Literature",
-    "faculty": "Faculty of Languages & Literature"
-  },
-  {
-    "department": "Lahore School of Aviation",
-    "faculty": "Faculty of Management Sciences"
-  },
-  {
-    "department": "Department of Health Professional Technologies",
-    "faculty": "Faculty of Allied Health Sciences"
-  },
-  {
-    "department": "Department of Optometry & Vision Science",
-    "faculty": "Faculty of Allied Health Sciences"
-  },
-  {
-    "department": "Department of Information Management",
-    "faculty": "Faculty of Management Sciences"
-  },
-  {
-    "department": "Department of Software Engineering",
-    "faculty": "Faculty of Information Technology"
-  },
-  {
-    "department": "Institute of Molecular Biology & Biotechnology",
-    "faculty": "Faculty of Sciences"
-  },
-  {
-    "department": "Department of Urdu",
-    "faculty": "Faculty of Languages & Literature"
-  },
-  {
-    "department": "Department of Education",
-    "faculty": "Faculty of Social Sciences"
-  },
-  {
-    "department": "Department of Mathematics and Statistics",
-    "faculty": "Faculty of Sciences"
-  },
-  {
-    "department": "Department of Chemistry",
-    "faculty": "Faculty of Sciences"
-  },
-  {
-    "department": "Department of Civil Engineering",
-    "faculty": "Faculty of Engineering & Technology"
-  },
-  {
-    "department": "M.A Raoof College of Law",
-    "faculty": "Faculty of Law"
-  },
-  {
-    "department": "Lahore Business School",
-    "faculty": "Faculty of Management Sciences"
-  }
-];
-let uolInstitutionalRoster=[...UOL_SOURCE_DEPARTMENT_ROSTER];
+let uolInstitutionalRoster=[];
 async function loadInstitutionalRoster(){
  try{
-  const response=await fetch('data/64_Submissions_Source.xlsx',{cache:'no-store'});
+  const response=await fetch('data/65_Submissions_Source.xlsx',{cache:'no-store'});
   if(!response.ok)throw Error('Submission workbook could not load');
   const book=XLSX.read(await response.arrayBuffer(),{type:'array'});
   uolInstitutionalRoster=XLSX.utils.sheet_to_json(book.Sheets['All Submissions'],{defval:'',raw:false})
-   .filter(r=>!isInvalidLabel(r.Department))
+   .filter(r=>window.UOLSnapshots.contains(r['Ref #'])&&!isInvalidLabel(r.Department))
    .map(r=>({department:clean(r.Department),faculty:clean(r.Faculty)}));
- }catch(err){console.warn('Institutional department roster unavailable; retaining verified 29-department source roster',err);}
- // Preserve the complete source roster even if a later workbook omits a department.
- const seen=new Set(uolInstitutionalRoster.map(r=>r.department));
- for(const entry of UOL_SOURCE_DEPARTMENT_ROSTER){if(!seen.has(entry.department)){uolInstitutionalRoster.push(entry);seen.add(entry.department);}}
+ }catch(err){console.warn('Institutional department roster unavailable',err);}
 }
 function updateDepartmentFilter() {
 
@@ -2392,21 +2266,29 @@ function monthlyChart() {
    RENDER
    ========================================================= */
 
-function renderFilterStats() {
-  const countUnique = key => new Set(filteredRows.map(row => String(row[key] || '').trim()).filter(value => value && !/^(n\/?a|not available|unclassified|blank|null|undefined)$/i.test(value))).size;
-  const values = {
-    filterStatActivities: filteredRows.reduce((sum, row) => sum + rowAmount(row), 0),
-    filterStatFaculties: countUnique('faculty'),
-    filterStatDepartments: countUnique('department'),
-    filterStatTypes: countUnique('type'),
-    filterStatOrganizations: countUnique('organization'),
-    filterStatRecords: filteredRows.length
-  };
-  Object.entries(values).forEach(([id, value]) => { const el = $(id); if (el) el.textContent = Number(value).toLocaleString(); });
+function renderVisibleFilterStats(){
+ const root=$("uolFilterStats");if(!root)return;
+ const countUnique=key=>new Set(filteredRows.map(r=>clean(r[key])).filter(v=>!isInvalidLabel(v))).size;
+ const values=[
+  ['Activities',filteredRows.reduce((sum,r)=>sum+rowAmount(r),0)],
+  ['Records',filteredRows.length],
+  ['Faculties',countUnique('faculty')],
+  ['Departments',countUnique('department')],
+  ['Activity Types',countUnique('type')],
+  ['Organizations',countUnique('organization')]
+ ];
+ root.replaceChildren(...values.map(([label,count])=>{
+  const el=document.createElement('span');el.className='uol-stat';
+  const name=document.createElement('span');name.textContent=label;
+  const value=document.createElement('strong');value.textContent=Number(count).toLocaleString('en-US');
+  el.append(name,value);return el;
+ }));
 }
 
+
+
 function render() {
-  renderFilterStats();
+  renderVisibleFilterStats();
 
   const totalActivities =
     filteredRows.reduce(
@@ -2919,6 +2801,9 @@ async function loadActivityWorkbook() {
     Number(row.events) === 1 &&
     isInvalidLabel(clean(row.organization))
   ));
+
+  // Apply the selected reference-cohort to all activity KPIs and chart data.
+  allRows = allRows.filter(row => window.UOLSnapshots.contains(row.ref));
 
   // Separate section dashboards provide the reporting and MoU charts.
 
@@ -4621,31 +4506,6 @@ function drawPdfChartPage(doc, item, title = "Graph", startY = 58, section = nul
 
 // Central table renderer: one consistent, print-friendly visual system for
 // faculty, department, activity and detailed-record pages.
-// jsPDF's standard Helvetica font does not support arbitrary Unicode text.
-// Keep original activity data untouched; make a readable export copy and stop
-// damaged/non-Latin sequences from escaping a PDF table cell.
-function pdfSafeCellText(value) {
-  if (value === null || value === undefined) return "-";
-  let text = String(value)
-    .replace(/&amp;/gi, "&").replace(/&nbsp;/gi, " ")
-    .replace(/\r\n?/g, "\n")
-    .replace(/[\u200B-\u200D\uFEFF]/g, "")
-    .replace(/[\u2018\u2019]/g, "'")
-    .replace(/[\u201C\u201D]/g, '"')
-    .replace(/[\u2013\u2014]/g, "-")
-    .replace(/\u2026/g, "...")
-    .replace(/\u00A0/g, " ");
-  // Corrupted encoding commonly starts with these sequences; don't print it as
-  // stray Latin characters, and avoid silently altering the source workbook.
-  text = text.replace(/(?:[\u00C2-\u00FF][\u0080-\u00BF]|[ØÙÐ][^\s,;:.]{1,})(?:\s*(?:[\u00C2-\u00FF][\u0080-\u00BF]|[ØÙÐ][^\s,;:.]{1,}))*/g,
-    " [Text encoding unsupported; see source data] ");
-  text = text.replace(/[^\x09\x0A\x0D\x20-\x7E\u00A1-\u00FF]+/g,
-    " [Non-Latin text; see source data] ");
-  // Force breaks for URL-like or damaged long words that autotable cannot wrap.
-  text = text.replace(/\S{48,}/g, token => token.match(/.{1,38}/g).join(" "));
-  return text.replace(/[ \t]{2,}/g, " ").trim() || "-";
-}
-
 function addModernPdfTable(doc, config) {
   if (typeof doc.autoTable !== "function") {
     throw new Error("The PDF table library is missing (jspdf-autotable).");
@@ -4667,16 +4527,16 @@ function addModernPdfTable(doc, config) {
   doc.autoTable({
     startY: config.startY || 60,
     head: [config.headers],
-    body: config.rows.map(row => row.map(pdfSafeCellText)),
+    body: config.rows,
     theme: "grid",
     showHead: "everyPage",
-    rowPageBreak: "auto",
+    rowPageBreak: "avoid",
     margin: { left: 14, right: 14, top: 58, bottom: 18 },
     tableWidth: usableWidth,
     styles: {
       font: "helvetica", fontSize: compact ? 7.4 : 9.2,
       cellPadding: compact ? {top: 2.8, bottom: 2.8, left: 2.2, right: 2.2} : {top: 4.1, bottom: 4.1, left: 4, right: 4},
-      overflow: "linebreak", valign: "top", textColor: [8, 25, 42],
+      overflow: "linebreak", valign: "middle", textColor: [8, 25, 42],
       lineColor: [218, 228, 235], lineWidth: 0.16
     },
     headStyles: {
