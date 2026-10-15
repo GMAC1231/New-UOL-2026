@@ -1633,6 +1633,36 @@ function barChart(
       "px";
   }
 
+  // A separate, touch-friendly mobile rendering; desktop canvas remains unchanged.
+  if (id === "facultyChart" || id === "departmentChart") {
+    const host = $(id === "facultyChart" ? "mobileFacultyActivities" : "mobileDepartmentActivities");
+    if (host) {
+      host.replaceChildren();
+      const colors = ["#0b6b3a", "#1556c0", "#7f2db4", "#ef7d17", "#0b7f90", "#14206d"];
+      const max = Math.max(1, ...values.map(n => Number(n) || 0));
+      const intro = document.createElement("div"); intro.className = "uol-mobile-chart-intro";
+      intro.textContent = `${labels.length} ${key === "faculty" ? "faculties" : "departments"} · ${chartTotal.toLocaleString()} activities`;
+      host.append(intro);
+      labels.forEach((name, index) => {
+        const n = Number(values[index]) || 0;
+        const card = document.createElement("button"); card.type = "button"; card.className = "uol-mobile-chart-card";
+        card.style.setProperty("--rank-color", colors[index % colors.length]);
+        card.setAttribute("aria-label", `${name}, ${n} activities, ${chartPercent(n)}. View details`);
+        const head = document.createElement("div"); head.className = "uol-mobile-chart-head";
+        const rank = document.createElement("span"); rank.className = "uol-mobile-chart-rank"; rank.textContent = String(index + 1).padStart(2,"0");
+        const title = document.createElement("strong"); title.textContent = name;
+        const amount = document.createElement("span"); amount.className = "uol-mobile-chart-value"; amount.textContent = n.toLocaleString();
+        head.append(rank,title,amount);
+        const bottom = document.createElement("div"); bottom.className = "uol-mobile-chart-bottom";
+        const track = document.createElement("span"); track.className = "uol-mobile-chart-track";
+        const fill = document.createElement("span"); fill.style.width = `${n / max * 100}%`; track.append(fill);
+        const pct = document.createElement("span"); pct.className = "uol-mobile-chart-pct"; pct.textContent = chartPercent(n);
+        bottom.append(track,pct); card.append(head,bottom);
+        card.addEventListener("click", () => openPopup(key,name)); host.append(card);
+      });
+    }
+  }
+
   const visibleBarValuePlugin = {
     id: `visibleBarValue_${id}`,
     afterDatasetsDraw(chart) {
@@ -4474,34 +4504,49 @@ function drawPdfChartPage(doc, item, title = "Graph", startY = 58, section = nul
     return;
   }
 
-  // Horizontal report bars for faculty and department. Department entries
-  // are split into two printable columns rather than shrinking to tiny text.
+  // PDF rendition of the responsive ranked cards. Counts and shares are
+  // computed from the same filtered report rows used by desktop/mobile.
   const isDepartment = graphTitle === "Department-wise Activities";
-  const columns = isDepartment && entries.length > 14 ? 2 : 1;
-  const colGap = 10;
-  const colWidth = (right - left - colGap * (columns - 1)) / columns;
+  const columns = isDepartment && entries.length > 15 ? 2 : 1;
+  const gap = 9;
+  const colWidth = (right - left - gap * (columns - 1)) / columns;
   const perCol = Math.ceil(entries.length / columns);
-  const top = startY + 22;
-  const rowH = Math.min(isDepartment ? 10.8 : 12.2, (footer - top) / perCol);
+  const top = startY + 20;
+  const available = footer - top;
+  const rowH = Math.min(columns === 2 ? 9.1 : 12.0, available / Math.max(1,perCol));
   const max = Math.max(1, ...entries.map(v => Number(v[1]) || 0));
   entries.forEach(([name, value], i) => {
     const col = Math.floor(i / perCol);
     const ri = i % perCol;
-    const x = left + col * (colWidth + colGap);
+    const x = left + col * (colWidth + gap);
     const y = top + ri * rowH;
-    const labelArea = columns === 2 ? 43 : 82;
-    const barX = x + labelArea;
-    const barW = colWidth - labelArea - 17;
-    const fontSize = columns === 2 ? 6.6 : 8.8;
-    const maxChars = columns === 2 ? 25 : 48;
-    const label = String(name).length > maxChars ? String(name).slice(0, maxChars - 3) + "..." : String(name);
-    const lines = doc.splitTextToSize(label, labelArea - 4).slice(0, 2);
-    doc.setFont("helvetica", "normal");doc.setFontSize(fontSize);doc.setTextColor(48, 70, 90);
-    doc.text(lines, x + 1, y + (lines.length > 1 ? 0 : 1.6));
-    doc.setFillColor(235, 240, 245); doc.roundedRect(barX, y - 2.2, barW, 4.6, 1, 1, "F");
-    doc.setFillColor(...pdfGraphColor(i)); doc.roundedRect(barX, y - 2.2, Math.max(.6, barW * Number(value) / max), 4.6, 1, 1, "F");
-    pdfGraphText(doc, Number(value).toLocaleString("en-US"), x + colWidth - 1, y + 1.6, { size: 8, bold: true, align: "right" });
+    const n = Number(value) || 0;
+    const share = total ? `${(n / total * 100).toFixed(1)}%` : "0.0%";
+    const color = pdfGraphColor(i);
+    // Card-like rows with rank, legible labels, count, percentage and bar.
+    doc.setFillColor(i % 2 ? 250 : 245, 248, 252);
+    doc.setDrawColor(229, 237, 244);
+    doc.roundedRect(x, y, colWidth - 1, rowH - .65, 1.4, 1.4, "FD");
+    doc.setFillColor(...color);
+    doc.roundedRect(x, y, 1.2, rowH - .65, .5, .5, "F");
+    const fs = columns === 2 ? 6.3 : 8.5;
+    const labelX = x + (columns === 2 ? 13 : 17);
+    const valueArea = columns === 2 ? 25 : 34;
+    const labelWidth = colWidth - (labelX - x) - valueArea - 3;
+    pdfGraphText(doc, String(i + 1).padStart(2, "0"), x + 3, y + 3.3, {size:columns === 2 ? 6 : 7.4, bold:true, color});
+    doc.setFont("helvetica", "bold"); doc.setFontSize(fs); doc.setTextColor(32, 57, 78);
+    const lines = doc.splitTextToSize(String(name), labelWidth).slice(0, 2);
+    doc.text(lines, labelX, y + (lines.length > 1 ? 2.6 : 3.6));
+    pdfGraphText(doc, `${n.toLocaleString("en-US")}  (${share})`, x + colWidth - 4, y + 3.4,
+      {size:columns === 2 ? 6.2 : 8, bold:true, align:"right"});
+    const barX = labelX, barY = y + rowH - 3.7;
+    const barWidth = colWidth - (barX - x) - 5;
+    doc.setFillColor(227, 235, 241);
+    doc.roundedRect(barX, barY, barWidth, 1.65, .8, .8, "F");
+    if (n > 0) {doc.setFillColor(...color);doc.roundedRect(barX, barY, Math.max(.5, barWidth * n/max), 1.65, .8, .8, "F");}
   });
+  pdfGraphText(doc, "Share calculated within the selected report records · ranked by reported activity volume", left, footer + 4,
+    {size:7, color:[114, 133, 150]});
 }
 
 // Central table renderer: one consistent, print-friendly visual system for

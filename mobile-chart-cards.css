@@ -1,0 +1,20 @@
+/* Only the two executive overview charts switch format on narrow viewports. */
+.uol-mobile-chart-list{display:none}
+@media(max-width:780px){
+ .panel-faculty .chart-wrap,.panel-department .chart-wrap{display:none!important}
+ .panel-faculty .uol-mobile-chart-list,.panel-department .uol-mobile-chart-list{display:grid;gap:10px;min-width:0}
+ .panel-faculty,.panel-department{min-width:0!important;overflow:hidden}
+ .panel-faculty .panel-head,.panel-department .panel-head{gap:12px;flex-wrap:wrap}
+ .uol-mobile-chart-intro{font-size:11px;font-weight:750;color:#6f849a;margin:4px 2px}
+ .uol-mobile-chart-card{display:block;appearance:none;width:100%;height:auto!important;min-width:0;border:1px solid #dce7ee!important;border-left:4px solid var(--rank-color)!important;border-radius:14px!important;background:linear-gradient(110deg,#fff,#f7fafc)!important;text-align:left;padding:13px!important;box-shadow:0 5px 16px rgba(17,52,78,.045);color:#173b56!important;cursor:pointer}
+ .uol-mobile-chart-card:focus-visible{outline:2px solid #0f997b;outline-offset:2px}
+ .uol-mobile-chart-head{display:flex;align-items:center;gap:10px;min-width:0}
+ .uol-mobile-chart-rank{display:grid;place-items:center;width:29px;height:29px;border-radius:8px;background:#e9f0f5;color:var(--rank-color);font-size:10px;font-weight:900;flex-shrink:0}
+ .uol-mobile-chart-head strong{flex:1;min-width:0;font-size:12px;line-height:1.45;overflow-wrap:anywhere}
+ .uol-mobile-chart-value{font-size:17px;color:var(--rank-color);font-weight:850;font-variant-numeric:tabular-nums;flex-shrink:0}
+ .uol-mobile-chart-bottom{display:flex;align-items:center;gap:10px;margin:12px 0 0 39px}
+ .uol-mobile-chart-track{display:block;flex:1;min-width:0;height:7px;background:#e5edf2;border-radius:20px;overflow:hidden}
+ .uol-mobile-chart-track>span{display:block;height:100%;background:var(--rank-color);border-radius:20px}
+ .uol-mobile-chart-pct{width:51px;text-align:right;font-size:11px;font-weight:800;color:#55728a;font-variant-numeric:tabular-nums}
+}
+@media(max-width:390px){.uol-mobile-chart-card{padding:10px!important}.uol-mobile-chart-head{gap:7px}.uol-mobile-chart-head strong{font-size:11px}.uol-mobile-chart-bottom{margin-left:36px}}

@@ -1,0 +1,15 @@
+/* Progress Report: modern audit visual treatment */
+.dq-feature{background:#fff;border:1px solid #dce7ee;border-radius:22px;padding:25px;margin-bottom:22px;box-shadow:0 14px 38px rgba(19,54,79,.06)}
+.dq-feature-heading{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;padding-bottom:17px;border-bottom:1px solid #e5edf2;margin-bottom:17px}
+.dq-feature-kicker,.dq-feature-badge{font-size:10px;font-weight:900;letter-spacing:.13em;border-radius:99px;padding:7px 11px}
+.dq-feature-kicker{display:inline-block;color:#078772;background:#e9f8f3;border:1px solid #d6eee6}.dq-feature-badge{color:#597890;background:#f0f6fa;border:1px solid #dce7ef;white-space:nowrap}
+.dq-feature-heading h2{margin:9px 0 6px;color:#153b59;font-size:25px;letter-spacing:-.035em}.dq-feature-heading p{font-size:12px;color:#7890a5;margin:0;line-height:1.5}
+.dq-modern-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:15px}
+.dq-modern-stat{position:relative;min-height:100px;border:1px solid #e0eaf0!important;border-top:1px solid #e0eaf0!important;border-radius:17px!important;background:linear-gradient(135deg,#fff,#f9fcfe)!important;padding:18px 18px 16px 65px!important;box-shadow:0 8px 22px rgba(19,54,79,.035);overflow:hidden}
+.dq-modern-stat:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:#238ac1}.dq-modern-stat.departments:before{background:#0fa486}.dq-modern-stat.duplicate:before{background:#9c63d5}.dq-modern-stat.missing:before{background:#e6636c}
+.dq-stat-icon{position:absolute;top:18px;left:17px;display:grid!important;place-items:center;width:36px;height:36px;border-radius:12px;background:#eaf5fb;color:#276c91;font-size:18px!important;min-height:0!important}
+.dq-modern-stat.departments .dq-stat-icon{background:#e8f8f1}.dq-modern-stat.duplicate .dq-stat-icon{background:#f3edfd}.dq-modern-stat.missing .dq-stat-icon{background:#fff0f1}
+.dq-modern-stat strong{display:block;font-size:35px;line-height:1.05;color:#153b59;font-variant-numeric:tabular-nums}.dq-modern-stat .dq-stat-title{display:block;min-height:0;font-weight:600;font-size:11px;color:#6c859b;margin-top:7px;line-height:1.4}
+.dq-cleaning-notes{padding:17px 18px;background:#f7fafc;border:1px solid #e0eaf0;border-radius:16px}.dq-cleaning-notes h3{font-size:15px;color:#153c5a;margin:0 0 8px}.dq-cleaning-notes p{font-size:12px;color:#647d92;line-height:1.7;margin:0}
+@media(max-width:750px){.dq-feature{padding:17px}.dq-feature-heading{flex-wrap:wrap}.dq-feature-heading h2{font-size:22px}.dq-modern-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.dq-modern-stats{grid-template-columns:1fr}.dq-modern-stat{min-height:87px}.dq-feature-badge{font-size:9px}}

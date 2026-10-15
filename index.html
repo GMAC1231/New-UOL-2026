@@ -13,7 +13,7 @@
 
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="powerbi.css">
-<link rel="stylesheet" href="mobile-responsive.css?v=20261011"><link rel="stylesheet" href="submission-snapshots.css"></head>
+<link rel="stylesheet" href="mobile-responsive.css?v=20261011"><link rel="stylesheet" href="submission-snapshots.css"><link rel="stylesheet" href="quality-embedded.css"><link rel="stylesheet" href="mobile-chart-cards.css"></head>
 
 <body>
 
@@ -39,6 +39,7 @@
       <a class="nav-link" href="basic-reporting.html"><span class="nav-glyph">▤</span> Basic Reporting</a>
       <a class="nav-link" href="internship-placement.html"><span class="nav-glyph">◎</span> Internship &amp; Placement</a>
       <a class="nav-link" href="mou-collaborations.html"><span class="nav-glyph">◇</span> MoU &amp; Collaborations</a>
+      
       <div class="nav-caption secondary-caption">REPORTING</div>
       <a class="nav-link" href="#analytics-section"><span class="nav-glyph">▥</span> Activity Insights</a>
       <a class="nav-link" href="#top-filters"><span class="nav-glyph">☷</span> Filters &amp; Export</a>
@@ -196,7 +197,7 @@
 
         <div id="facultyWrap" class="chart-wrap tall">
           <canvas id="facultyChart"></canvas>
-        </div>
+        </div><div id="mobileFacultyActivities" class="uol-mobile-chart-list" aria-label="Faculty activity rankings"></div>
 
       </div>
 
@@ -265,7 +266,7 @@
 
         <div id="departmentWrap" class="chart-wrap tall">
           <canvas id="departmentChart"></canvas>
-        </div>
+        </div><div id="mobileDepartmentActivities" class="uol-mobile-chart-list" aria-label="Department activity rankings"></div>
 
       </div>
 
@@ -340,7 +341,7 @@
     </section>
 
 
-    <footer class="dashboard-footer">
+    <section id="data-quality-scope" class="uol-quality-embed" aria-labelledby="uol-quality-heading"><div class="uol-qe-head"><div><span class="uol-qe-kicker">REFERENCE</span><h2 id="uol-quality-heading">Data Quality &amp; Scope</h2><p id="uol-quality-context" data-quality-cohort>Loading selected submission dataset…</p></div><span class="uol-qe-audit" aria-label="Audit trail summary">AUDIT TRAIL</span></div><div class="uol-qe-cards" aria-live="polite"><article class="uol-qe-card"><span class="uol-qe-icon" aria-hidden="true">📥</span><div><strong data-quality-count>—</strong><small>Submission records</small></div></article><article class="uol-qe-card"><span class="uol-qe-icon" aria-hidden="true">🏢</span><div><strong data-quality-count>—</strong><small>Unique departments</small></div></article><article class="uol-qe-card"><span class="uol-qe-icon" aria-hidden="true">🔎</span><div><strong data-quality-count>—</strong><small>Repeated section descriptions</small></div></article><article class="uol-qe-card"><span class="uol-qe-icon" aria-hidden="true">⚠️</span><div><strong data-quality-count>—</strong><small>Missing faculty / department</small></div></article></div><div class="uol-qe-notes"><strong>Cleaning notes</strong><p>This is a read-only audit of the selected Progress Report submission snapshot. Identical section descriptions are flagged for review—not automatically deleted or treated as duplicate events. Main activity analytics continue to use their existing cleaned activity workbooks.</p></div></section><footer class="dashboard-footer">
       Tentative analytics • Activity totals and student totals use the same cleaned Excel dataset
     </footer>
 
@@ -378,5 +379,5 @@
 
   <script src="excel-connection.js"></script><script src="submission-snapshots.js"></script><script src="app.js?v=activity-evidence-20261010"></script>
 
-<script src="mobile-navigation.js?v=20261011" defer></script></body>
+<script src="mobile-navigation.js?v=20261011" defer></script><script src="quality-embedded.js" defer></script></body>
 </html>
