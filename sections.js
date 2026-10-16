@@ -5,6 +5,14 @@ const valid=x=>!!clean(x)&&!['null','none','n/a','nan','not available','undefine
 const uniq=a=>[...new Set(a.filter(valid))].sort((a,b)=>a.localeCompare(b));
 const fmt=n=>Number(n||0).toLocaleString('en-US');
 const num=x=>{const n=Number(clean(x).replace(/,/g,''));return Number.isFinite(n)?n:0};
+// PRPSTFPT41's verified Section 4 evidence lists 57 company-field responses.
+// These company labels are references, not separate copies of the 57-student submission total.
+const PR41_ORIGINAL = 'PRPSTFPT41 · internship company names in evidence';
+const PR46_ORIGINAL = 'PRPSTFPT46 · internship company names in evidence';
+let pr46Evidence={organizations:[],reportedStudents:102,evidenceStudents:98,namedCompanyRows:91};
+let pr41Evidence={organizations:[],reportedStudents:57,evidenceRows:57};
+const pr41Names=()=>pr41Evidence.organizations.map(x=>x.name);
+const pr46Names=()=>pr46Evidence.organizations.map(x=>x.name);
 const normalizeOrg=x=>{
  let s=clean(x);
  if(!valid(s) || s==='...') return '';
@@ -86,7 +94,11 @@ function select(id,values,label,rows=[],key='',weighted=false){
 function parseIp(rows){
  const used=new Set(),out=[];
  for(const r of rows){
-  const ref=clean(r['Ref #']),amount=num(r['How Many']),org=normalizeOrg(r['Organization / Activity Title']);
+  const ref=clean(r['Ref #']),amount=num(r['How Many']);
+  const originalOrg=normalizeOrg(r['Organization / Activity Title']);
+  const pr41=ref==='PRPSTFPT41' && /mentioned in excel sheet/i.test(originalOrg);
+  const pr46=ref==='PRPSTFPT46' && /^multiple$/i.test(originalOrg);
+  const org=pr41?PR41_ORIGINAL:pr46?PR46_ORIGINAL:originalOrg;
   if(!ref||amount<=0)continue;
   // PRPSTFPT39 has one How Many=1 activity with no organization.
   // Exclude that incomplete entry to reconcile the verified 1,068 source to 1,067.
@@ -96,7 +108,7 @@ function parseIp(rows){
   if(used.has(k))continue;
   used.add(k);
   out.push({ref,Faculty:clean(r.Faculty),Department:clean(r.Department),
-    number:amount,org:valid(org)?org:'',type:clean(r['Original Activity Type'])});
+    number:amount,org:valid(org)?org:'',orgAliases:pr41?pr41Names():pr46?pr46Names():[],type:clean(r['Original Activity Type'])});
  }
  return out;
 }
@@ -126,7 +138,7 @@ function updateFilters(changed){
  if(page==='ip'){
   select('activitytype',['Internship / Placement'],'All Activity Types');
   const relevant=ip.filter(semesterMatches).filter(matches);
-  select('organization',relevant.map(r=>r.org),'All Organizations');
+  select('organization',relevant.flatMap(r=>r.orgAliases?.length?r.orgAliases:[r.org]),'All Organizations');
  }
  if(page==='mou'){
   select('activitytype',['MoU / Collaboration'],'All Activity Types');
@@ -271,14 +283,22 @@ function draw(){charts.forEach(c=>c.destroy());charts=[];$('metrics').replaceChi
  if(page==='ip'){
   let rows=ip.filter(semesterMatches).filter(matches);
   const selectedOrg=$('organization')&&$('organization').value!=='All';
-  if(selectedOrg)rows=rows.filter(r=>r.org===$('organization').value);
-  const orgRows=rows.filter(r=>valid(r.org));const orgTally=tally(orgRows,'org',true);
+  if(selectedOrg)rows=rows.filter(r=>r.org===$('organization').value||r.orgAliases?.includes($('organization').value));
+  const orgRows=rows.filter(r=>valid(r.org)&&r.org!==PR41_ORIGINAL&&r.org!==PR46_ORIGINAL);
+  const orgTally=tally(orgRows,'org',true);
+  const pr41InView=rows.some(r=>r.ref==='PRPSTFPT41'&&r.org===PR41_ORIGINAL);
+  if(pr41InView){const one=$('organization')?.value||'All';for(const entry of pr41Evidence.organizations){if(one!=='All'&&one!==entry.name)continue;const found=orgTally.find(row=>row[0].toLowerCase()===entry.name.toLowerCase());if(found)found[1]+=entry.evidenceRecords;else orgTally.push([entry.name,entry.evidenceRecords]);}orgTally.sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));}
+  const pr46InView=rows.some(r=>r.ref==='PRPSTFPT46'&&r.org===PR46_ORIGINAL);
+  if(pr46InView){const one=$('organization')?.value||'All';for(const entry of pr46Evidence.organizations){if(one!=='All'&&one!==entry.name)continue;const found=orgTally.find(row=>row[0].toLowerCase()===entry.name.toLowerCase());if(found)found[1]+=entry.records;else orgTally.push([entry.name,entry.records]);}orgTally.sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));}
+
   metric('Total Internship / Placement — Including Planned & Remote',rows.reduce((a,b)=>a+b.number,0),'💼','Reported quantities including planned opportunities; not all are completed placements');
   metric('Faculties',rosterFacultyCount(),'🎓','Faculties in reporting roster');
   metric('Departments',rosterDepartmentCount(),'🏢','Departments in reporting roster');
-  metric('Partner Organizations',uniq(orgRows.map(r=>r.org)).length,'🤝','Named external organizations');
+  metric('Partner Organizations',uniq(rows.flatMap(r=>r.orgAliases?.length?r.orgAliases:[r.org]).filter(x=>x!==PR41_ORIGINAL&&x!==PR46_ORIGINAL)).length,'🤝','Company names from internship evidence; reported students counted once');
   metric('Reporting Submissions',new Set(rows.map(r=>r.ref)).size,'📑','Source reports represented');
   organizationGraph(orgTally,selectedOrg);
+  if(pr46InView){const note=document.createElement('p');note.className='ip-evidence-note';note.textContent='PRPSTFPT46: 72 named organization options from internship evidence (91 named-company student rows). Chart counts for these names are evidence mentions, not an allocation of the 102 students. The original 102-student submission is counted once.';$('charts').lastElementChild?.append(note);}
+  if(pr41InView){const panel=document.createElement('article');panel.className='panel wide';const head=document.createElement('h3');head.textContent='PRPSTFPT41 · Internship companies from supporting Excel evidence';const note=document.createElement('p');note.style.cssText='font-size:12px;color:#6c8095;line-height:1.6';note.textContent=`${pr41Evidence.evidenceRows} original company-field responses; ${pr41Evidence.organizations.length} distinct entries (case/spacing deduplicated). The submission reports 57 students once. Company counts below describe evidence mentions, not additional student allocations or confirmed completions.`;panel.append(head,note);const list=document.createElement('div');list.className='ranking-rows';pr41Evidence.organizations.filter(x=>!selectedOrg||x.name===$('organization').value).forEach((item,i)=>{const entry=document.createElement('div');entry.className='ranking-item';entry.style.cssText='display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid #e5eef3';const rank=document.createElement('span');rank.className='ranking-number';rank.textContent=String(i+1).padStart(2,'0');const label=document.createElement('strong');label.textContent=item.name;label.style.overflowWrap='anywhere';const qualifier=document.createElement('span');qualifier.style.cssText='font-size:11px;color:#668398;margin-left:auto;white-space:nowrap';qualifier.textContent=`${item.evidenceRecords} evidence record${item.evidenceRecords===1?'':'s'}`;entry.append(rank,label,qualifier);list.append(entry)});panel.append(list);$('charts').append(panel);}
   const ipFac=tally(rows,'Faculty',true);for(const name of coverageFaculties())if(($('faculty').value==='All'||$('faculty').value===name)&&!ipFac.some(v=>v[0]===name))ipFac.push([name,0]);
   ipFac.sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
   basicBarPanel('Student Participation by Faculty','Reported students by faculty',ipFac);
@@ -312,7 +332,7 @@ function draw(){charts.forEach(c=>c.destroy());charts=[];$('metrics').replaceChi
 }
 function reset(){for(const id of ['semester','faculty','department','activitytype','organization','country','moutype'])if($(id))$(id).value='All';updateFilters();draw();}
 async function boot(){
- try{
+ try{if(page==='ip'){const evidenceResponse=await fetch('data/pr41-internship-evidence.json',{cache:'no-store'});if(evidenceResponse.ok)pr41Evidence=await evidenceResponse.json();else throw Error('PR41 evidence HTTP '+evidenceResponse.status);const pr46Response=await fetch('data/PRPSTFPT46_Unique_Organizations.json',{cache:'no-store'});if(pr46Response.ok)pr46Evidence=await pr46Response.json();else throw Error('PR46 evidence HTTP '+pr46Response.status);}
   if(typeof XLSX==='undefined')throw Error('Excel library did not load. Check internet access or local library.');
   if(typeof Chart==='undefined')throw Error('Chart.js did not load. Check internet access or local library.');
   const source=await workbook('data/65_Submissions_Source.xlsx');

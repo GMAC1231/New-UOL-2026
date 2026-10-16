@@ -1,0 +1,210 @@
+{
+  "submission": "PRPSTFPT41",
+  "source": "6a61a04194122.xlsx",
+  "reportedStudents": 57,
+  "evidenceRows": 57,
+  "distinctCompanyEntries": 46,
+  "organizations": [
+    {
+      "name": "Code Alpha",
+      "evidenceRecords": 4,
+      "sourceVariants": [
+        "Code Alpha",
+        "Codealpha"
+      ]
+    },
+    {
+      "name": "Texense",
+      "evidenceRecords": 3
+    },
+    {
+      "name": "Astute Software",
+      "evidenceRecords": 2
+    },
+    {
+      "name": "Bookme",
+      "evidenceRecords": 2
+    },
+    {
+      "name": "FlyRank AI (Remote Machine Learning Internship)",
+      "evidenceRecords": 2,
+      "sourceVariants": [
+        "FlyRank AI (Remote Machine Learning Internship)",
+        "Flyrank Ai, Chicago"
+      ]
+    },
+    {
+      "name": "NerithonX Technologies (PVT.) LTD.",
+      "evidenceRecords": 2
+    },
+    {
+      "name": "Shabbir Industries & Amir Steel",
+      "evidenceRecords": 2,
+      "sourceVariants": [
+        "Shabbir Industries & Amir Steel",
+        "Shabbir Industries & Amir Steels"
+      ]
+    },
+    {
+      "name": "Systems Limited Head Office (intern/trainee in Automations )",
+      "evidenceRecords": 2,
+      "sourceVariants": [
+        "Systems Limited Head Office (intern/trainee in Automations )",
+        "Systems Limited Head office (Trainee/Intern in automations)"
+      ]
+    },
+    {
+      "name": "10Pearls",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "American Prime Solution",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Americans Prime Solution",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Amrood labs",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Arch Technologies",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Arfa tower",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Arhamsoft",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "CCI ( coca-cola Icecek)",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Claim Care",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Clicktake technologies",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Cobb Uk.",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Code Alpha (Remote) , Vision Plus Technologies (On-Site)",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Code Room Hub",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Code Room Hub(Remote) + Netsol(NIAI Training Program)",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "CodetoKloud (job)",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "DarkBytes",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "DevelopersHub Corporation",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Devntech",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Everyone Company",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Fly",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Glosix System",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Incubee",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "ISPR (Inter Service Public Relations)",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Parallax Labs(remote)",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Poplone",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Quantum logistics",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Shezan International Limited",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Synoptix.ai",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "System",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "system solution",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Tech Orbito",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Technisia",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Techtimize.co",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Unilever",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Unisoftware",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "UniSoftwares Pakistan",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Web marketing solutions",
+      "evidenceRecords": 1
+    },
+    {
+      "name": "Web7labs",
+      "evidenceRecords": 1
+    }
+  ],
+  "deduplicationNote": "Merged four clear spelling/description variants while preserving 57 original company-field responses; potentially different organization names and multi-organization cells are not split or assumed identical."
+}

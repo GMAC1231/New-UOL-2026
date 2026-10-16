@@ -1,0 +1,370 @@
+{
+  "submission": "PRPSTFPT46",
+  "classification": "Internship / Placement (IP)",
+  "reportedStudents": 102,
+  "evidenceStudents": 98,
+  "namedCompanyRows": 91,
+  "blankCompanyRows": 7,
+  "organizations": [
+    {
+      "name": "PNP",
+      "records": 9,
+      "sourceRows": "26, 55, 60, 66, 80, 86, 88, 89, 97"
+    },
+    {
+      "name": "Aspring Pens",
+      "records": 4,
+      "sourceRows": "4, 39, 46, 49"
+    },
+    {
+      "name": "Nufayrah Foundation",
+      "records": 4,
+      "sourceRows": "16, 25, 41, 94"
+    },
+    {
+      "name": "NETCO energy service",
+      "records": 3,
+      "sourceRows": "59, 63, 81"
+    },
+    {
+      "name": "Apex Trail",
+      "records": 2,
+      "sourceRows": "71, 101"
+    },
+    {
+      "name": "Company Ecommerce",
+      "records": 2,
+      "sourceRows": "74, 75"
+    },
+    {
+      "name": "TCF",
+      "records": 2,
+      "sourceRows": "37, 68"
+    },
+    {
+      "name": "Abdullah College for Boys, Minchanabad",
+      "records": 1,
+      "sourceRows": "95"
+    },
+    {
+      "name": "Advance Learners School and Management",
+      "records": 1,
+      "sourceRows": "43"
+    },
+    {
+      "name": "Ahmad Traders",
+      "records": 1,
+      "sourceRows": "44"
+    },
+    {
+      "name": "Al-Falah Bank, Gujranwala",
+      "records": 1,
+      "sourceRows": "14"
+    },
+    {
+      "name": "Al-Khidmat Foundation",
+      "records": 1,
+      "sourceRows": "87"
+    },
+    {
+      "name": "Al-Nawab Mix Spice",
+      "records": 1,
+      "sourceRows": "15"
+    },
+    {
+      "name": "Apex school",
+      "records": 1,
+      "sourceRows": "65"
+    },
+    {
+      "name": "Aspire College",
+      "records": 1,
+      "sourceRows": "62"
+    },
+    {
+      "name": "Babul Ilm Public High School under PEF",
+      "records": 1,
+      "sourceRows": "20"
+    },
+    {
+      "name": "BZU Multan",
+      "records": 1,
+      "sourceRows": "21"
+    },
+    {
+      "name": "Call Center",
+      "records": 1,
+      "sourceRows": "10"
+    },
+    {
+      "name": "Carrefour with dilasa jewelry brand",
+      "records": 1,
+      "sourceRows": "67"
+    },
+    {
+      "name": "Chat Support Inc.",
+      "records": 1,
+      "sourceRows": "19"
+    },
+    {
+      "name": "Citrex.uk",
+      "records": 1,
+      "sourceRows": "54"
+    },
+    {
+      "name": "English Academy",
+      "records": 1,
+      "sourceRows": "52"
+    },
+    {
+      "name": "Excellence Public School",
+      "records": 1,
+      "sourceRows": "9"
+    },
+    {
+      "name": "Farah Educational Girls Higher Secondary School under PEF",
+      "records": 1,
+      "sourceRows": "5"
+    },
+    {
+      "name": "FiNASAL TECH Innovations Limited",
+      "records": 1,
+      "sourceRows": "33"
+    },
+    {
+      "name": "Globa Chats",
+      "records": 1,
+      "sourceRows": "23"
+    },
+    {
+      "name": "GLS",
+      "records": 1,
+      "sourceRows": "99"
+    },
+    {
+      "name": "Habib gold test laboratory",
+      "records": 1,
+      "sourceRows": "82"
+    },
+    {
+      "name": "Higher power Ministry",
+      "records": 1,
+      "sourceRows": "34"
+    },
+    {
+      "name": "Holistic Foster Care",
+      "records": 1,
+      "sourceRows": "36"
+    },
+    {
+      "name": "Karim industries.",
+      "records": 1,
+      "sourceRows": "91"
+    },
+    {
+      "name": "Knowledge School",
+      "records": 1,
+      "sourceRows": "7"
+    },
+    {
+      "name": "LA language and Cultural Center",
+      "records": 1,
+      "sourceRows": "45"
+    },
+    {
+      "name": "Learners House School",
+      "records": 1,
+      "sourceRows": "73"
+    },
+    {
+      "name": "Madina-tul-Ilm Girls High School",
+      "records": 1,
+      "sourceRows": "22"
+    },
+    {
+      "name": "Mangat Technical Services",
+      "records": 1,
+      "sourceRows": "72"
+    },
+    {
+      "name": "Matrix School System",
+      "records": 1,
+      "sourceRows": "64"
+    },
+    {
+      "name": "Merit Science Academy",
+      "records": 1,
+      "sourceRows": "51"
+    },
+    {
+      "name": "Nafayrah Summer Internship Program",
+      "records": 1,
+      "sourceRows": "29"
+    },
+    {
+      "name": "Netpricks Solutions",
+      "records": 1,
+      "sourceRows": "24"
+    },
+    {
+      "name": "Nufayrah Charity Foundation",
+      "records": 1,
+      "sourceRows": "85"
+    },
+    {
+      "name": "Prime appliance",
+      "records": 1,
+      "sourceRows": "61"
+    },
+    {
+      "name": "Pro Edits.net",
+      "records": 1,
+      "sourceRows": "78"
+    },
+    {
+      "name": "PRS Organization and Hamedli",
+      "records": 1,
+      "sourceRows": "92"
+    },
+    {
+      "name": "Public School Larkana",
+      "records": 1,
+      "sourceRows": "8"
+    },
+    {
+      "name": "Qaswa Development Organization",
+      "records": 1,
+      "sourceRows": "6"
+    },
+    {
+      "name": "quality dispatch LIC",
+      "records": 1,
+      "sourceRows": "93"
+    },
+    {
+      "name": "Ragzon Solutions",
+      "records": 1,
+      "sourceRows": "90"
+    },
+    {
+      "name": "Redfox Logistic Solutions",
+      "records": 1,
+      "sourceRows": "17"
+    },
+    {
+      "name": "RIA Barker Gillete Chamber",
+      "records": 1,
+      "sourceRows": "98"
+    },
+    {
+      "name": "Riphah College",
+      "records": 1,
+      "sourceRows": "50"
+    },
+    {
+      "name": "Ros school",
+      "records": 1,
+      "sourceRows": "77"
+    },
+    {
+      "name": "Saz gas Pvt ltd",
+      "records": 1,
+      "sourceRows": "70"
+    },
+    {
+      "name": "School",
+      "records": 1,
+      "sourceRows": "30"
+    },
+    {
+      "name": "Security Agency",
+      "records": 1,
+      "sourceRows": "76"
+    },
+    {
+      "name": "Senate of Pakistan",
+      "records": 1,
+      "sourceRows": "102"
+    },
+    {
+      "name": "software house",
+      "records": 1,
+      "sourceRows": "57"
+    },
+    {
+      "name": "Sukaar Foundation Mithi, Sindh",
+      "records": 1,
+      "sourceRows": "11"
+    },
+    {
+      "name": "Sukaar Foundation Mitthi, Tharparkar",
+      "records": 1,
+      "sourceRows": "40"
+    },
+    {
+      "name": "Syed Holdings",
+      "records": 1,
+      "sourceRows": "42"
+    },
+    {
+      "name": "Tests School and Academy",
+      "records": 1,
+      "sourceRows": "83"
+    },
+    {
+      "name": "Tests School lahore",
+      "records": 1,
+      "sourceRows": "58"
+    },
+    {
+      "name": "TG IT Solutions",
+      "records": 1,
+      "sourceRows": "38"
+    },
+    {
+      "name": "Thall Education System & Shell Company lim.",
+      "records": 1,
+      "sourceRows": "56"
+    },
+    {
+      "name": "University of Lahore",
+      "records": 1,
+      "sourceRows": "13"
+    },
+    {
+      "name": "UOL Relief Education Department",
+      "records": 1,
+      "sourceRows": "47"
+    },
+    {
+      "name": "UOL-CSDL Department",
+      "records": 1,
+      "sourceRows": "79"
+    },
+    {
+      "name": "Victoria College",
+      "records": 1,
+      "sourceRows": "27"
+    },
+    {
+      "name": "Viral Square",
+      "records": 1,
+      "sourceRows": "32"
+    },
+    {
+      "name": "yasmeen medical complex",
+      "records": 1,
+      "sourceRows": "69"
+    },
+    {
+      "name": "Zafco Institute of New Technology",
+      "records": 1,
+      "sourceRows": "35"
+    },
+    {
+      "name": "ZNZ Community",
+      "records": 1,
+      "sourceRows": "100"
+    }
+  ]
+}
