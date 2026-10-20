@@ -108,7 +108,7 @@ function parseIp(rows){
   if(used.has(k))continue;
   used.add(k);
   out.push({ref,Faculty:clean(r.Faculty),Department:clean(r.Department),
-    number:amount,org:valid(org)?org:'',orgAliases:pr41?pr41Names():pr46?pr46Names():[],type:clean(r['Original Activity Type'])});
+    number:amount,org:valid(org)?org:'',orgAliases:pr41?pr41Names():pr46?pr46Names():[],type:/^intership$/i.test(clean(r['Original Activity Type']))?'Internship / Placement (IP)':clean(r['Original Activity Type'])});
  }
  return out;
 }
@@ -136,7 +136,7 @@ function updateFilters(changed){
   select('organization',matched.map(r=>r.org),'All Organizations');
  }
  if(page==='ip'){
-  select('activitytype',['Internship / Placement'],'All Activity Types');
+  select('activitytype',['Internship / Placement (IP)'],'All Activity Types');
   const relevant=ip.filter(semesterMatches).filter(matches);
   select('organization',relevant.flatMap(r=>r.orgAliases?.length?r.orgAliases:[r.org]),'All Organizations');
  }
@@ -203,7 +203,7 @@ function organizationGraph(entries,selectedOrg){
  const visible=selectedOrg?entries:entries.slice(0,count);
  const title=selectedOrg?'Internship / Placement — Selected Organization':
     `Internship / Placement — Top ${organizationChartLimit} Organizations`;
- basicBarPanel(title,'Top partner organizations ranked by reported student participation',visible);
+ basicBarPanel(title,'Reported quantities for other partners; evidence mentions for PRPSTFPT41 and PRPSTFPT46',visible);
  const panel=$('charts').lastElementChild;
  const heading=panel.querySelector('h3');
  const controls=document.createElement('div');controls.className='org-chart-controls';
@@ -221,6 +221,9 @@ function organizationGraph(entries,selectedOrg){
    `${visible.length} of ${entries.length} organizations shown`;
  controls.append(hint);
  heading.after(controls);
+ // Evidence-backed organization bars open the same details popup as the ranked lists.
+ const canvas=panel.querySelector('canvas');
+ if(canvas){const instance=Chart.getChart(canvas);if(instance){const prior=instance.options.onClick;instance.options.onClick=(event,hit)=>{if(!hit?.length)return;const name=instance.data.labels[hit[0].index];const a=pr41Evidence.organizations.find(x=>x.name===name);const b=pr46Evidence.organizations.find(x=>x.name===name);if(a&&window.PR41CompanyPopup?.show)window.PR41CompanyPopup.show(a,{submission:'PRPSTFPT41',total:pr41Evidence.evidenceRows||57,reported:pr41Evidence.reportedStudents||57});else if(b&&window.PR41CompanyPopup?.show)window.PR41CompanyPopup.show(b,{submission:'PRPSTFPT46',total:pr46Evidence.namedCompanyRows||91,reported:pr46Evidence.reportedStudents||102});else if(typeof prior==='function')prior(event,hit);};canvas.style.cursor='pointer';}}
 
 }
 function drawBasic(){
@@ -284,6 +287,10 @@ function draw(){charts.forEach(c=>c.destroy());charts=[];$('metrics').replaceChi
   let rows=ip.filter(semesterMatches).filter(matches);
   const selectedOrg=$('organization')&&$('organization').value!=='All';
   if(selectedOrg)rows=rows.filter(r=>r.org===$('organization').value||r.orgAliases?.includes($('organization').value));
+  // When a single evidence-backed organization is selected, show its documented
+  // evidence frequency, not the complete submission's 57 reported students.
+  // All-organizations view still retains the original submission total once.
+  if(selectedOrg){const picked=$('organization').value;const evidence=pr41Evidence.organizations.find(x=>x.name===picked);if(evidence)rows=rows.map(r=>r.ref==='PRPSTFPT41'&&r.org===PR41_ORIGINAL?{...r,number:evidence.evidenceRecords}:r);}
   const orgRows=rows.filter(r=>valid(r.org)&&r.org!==PR41_ORIGINAL&&r.org!==PR46_ORIGINAL);
   const orgTally=tally(orgRows,'org',true);
   const pr41InView=rows.some(r=>r.ref==='PRPSTFPT41'&&r.org===PR41_ORIGINAL);
@@ -291,14 +298,14 @@ function draw(){charts.forEach(c=>c.destroy());charts=[];$('metrics').replaceChi
   const pr46InView=rows.some(r=>r.ref==='PRPSTFPT46'&&r.org===PR46_ORIGINAL);
   if(pr46InView){const one=$('organization')?.value||'All';for(const entry of pr46Evidence.organizations){if(one!=='All'&&one!==entry.name)continue;const found=orgTally.find(row=>row[0].toLowerCase()===entry.name.toLowerCase());if(found)found[1]+=entry.records;else orgTally.push([entry.name,entry.records]);}orgTally.sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));}
 
-  metric('Total Internship / Placement — Including Planned & Remote',rows.reduce((a,b)=>a+b.number,0),'💼','Reported quantities including planned opportunities; not all are completed placements');
+  metric('Total Internship / Placement — Including Planned & Remote',rows.reduce((a,b)=>a+b.number,0),'💼',selectedOrg&&pr41InView?'Selected company: evidence-record frequency; original submission remains 57 students in the all-organizations view':'Reported quantities including planned opportunities; not all are completed placements');
   metric('Faculties',rosterFacultyCount(),'🎓','Faculties in reporting roster');
   metric('Departments',rosterDepartmentCount(),'🏢','Departments in reporting roster');
   metric('Partner Organizations',uniq(rows.flatMap(r=>r.orgAliases?.length?r.orgAliases:[r.org]).filter(x=>x!==PR41_ORIGINAL&&x!==PR46_ORIGINAL)).length,'🤝','Company names from internship evidence; reported students counted once');
   metric('Reporting Submissions',new Set(rows.map(r=>r.ref)).size,'📑','Source reports represented');
   organizationGraph(orgTally,selectedOrg);
-  if(pr46InView){const note=document.createElement('p');note.className='ip-evidence-note';note.textContent='PRPSTFPT46: 72 named organization options from internship evidence (91 named-company student rows). Chart counts for these names are evidence mentions, not an allocation of the 102 students. The original 102-student submission is counted once.';$('charts').lastElementChild?.append(note);}
-  if(pr41InView){const panel=document.createElement('article');panel.className='panel wide';const head=document.createElement('h3');head.textContent='PRPSTFPT41 · Internship companies from supporting Excel evidence';const note=document.createElement('p');note.style.cssText='font-size:12px;color:#6c8095;line-height:1.6';note.textContent=`${pr41Evidence.evidenceRows} original company-field responses; ${pr41Evidence.organizations.length} distinct entries (case/spacing deduplicated). The submission reports 57 students once. Company counts below describe evidence mentions, not additional student allocations or confirmed completions.`;panel.append(head,note);const list=document.createElement('div');list.className='ranking-rows';pr41Evidence.organizations.filter(x=>!selectedOrg||x.name===$('organization').value).forEach((item,i)=>{const entry=document.createElement('div');entry.className='ranking-item';entry.style.cssText='display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid #e5eef3';const rank=document.createElement('span');rank.className='ranking-number';rank.textContent=String(i+1).padStart(2,'0');const label=document.createElement('strong');label.textContent=item.name;label.style.overflowWrap='anywhere';const qualifier=document.createElement('span');qualifier.style.cssText='font-size:11px;color:#668398;margin-left:auto;white-space:nowrap';qualifier.textContent=`${item.evidenceRecords} evidence record${item.evidenceRecords===1?'':'s'}`;entry.append(rank,label,qualifier);list.append(entry)});panel.append(list);$('charts').append(panel);}
+  if(pr46InView){const note=document.createElement('p');note.className='ip-evidence-note';note.textContent='PRPSTFPT46: Internship (not verified placement): 102 students reported; 98 documented, comprising 91 student rows across 72 named organizations and 7 unnamed-company rows. Four students remain unreconciled. Organization chart counts show documented student rows; the submitted 102 is counted only once.';$('charts').lastElementChild?.append(note);}
+  if(pr41InView){const panel=document.createElement('article');panel.className='panel wide';const head=document.createElement('h3');head.textContent='PRPSTFPT41 · Internship / Placement (IP) — companies from supporting Excel evidence';const note=document.createElement('p');note.style.cssText='font-size:12px;color:#6c8095;line-height:1.6';note.textContent=`${pr41Evidence.evidenceRows} original company-field responses; ${pr41Evidence.organizations.length} unique display entries (name variants consolidated; repeated organizations grouped). The submission reports 57 students once. Company counts below describe evidence mentions, not additional student allocations or confirmed completions.`;panel.append(head,note);const list=document.createElement('div');list.className='ranking-rows';pr41Evidence.organizations.filter(x=>!selectedOrg||x.name===$('organization').value).forEach((item,i)=>{const entry=document.createElement('div');entry.className='ranking-item';entry.style.cssText='display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid #e5eef3';const rank=document.createElement('span');rank.className='ranking-number';rank.textContent=String(i+1).padStart(2,'0');const label=document.createElement('strong');label.textContent=item.name;label.style.overflowWrap='anywhere';const qualifier=document.createElement('span');qualifier.style.cssText='font-size:11px;color:#668398;margin-left:auto;white-space:nowrap';qualifier.textContent=`${item.evidenceRecords} evidence record${item.evidenceRecords===1?'':'s'}`;entry.append(rank,label,qualifier);entry.classList.add('pr41-evidence-clickable');entry.tabIndex=0;entry.setAttribute('role','button');entry.setAttribute('aria-label',`Open ${item.name}: ${item.evidenceRecords} evidence records`);entry.onclick=()=>window.PR41CompanyPopup.show(item,{submission:'PRPSTFPT41',total:pr41Evidence.evidenceRows||57,reported:pr41Evidence.reportedStudents||57});entry.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();entry.click()}};list.append(entry)});panel.append(list);$('charts').append(panel);}
   const ipFac=tally(rows,'Faculty',true);for(const name of coverageFaculties())if(($('faculty').value==='All'||$('faculty').value===name)&&!ipFac.some(v=>v[0]===name))ipFac.push([name,0]);
   ipFac.sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
   basicBarPanel('Student Participation by Faculty','Reported students by faculty',ipFac);

@@ -3,7 +3,7 @@
   "source": "6a61a04194122.xlsx",
   "reportedStudents": 57,
   "evidenceRows": 57,
-  "distinctCompanyEntries": 46,
+  "distinctCompanyEntries": 45,
   "organizations": [
     {
       "name": "Code Alpha",
@@ -59,11 +59,11 @@
     },
     {
       "name": "American Prime Solution",
-      "evidenceRecords": 1
-    },
-    {
-      "name": "Americans Prime Solution",
-      "evidenceRecords": 1
+      "evidenceRecords": 2,
+      "sourceVariants": [
+        "American Prime Solution",
+        "Americans Prime Solution"
+      ]
     },
     {
       "name": "Amrood labs",
@@ -206,5 +206,5 @@
       "evidenceRecords": 1
     }
   ],
-  "deduplicationNote": "Merged four clear spelling/description variants while preserving 57 original company-field responses; potentially different organization names and multi-organization cells are not split or assumed identical."
+  "deduplicationNote": "Consolidated company-name spelling/case/description variants, including American(s) Prime Solution; 45 unique display labels. All 57 evidence records and the submission-reported 57 students remain intact; multiple different students at one company are not deleted. Compound company fields remain intact. This is organization-name deduplication, not proof of duplicated students."
 }

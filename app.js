@@ -13,6 +13,14 @@
    ========================================================= */
 
 let allRows = [];
+let pr41OrgEvidence = {organizations:[],reportedStudents:57};
+let pr46OrgEvidence = {organizations:[],reportedStudents:102,evidenceStudents:98,namedCompanyRows:91};
+const pr46OrgNames = () => pr46OrgEvidence.organizations.map(x=>x.name);
+const isPr46Internship = row => row.ref === 'PRPSTFPT46' && /internship/i.test(String(row.type || '')) && (/^multiple$/i.test(String(row.organization || '').trim()) || /internship company names in evidence/i.test(String(row.organization || '')));
+const pr41OrgNames = () => pr41OrgEvidence.organizations.map(x=>x.name);
+const isPr41Internship = row => row.ref === 'PRPSTFPT41' && row.type === 'Internship / Placement' && /mentioned in excel sheet/i.test(String(row.organization || ''));
+const executiveOrgAliases = row => isPr41Internship(row) ? pr41OrgNames() : isPr46Internship(row) ? pr46OrgNames() : [row.organization];
+
 let filteredRows = [];
 
 let allIpRows = [];
@@ -903,8 +911,8 @@ function updateOrganizationFilter() {
   setSelectOptions(
     "organizationFilter",
     rows
-      .map(row => row.organization)
-      .filter(organization => !isInvalidLabel(organization)),
+      .flatMap(executiveOrgAliases)
+      .filter(organization => !isInvalidLabel(organization) && !/mentioned in excel sheet/i.test(organization)),
     "All Organizations", optionTotals(rows, "organization"), rows.reduce((n,r)=>n+rowAmount(r),0)
   );
 }
@@ -975,7 +983,7 @@ function applyFilters() {
       month === "All" || semesterForActivity(row) === month;
 
     const organizationMatch =
-      organization === "All" || row.organization === organization;
+      organization === "All" || row.organization === organization || (isPr41Internship(row) && pr41OrgNames().includes(organization)) || (isPr46Internship(row) && pr46OrgNames().includes(organization));
 
     const searchMatch =
       !search || [
@@ -1445,10 +1453,18 @@ function renderStudentSummary() {
    ========================================================= */
 
 function rowAmount(row) {
-
-  return row.events > 0
-    ? row.events
-    : 1;
+  // For a selected PRPSTFPT41 evidence organization, display its own frequency.
+  // Do not allocate the entire 57-student submission to every company.
+  const selectedOrg=document.getElementById('organizationFilter')?.value||'All';
+  if(selectedOrg!=='All'&&isPr41Internship(row)){
+    const match=pr41OrgEvidence.organizations.find(x=>x.name===selectedOrg);
+    if(match)return match.evidenceRecords;
+  }
+  if(selectedOrg!=='All'&&isPr46Internship(row)){
+    const match=pr46OrgEvidence.organizations.find(x=>x.name===selectedOrg);
+    if(match)return match.records;
+  }
+  return row.events > 0 ? row.events : 1;
 }
 
 
@@ -2297,6 +2313,27 @@ function monthlyChart() {
    RENDER
    ========================================================= */
 
+function renderPr46CompanyEvidence(){
+ const target=$('pr46ExecutiveOrganizations');if(!target)return;
+ const matches=filteredRows.some(isPr46Internship);target.hidden=!matches;target.replaceChildren();if(!matches)return;
+ const heading=document.createElement('h3');heading.textContent='PRPSTFPT46 · Internship — Organization breakdown';
+ const info=document.createElement('p');info.textContent=`“Multiple” resolved to ${pr46OrgEvidence.organizations.length} distinct evidence-based organization names. ${pr46OrgEvidence.evidenceStudents||98} student records (${pr46OrgEvidence.namedCompanyRows||91} with company names); the submission reports ${pr46OrgEvidence.reportedStudents||102} students counted once. Organization counts are evidence mentions, not additional placement quantities.`;
+ const container=document.createElement('div');container.className='pr41-executive-list';const selected=$('organizationFilter')?.value||'All';
+ pr46OrgEvidence.organizations.filter(x=>selected==='All'||x.name===selected).forEach((item,i)=>{const card=document.createElement('div');card.className='pr41-executive-company';const label=document.createElement('strong');label.textContent=`${i+1}. ${item.name}`;const count=document.createElement('span');count.textContent=`${item.records} evidence ${item.records===1?'record':'records'} · ${(item.records/(pr46OrgEvidence.namedCompanyRows||91)*100).toFixed(1)}% of named-company rows`;card.append(label,count);card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label',`Open ${item.name}: ${item.records} evidence records`);card.onclick=()=>window.PR41CompanyPopup.show(item,{submission:'PRPSTFPT46',total:pr46OrgEvidence.namedCompanyRows||91,reported:pr46OrgEvidence.reportedStudents||102});card.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();card.click()}};container.append(card)});target.append(heading,info,container);
+}
+function renderPr41CompanyEvidence(){
+ const target=$('pr41ExecutiveOrganizations');if(!target)return;
+ const matches=filteredRows.some(isPr41Internship);target.hidden=!matches;target.replaceChildren();if(!matches)return;
+ const heading=document.createElement('h3');heading.textContent='PRPSTFPT41 · Internship / Placement (IP) — Organization names';
+ const info=document.createElement('p');info.textContent=`${pr41OrgEvidence.organizations.length} unique organization display entries from Section 4 evidence (repeated names grouped); ${pr41OrgEvidence.reportedStudents||57} students reported once. Counts below indicate evidence mentions, not additional internship quantities.`;
+ const activityHeading=document.createElement('h4');activityHeading.className='pr41-other-heading';activityHeading.textContent='Other activities reported in Section 2';
+ const activityInfo=document.createElement('p');activityInfo.textContent='Four separately reported activity rows (quantity 1 each); these are not additional internship students or placement companies.';
+ const activityGrid=document.createElement('div');activityGrid.className='pr41-other-activities';
+ const otherActivities=[['Seminar / Conference / Workshop','ICACS-2026','10 Feb 2026','Successfully Organized'],['Guest Lecture',"Unisoftware’s Pakistan",'21 May 2026','Successfully Organized'],['Seminar / Conference / Workshop','AWS Community','24 Jan 2026','Successfully Organized Workshop'],['IAB Meeting / Industry Consultation','Faculty of Information Technology, UOL','26 Feb 2026','FYP Expo 2026 Successfully Organized']];
+ for(const [type,partner,date,outcome] of otherActivities){const item=document.createElement('article');item.className='pr41-other-activity';const kind=document.createElement('small');kind.textContent=type;const name=document.createElement('strong');name.textContent=partner;const detail=document.createElement('span');detail.textContent=`Quantity 1 · ${date}`;const status=document.createElement('em');status.textContent=outcome;item.append(kind,name,detail,status);activityGrid.append(item)}
+ const container=document.createElement('div');container.className='pr41-executive-list';const selected=$('organizationFilter')?.value||'All';
+ pr41OrgEvidence.organizations.filter(x=>selected==='All'||x.name===selected).forEach((item,i)=>{const card=document.createElement('div');card.className='pr41-executive-company';const label=document.createElement('strong');label.textContent=`${i+1}. ${item.name}`;const count=document.createElement('span');count.textContent=`${item.evidenceRecords} evidence ${item.evidenceRecords===1?'record':'records'} · ${(item.evidenceRecords/(pr41OrgEvidence.evidenceRows||57)*100).toFixed(1)}%`; card.append(label,count);card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label',`Open ${item.name}: ${item.evidenceRecords} evidence records`);card.onclick=()=>window.PR41CompanyPopup.show(item,{submission:'PRPSTFPT41',total:pr41OrgEvidence.evidenceRows||57,reported:pr41OrgEvidence.reportedStudents||57});card.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();card.click()}};container.append(card)});target.append(heading,info,container,activityHeading,activityInfo,activityGrid);
+}
 function render() {
 
   const totalActivities =
@@ -2529,6 +2566,8 @@ setText(
       .toLocaleString()
   );
 renderStudentSummary();
+  renderPr41CompanyEvidence();
+  renderPr46CompanyEvidence();
 
   barChart(
     "facultyChart",
@@ -2872,6 +2911,8 @@ async function loadExcel() {
 
   try {
 
+    try { const response = await fetch('data/pr41-internship-evidence.json',{cache:'no-store'}); if(response.ok) pr41OrgEvidence = await response.json(); } catch(error) { console.warn('PR41 organization evidence unavailable', error); }
+    try { const response=await fetch('data/PRPSTFPT46_Unique_Organizations.json',{cache:'no-store'}); if(response.ok) pr46OrgEvidence=await response.json(); } catch(error) { console.warn('PR46 organization evidence unavailable',error); }
     await Promise.all([loadActivityWorkbook(),loadInstitutionalRoster()]);
 
     populateFilters();
@@ -2969,6 +3010,18 @@ function displayValue(value) {
 }
 
 
+function pr46PopupBreakdown(row){
+ if(!isPr46Internship(row))return '';
+ const entries=pr46OrgEvidence.organizations||[];
+ const named=pr46OrgEvidence.namedCompanyRows||91;
+ return `<section class="pr46-record-breakdown" aria-label="PRPSTFPT46 organization evidence">
+   <div class="pr46-record-heading"><div><span class="pr46-record-eyebrow">INTERNSHIP · PRPSTFPT46</span><h3>Organization breakdown</h3><p>Original company field: Multiple · Classification: Internship · Source: Section 4 · Evidence: 6a604efa01357(2).xlsx</p></div><span class="pr46-record-badge">${entries.length} unique organizations</span></div>
+   <div class="pr46-record-metrics"><span><strong>${pr46OrgEvidence.reportedStudents||102}</strong> reported students</span><span><strong>${pr46OrgEvidence.evidenceStudents||98}</strong> evidence rows</span><span><strong>${named}</strong> named-company rows</span><span><strong>${pr46OrgEvidence.blankCompanyRows??7}</strong> unnamed-company students</span></div>
+   <label class="pr46-record-search-label">Find an organization<input class="pr46-record-search" type="search" placeholder="Search the 72 organization names…" autocomplete="off"></label>
+   <div class="pr46-record-list">${entries.map((item,i)=>`<button type="button" class="pr46-record-company" data-org-index="${i}"><span class="pr46-record-number">${String(i+1).padStart(2,'0')}</span><span class="pr46-record-name">${esc(item.name)}</span><span class="pr46-record-frequency">${Number(item.records)||0} · ${((Number(item.records)||0)/named*100).toFixed(1)}%</span></button>`).join('')}</div>
+   <p class="pr46-record-note">Organization counts represent documented student rows, not completed placements or extra internships. The submission reports 102 students, but 98 appear in the supplied workbook (91 with named organizations and 7 without). Four remain unreconciled. Do not add organization totals to the reported 102.</p>
+ </section>`;
+}
 function openPopup(
   key,
   label
@@ -3037,17 +3090,17 @@ function openPopup(
 
               <div class="detail-field">
                 <small>Activity Type</small>
-                <strong>${displayValue(row.type)}</strong>
+                <strong>${isPr46Internship(row) ? "Internship (dashboard group: Internship / Placement (IP))" : displayValue(row.type)}</strong>
               </div>
 
               <div class="detail-field">
                 <small>Original Activity Type</small>
-                <strong>${displayValue(row.originalType)}</strong>
+                <strong>${isPr46Internship(row) ? "Intership (submitted spelling; normalized to Internship)" : displayValue(row.originalType)}</strong>
               </div>
 
               <div class="detail-field">
                 <small>How Many</small>
-                <strong>${Number(row.events || 0).toLocaleString()}</strong>
+                <strong>${Number(row.events || 0).toLocaleString()}${isPr46Internship(row) ? " reported students (98 documented)" : ""}</strong>
               </div>
 
               <div class="detail-field">
@@ -3067,7 +3120,7 @@ function openPopup(
 
               <div class="detail-field">
                 <small>Organization</small>
-                <strong>${displayValue(row.organization)}</strong>
+                <strong>${isPr46Internship(row) ? `${pr46OrgEvidence.organizations.length} named organizations (supporting evidence)` : displayValue(row.organization)}</strong>
               </div>
 
               <div class="detail-field">
@@ -3086,7 +3139,7 @@ function openPopup(
               </div>
 
             </div>
-
+            ${pr46PopupBreakdown(row)}
           </div>
         `
       )
@@ -3095,6 +3148,22 @@ function openPopup(
         );
   }
 
+  const body=$('detailModalBody');
+  if(body){
+    body.querySelectorAll('.pr46-record-breakdown').forEach(section=>{
+      const search=section.querySelector('.pr46-record-search');
+      search?.addEventListener('input',()=>{
+        const q=search.value.trim().toLocaleLowerCase();
+        section.querySelectorAll('.pr46-record-company').forEach(button=>{button.hidden=!button.querySelector('.pr46-record-name').textContent.toLocaleLowerCase().includes(q)});
+      });
+      section.querySelectorAll('.pr46-record-company').forEach(button=>{
+        button.addEventListener('click',()=>{
+          const item=pr46OrgEvidence.organizations[Number(button.dataset.orgIndex)];
+          if(item&&window.PR41CompanyPopup?.show)window.PR41CompanyPopup.show(item,{submission:'PRPSTFPT46',total:pr46OrgEvidence.namedCompanyRows||91,reported:pr46OrgEvidence.reportedStudents||102});
+        });
+      });
+    });
+  }
   modal
     .classList
     .add(
@@ -3320,6 +3389,7 @@ function bindEvents() {
           "Escape"
         ) {
 
+          if (document.querySelector('.pr41-detail-overlay:not([hidden])')) return;
           closePopup();
         }
       }
