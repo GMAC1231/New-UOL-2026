@@ -628,8 +628,11 @@ function setSelectOptions(id, values, allLabel, counts = null, total = null) {
     select.appendChild(option);
   };
   const totalChoices = items.length.toLocaleString('en-US');
-  makeOption('All', `${allLabel} (${totalChoices})`);
-  items.forEach(item => makeOption(item, item));
+  makeOption('All', `${allLabel} (${totalChoices})${Number.isFinite(total) ? ' · '+Number(total).toLocaleString('en-US')+' activities' : ''}`);
+  items.forEach(item => {
+    const count = counts instanceof Map ? counts.get(item) : counts?.[item];
+    makeOption(item, `${item} (${Number(count || 0).toLocaleString('en-US')})`);
+  });
   select.value = previous !== 'All' && items.includes(previous) ? previous : 'All';
 }
 
@@ -913,10 +916,24 @@ function updateOrganizationFilter() {
     rows
       .flatMap(executiveOrgAliases)
       .filter(organization => !isInvalidLabel(organization) && !/mentioned in excel sheet/i.test(organization)),
-    "All Organizations", optionTotals(rows, "organization"), rows.reduce((n,r)=>n+rowAmount(r),0)
+    "All Organizations", organizationOptionTotals(rows), rows.reduce((n,r)=>n+rowAmount(r),0)
   );
 }
 
+
+// Company evidence provides aliases for grouped Section 4 submissions. The
+// expanded names are filter labels, not extra internship/placement activities.
+function organizationOptionTotals(rows) {
+  const totals = new Map();
+  for (const row of rows) {
+    const names = executiveOrgAliases(row).filter(name => !isInvalidLabel(name));
+    for (const name of new Set(names)) {
+      // Preserve the source row's reported quantity without multiplying the KPI.
+      totals.set(name, (totals.get(name) || 0) + rowAmount(row));
+    }
+  }
+  return totals;
+}
 
 /* =========================================================
    INITIAL FILTER LOAD
@@ -994,6 +1011,7 @@ function applyFilters() {
         row.person,
         row.designation,
         row.organization,
+        ...executiveOrgAliases(row),
         row.remarks,
         row.month,
         semesterForActivity(row)
@@ -2319,7 +2337,7 @@ function renderPr46CompanyEvidence(){
  const heading=document.createElement('h3');heading.textContent='PRPSTFPT46 · Internship — Organization breakdown';
  const info=document.createElement('p');info.textContent=`“Multiple” resolved to ${pr46OrgEvidence.organizations.length} distinct evidence-based organization names. ${pr46OrgEvidence.evidenceStudents||98} student records (${pr46OrgEvidence.namedCompanyRows||91} with company names); the submission reports ${pr46OrgEvidence.reportedStudents||102} students counted once. Organization counts are evidence mentions, not additional placement quantities.`;
  const container=document.createElement('div');container.className='pr41-executive-list';const selected=$('organizationFilter')?.value||'All';
- pr46OrgEvidence.organizations.filter(x=>selected==='All'||x.name===selected).forEach((item,i)=>{const card=document.createElement('div');card.className='pr41-executive-company';const label=document.createElement('strong');label.textContent=`${i+1}. ${item.name}`;const count=document.createElement('span');count.textContent=`${item.records} evidence ${item.records===1?'record':'records'} · ${(item.records/(pr46OrgEvidence.namedCompanyRows||91)*100).toFixed(1)}% of named-company rows`;card.append(label,count);card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label',`Open ${item.name}: ${item.records} evidence records`);card.onclick=()=>window.PR41CompanyPopup.show(item,{submission:'PRPSTFPT46',total:pr46OrgEvidence.namedCompanyRows||91,reported:pr46OrgEvidence.reportedStudents||102});card.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();card.click()}};container.append(card)});target.append(heading,info,container);
+ (pr46OrgEvidence.organizations || []).filter(x=>selected==='All'||x.name===selected).forEach((item,i)=>{const card=document.createElement('div');card.className='pr41-executive-company';const label=document.createElement('strong');label.textContent=`${i+1}. ${item.name}`;const count=document.createElement('span');count.textContent=`${item.records} evidence ${item.records===1?'record':'records'} · ${(item.records/(pr46OrgEvidence.namedCompanyRows||91)*100).toFixed(1)}% of named-company rows`;card.append(label,count);card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label',`Open ${item.name}: ${item.records} evidence records`);card.onclick=()=>window.PR41CompanyPopup.show(item,{submission:'PRPSTFPT46',total:pr46OrgEvidence.namedCompanyRows||91,reported:pr46OrgEvidence.reportedStudents||102});card.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();card.click()}};container.append(card)});target.append(heading,info,container);
 }
 function renderPr41CompanyEvidence(){
  const target=$('pr41ExecutiveOrganizations');if(!target)return;
@@ -2332,7 +2350,7 @@ function renderPr41CompanyEvidence(){
  const otherActivities=[['Seminar / Conference / Workshop','ICACS-2026','10 Feb 2026','Successfully Organized'],['Guest Lecture',"Unisoftware’s Pakistan",'21 May 2026','Successfully Organized'],['Seminar / Conference / Workshop','AWS Community','24 Jan 2026','Successfully Organized Workshop'],['IAB Meeting / Industry Consultation','Faculty of Information Technology, UOL','26 Feb 2026','FYP Expo 2026 Successfully Organized']];
  for(const [type,partner,date,outcome] of otherActivities){const item=document.createElement('article');item.className='pr41-other-activity';const kind=document.createElement('small');kind.textContent=type;const name=document.createElement('strong');name.textContent=partner;const detail=document.createElement('span');detail.textContent=`Quantity 1 · ${date}`;const status=document.createElement('em');status.textContent=outcome;item.append(kind,name,detail,status);activityGrid.append(item)}
  const container=document.createElement('div');container.className='pr41-executive-list';const selected=$('organizationFilter')?.value||'All';
- pr41OrgEvidence.organizations.filter(x=>selected==='All'||x.name===selected).forEach((item,i)=>{const card=document.createElement('div');card.className='pr41-executive-company';const label=document.createElement('strong');label.textContent=`${i+1}. ${item.name}`;const count=document.createElement('span');count.textContent=`${item.evidenceRecords} evidence ${item.evidenceRecords===1?'record':'records'} · ${(item.evidenceRecords/(pr41OrgEvidence.evidenceRows||57)*100).toFixed(1)}%`; card.append(label,count);card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label',`Open ${item.name}: ${item.evidenceRecords} evidence records`);card.onclick=()=>window.PR41CompanyPopup.show(item,{submission:'PRPSTFPT41',total:pr41OrgEvidence.evidenceRows||57,reported:pr41OrgEvidence.reportedStudents||57});card.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();card.click()}};container.append(card)});target.append(heading,info,container,activityHeading,activityInfo,activityGrid);
+ (pr41OrgEvidence.organizations || []).filter(x=>selected==='All'||x.name===selected).forEach((item,i)=>{const card=document.createElement('div');card.className='pr41-executive-company';const label=document.createElement('strong');label.textContent=`${i+1}. ${item.name}`;const count=document.createElement('span');count.textContent=`${item.evidenceRecords} evidence ${item.evidenceRecords===1?'record':'records'} · ${(item.evidenceRecords/(pr41OrgEvidence.evidenceRows||57)*100).toFixed(1)}%`; card.append(label,count);card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label',`Open ${item.name}: ${item.evidenceRecords} evidence records`);card.onclick=()=>window.PR41CompanyPopup.show(item,{submission:'PRPSTFPT41',total:pr41OrgEvidence.evidenceRows||57,reported:pr41OrgEvidence.reportedStudents||57});card.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();card.click()}};container.append(card)});target.append(heading,info,container,activityHeading,activityInfo,activityGrid);
 }
 function render() {
 
@@ -2566,8 +2584,6 @@ setText(
       .toLocaleString()
   );
 renderStudentSummary();
-  renderPr41CompanyEvidence();
-  renderPr46CompanyEvidence();
 
   barChart(
     "facultyChart",
