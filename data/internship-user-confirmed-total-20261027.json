@@ -1,0 +1,8 @@
+{
+  "description": "User-confirmed sum of quantity column provided in conversation; not a sum of named JSON organization rows",
+  "confirmedQuantity": 127,
+  "namedJsonRecordCount": 117,
+  "unmatchedQuantity": 10,
+  "reconciliationStatus": "pending",
+  "confirmationDate": "2026-10-27"
+}

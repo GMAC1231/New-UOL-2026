@@ -1,0 +1,941 @@
+{
+  "source": "User-provided internship/placement table, October 27, 2026",
+  "records": [
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "UOTH and Social Security Hospital Multan Road",
+      "planned": "Yes",
+      "scheduled": "Yes",
+      "remarks": "Internship completed"
+    },
+    {
+      "type": "Internship/Placement",
+      "quantity": 1,
+      "organization": "Eushbi Private Limited",
+      "planned": "Yes",
+      "scheduled": "Yes",
+      "remarks": "The internship at the Eushbi Private Limited is enhancing technical expertise and interpersonal skills through teamwork toward organizational goals and to understand environmental problems"
+    },
+    {
+      "type": "Internship/Placement",
+      "quantity": 1,
+      "organization": "CEMB",
+      "planned": "Yes",
+      "scheduled": "Yes",
+      "remarks": "Developed technical and interpersonal skills while collaborating with team members to achieve organizational goals"
+    },
+    {
+      "type": "Internship/Placement",
+      "quantity": 1,
+      "organization": "Diagnostic Laboratories",
+      "planned": "Yes",
+      "scheduled": "Yes",
+      "remarks": "Gain practical industry experience and develop professional skills relevant to the chosen field"
+    },
+    {
+      "type": "Internship/Placement",
+      "quantity": 1,
+      "organization": "Jinnah hospitals .lAHORE",
+      "planned": "Yes",
+      "scheduled": "Yes",
+      "remarks": "Gain practical industry experience and develop professional skills relevant to the chosen field"
+    },
+    {
+      "type": "Internship/Placement",
+      "quantity": 1,
+      "organization": "children’s hospital .Lahore",
+      "planned": "Yes",
+      "scheduled": "Yes",
+      "remarks": "Developed technical and interpersonal skills while collaborating with team members to achieve organizational goals"
+    },
+    {
+      "type": "Internship/Placement",
+      "quantity": 1,
+      "organization": "PCSIR",
+      "planned": "Yes",
+      "scheduled": "Yes",
+      "remarks": "Students learn theoretical & Applied knowledge, technical / operational skills, soft skills & professional exposure, industry Awareness & Networking"
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "2 Space",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "AB Technologies",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Ahmaar (Pvt.) Ltd.",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Async Digital",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Async Digital Software House",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "AWS Tech",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Bytewise Technologies",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Codexiom",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Corvit Systems",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Devsinc",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Dgware Solutions",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Ebryx (Pvt.) Ltd.",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "E-Care Solution",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Eyra Tech",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Fermi Soft",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Flicken",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "GulfBase",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Hoster99 (Web Hosting Company)",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Ibex",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "IIFA Tech",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Infinity Wave",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Innosoft Works (SMC-Private) Ltd.",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Invosage",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Kashf Foundation",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Kings Solutions",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Nexrupt technologies pvt ltd",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "OMNI Soft",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Prismware Technologies",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Qubit Dynamics",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Rstack Labs",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Strategic System",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Studio 93",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Tech Lynx Overdrive",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Thingtrax",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Tx Labs",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "University of Engineering & Technology (UET)",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Upvave",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "US Mobile",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Wix Patriots",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Wordx BPO",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Z Space",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Azhar Engineering and Power Generation (Pvt.) Ltd.",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "M.S.B Engineering Services",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Machine Zone (Pvt.) Ltd.",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "NIMIR Group of Companies",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Nishat Power Plant",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Project Cell (HVAC)",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "S.T Engineering Services (Pvt.) Ltd.",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Saab Moulded Industry (MDK)",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Toyota HN Motors",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Xida Mould",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Akhter Saeed Hospital",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Alam Medix Company",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Amarant Medical Technologies",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Econ Whizz",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Farooq Hospital",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Jinnah Hospital Lahore",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "RM Scientific Lab",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Saleem Memorial Hospital",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Shaukat Khanum Memorial Cancer Hospital",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Shifa International Hospital",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "University of Lahore Teaching Hospital",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Al Riaz Civil Engineering Services (Pvt.) Ltd.",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Al Shabbir Developers",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "CCECC",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Eratech Engineering Company",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Lahore Engineering Consultant (LEC)",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Luxurious Design & Built (Pvt.) Ltd.",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "MS Builder and Construction Co.",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Nazim & Qasim (Pvt.) Ltd.",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Raza Engineers Construction",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Durable Technologies",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Electros Energies",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Lahore Electric Supply Company (LESCO)",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Technology Links (Pvt.) Ltd.",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "IP",
+      "quantity": 1,
+      "organization": "Transfopower Industries",
+      "planned": "Yes",
+      "scheduled": "",
+      "remarks": ""
+    },
+    {
+      "type": "Internship/Placement",
+      "quantity": 1,
+      "organization": "Pakistan Academy of Letters",
+      "planned": "Yes",
+      "scheduled": "Yes",
+      "remarks": "Literary Research & Editorial Exposure"
+    },
+    {
+      "type": "Internship/Placement",
+      "quantity": 1,
+      "organization": "Govt. Girls High School Bhubtian",
+      "planned": "Yes",
+      "scheduled": "Yes",
+      "remarks": ""
+    },
+    {
+      "type": "Internship/Placement",
+      "quantity": 1,
+      "organization": "Govt. High School Sher Shah Colony",
+      "planned": "Yes",
+      "scheduled": "Yes",
+      "remarks": ""
+    },
+    {
+      "type": "Internship/Placement",
+      "quantity": 1,
+      "organization": "Govt. Girls Elementary School Sher Shah Colony",
+      "planned": "Yes",
+      "scheduled": "Yes",
+      "remarks": ""
+    },
+    {
+      "type": "Internship/Placement",
+      "quantity": 1,
+      "organization": "Hamza Foundation",
+      "planned": "Yes",
+      "scheduled": "Yes",
+      "remarks": ""
+    },
+    {
+      "type": "Internship/Placement",
+      "quantity": 1,
+      "organization": "Child Welfare Center",
+      "planned": "Yes",
+      "scheduled": "Yes",
+      "remarks": ""
+    },
+    {
+      "type": "Internship",
+      "quantity": 1,
+      "organization": "Social security hospital Multan road",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Duration: 6 months \\"
+    },
+    {
+      "type": "Internship",
+      "quantity": 1,
+      "organization": "Mohaddis Media",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: Islamic Media \\"
+    },
+    {
+      "type": "Placement",
+      "quantity": 1,
+      "organization": "The Educators",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: Education \\"
+    },
+    {
+      "type": "Placement",
+      "quantity": 1,
+      "organization": "Punjab Institute of Mental Health, Lahore",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: Government \\"
+    },
+    {
+      "type": "Internship",
+      "quantity": 1,
+      "organization": "Pakistan Health and Population Welfare Department",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: Government \\"
+    },
+    {
+      "type": "Internship",
+      "quantity": 1,
+      "organization": "Media / TV",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: media \\"
+    },
+    {
+      "type": "Internship",
+      "quantity": 1,
+      "organization": "Pakistan Airport Athority (PAA)",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: Aviation \\"
+    },
+    {
+      "type": "Placement",
+      "quantity": 1,
+      "organization": "Airblue",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: Aviation \\"
+    },
+    {
+      "type": "Placement",
+      "quantity": 1,
+      "organization": "Menzies--Ras",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: Aviation \\"
+    },
+    {
+      "type": "Internship",
+      "quantity": 1,
+      "organization": "Shaukat Khanum Memorial Cancer Hospital and Research Centre",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: Private \\"
+    },
+    {
+      "type": "Placement",
+      "quantity": 1,
+      "organization": "SMC Hanjurwal",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: Private \\"
+    },
+    {
+      "type": "Placement",
+      "quantity": 1,
+      "organization": "UOLTH",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: private \\"
+    },
+    {
+      "type": "Placement",
+      "quantity": 1,
+      "organization": "Children Hospital",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: Private \\"
+    },
+    {
+      "type": "Placement",
+      "quantity": 1,
+      "organization": "PESSI KOT LAKHPAT",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: private \\"
+    },
+    {
+      "type": "Placement",
+      "quantity": 1,
+      "organization": "PESSI, Multan Road",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: private \\"
+    },
+    {
+      "type": "Placement",
+      "quantity": 1,
+      "organization": "Al- Mustafa Mazang",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: private \\"
+    },
+    {
+      "type": "Placement",
+      "quantity": 1,
+      "organization": "Ibrahim Eye Center",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: private \\"
+    },
+    {
+      "type": "Placement",
+      "quantity": 1,
+      "organization": "National Eye Hospital",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: private \\"
+    },
+    {
+      "type": "Placement",
+      "quantity": 1,
+      "organization": "Khizar Eye Center",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: private \\"
+    },
+    {
+      "type": "Internship",
+      "quantity": 1,
+      "organization": "Majlis-e-Taraqqi-e-Adab, Lahore",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: Govt. Literary & Publishing translation \\"
+    },
+    {
+      "type": "Internship",
+      "quantity": 1,
+      "organization": "Institute of Islamic Culture, Lahore",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: Govt. Academic & Research \\"
+    },
+    {
+      "type": "Internship",
+      "quantity": 1,
+      "organization": "University of Lahore (Self)",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Duration: 4 months as an Teacher Assistant \\"
+    },
+    {
+      "type": "Internship",
+      "quantity": 1,
+      "organization": "C&W",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: Construction \\"
+    },
+    {
+      "type": "Placement",
+      "quantity": 1,
+      "organization": "Federal Tax Ombudsman of Pakistan",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: GOV \\"
+    },
+    {
+      "type": "Placement",
+      "quantity": 1,
+      "organization": "Human Rights Committee, Punjab Bar Council",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: GOV \\"
+    },
+    {
+      "type": "Internship",
+      "quantity": 1,
+      "organization": "Provincial Assembly",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: GOV \\"
+    },
+    {
+      "type": "Placement",
+      "quantity": 1,
+      "organization": "Fountain House-Pakistan",
+      "planned": "",
+      "scheduled": "",
+      "remarks": "Sector: Mental Health \\"
+    },
+    {
+      "type": "Internship/Placement",
+      "quantity": 1,
+      "organization": "DGPR",
+      "planned": "Yes",
+      "scheduled": "Yes",
+      "remarks": "Senior Students"
+    }
+  ]
+}
