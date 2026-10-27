@@ -631,7 +631,8 @@ function setSelectOptions(id, values, allLabel, counts = null, total = null) {
   makeOption('All', `${allLabel} (${totalChoices})${Number.isFinite(total) ? ' · '+Number(total).toLocaleString('en-US')+' activities' : ''}`);
   items.forEach(item => {
     const count = counts instanceof Map ? counts.get(item) : counts?.[item];
-    makeOption(item, `${item} (${Number(count || 0).toLocaleString('en-US')})`);
+    const unfilteredInternship = id === "activityFilter" && item === "Internship / Placement" && isCompleteOverviewScope();
+    makeOption(item, `${item} (${(unfilteredInternship ? CONFIRMED_IP_TOTAL : Number(count || 0)).toLocaleString('en-US')})`);
   });
   select.value = previous !== 'All' && items.includes(previous) ? previous : 'All';
 }
@@ -686,7 +687,7 @@ function updateFacultyFilter() {
   setSelectOptions(
     "facultyFilter",
     [...rows.map(row => row.faculty), ...uolInstitutionalRoster.map(r => r.faculty)],
-    "All Faculties", optionTotals(rows, "faculty"), rows.reduce((n,r)=>n+rowAmount(r),0)
+    "All Faculties", optionTotals(rows, "faculty"), reconciledTotal(rows, {wholeCohort:isCompleteOverviewScope()})
   );
 }
 
@@ -727,7 +728,7 @@ function updateDepartmentFilter() {
   setSelectOptions(
     "departmentFilter",
     [...rows.map(row => row.department),...uolInstitutionalRoster.filter(r=>faculty==='All'||r.faculty===faculty).map(r=>r.department)],
-    "All Departments", optionTotals(rows, "department"), rows.reduce((n,r)=>n+rowAmount(r),0)
+    "All Departments", optionTotals(rows, "department"), reconciledTotal(rows, {wholeCohort:isCompleteOverviewScope()})
   );
 }
 
@@ -765,7 +766,8 @@ function updateActivityFilter() {
     // Do not show the data-quality placeholder "Unclassified" as an activity type.
     allRows.map(row => row.type)
       .filter(type => !isInvalidLabel(type) && norm(type) !== "total activities"),
-    "All Activity Types", optionTotals(rows.filter(r=>norm(r.type)!=="total activities"), "type"), rows.filter(r=>norm(r.type)!=="total activities").reduce((n,r)=>n+rowAmount(r),0)
+    "All Activity Types", optionTotals(rows.filter(r=>norm(r.type)!=="total activities"), "type"),
+    reconciledTotal(rows.filter(r=>norm(r.type)!=="total activities"), {wholeCohort:isCompleteOverviewScope()})
   );
 }
 
@@ -916,7 +918,7 @@ function updateOrganizationFilter() {
     rows
       .flatMap(executiveOrgAliases)
       .filter(organization => !isInvalidLabel(organization) && !/mentioned in excel sheet/i.test(organization)),
-    "All Organizations", organizationOptionTotals(rows), rows.reduce((n,r)=>n+rowAmount(r),0)
+    "All Organizations", organizationOptionTotals(rows), reconciledTotal(rows, {wholeCohort:isCompleteOverviewScope()})
   );
 }
 
@@ -1348,6 +1350,17 @@ function renderStudentSummary() {
       rows
     );
 
+  // Match Section 2's owner-confirmed submitted-list scope only when no
+  // faculty, department, semester or organization restriction is active.
+  // Filtered breakdowns still belong to the legacy cleaned worksheet.
+  const executiveIpConfirmedScope =
+    ($("facultyFilter")?.value || "All") === "All" &&
+    ($("departmentFilter")?.value || "All") === "All" &&
+    ($("monthFilter")?.value || "All") === "All" &&
+    ($("organizationFilter")?.value || "All") === "All" &&
+    !($('searchFilter')?.value || '').trim();
+  const executiveIpVisibleTotal = executiveIpConfirmedScope ? CONFIRMED_IP_TOTAL : summary.total;
+
   [
     "kInternshipStudents",
     "sideStudents",
@@ -1362,7 +1375,7 @@ function renderStudentSummary() {
 
         $(id)
           .textContent =
-          summary.total
+          executiveIpVisibleTotal
             .toLocaleString();
       }
     }
@@ -1469,6 +1482,26 @@ function renderStudentSummary() {
 /* =========================================================
    CHART DATA
    ========================================================= */
+
+// Canonical owner-confirmed quantity for the complete Internship / Placement scope.
+// Only replace the *aggregate* when the view contains the entire source cohort.
+// Do not distribute unattributed records across faculties, organizations or semesters.
+const CONFIRMED_IP_TOTAL = 127;
+function isCompleteOverviewScope(){
+  return ($("monthFilter")?.value || "All") === "All" &&
+    ($("facultyFilter")?.value || "All") === "All" &&
+    ($("departmentFilter")?.value || "All") === "All" &&
+    ($("organizationFilter")?.value || "All") === "All" &&
+    !($('searchFilter')?.value || '').trim();
+}
+function reconciledTotal(rows, {wholeCohort = false} = {}) {
+  const sourceTotal = rows.reduce((sum,row) => sum + rowAmount(row),0);
+  if (!wholeCohort) return sourceTotal;
+  const sourceIP = rows.filter(r=>r.type === "Internship / Placement")
+                       .reduce((sum,row)=>sum+rowAmount(row),0);
+  // Complete portfolio = all non-IP activities + confirmed 127 IP entries.
+  return sourceTotal - sourceIP + CONFIRMED_IP_TOTAL;
+}
 
 function rowAmount(row) {
   // For a selected PRPSTFPT41 evidence organization, display its own frequency.
@@ -1607,6 +1640,46 @@ function wrapLabel(
 }
 
 
+function escapeHtmlText(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => {
+    const entities = {"&":"&amp;", "<":"&lt;", ">":"&gt;", "'":"&#39;"};
+    return c === '"' ? "&quot;" : entities[c];
+  });
+}
+
+function renderDepartmentRanking(data) {
+  const host = $("departmentRanking");
+  if (!host) return;
+  const entries = Object.entries(data || {});
+  const totalGroups = entries.length;
+  const max = Math.max(1, ...entries.map(([,n]) => Number(n)||0));
+  const colors = ["#0c9478", "#2e68c7", "#7c57c2", "#de8e23", "#1c88a2", "#2f4ea8", "#0b7f6f", "#5b7be1"];
+  host.innerHTML = `
+    <div class="department-ranking-top">
+      <div>
+        <div class="department-ranking-title">Department-wise Activities</div>
+        <p class="department-ranking-subtitle">Total activity volume by department</p>
+      </div>
+      <span class="department-ranking-badge">${totalGroups} groups</span>
+    </div>
+    <div class="department-ranking-list">
+      ${entries.map(([name, value], index) => {
+        const n = Number(value)||0;
+        const width = Math.max(3, n / max * 100);
+        const color = colors[index % colors.length];
+        return `<button type="button" class="department-ranking-row" data-department-name="${escapeHtmlText(name)}" aria-label="${escapeHtmlText(name)}, ${n.toLocaleString()} activities. View details">
+          <span class="department-ranking-rank">${String(index+1).padStart(2,'0')}</span>
+          <span class="department-ranking-main">
+            <span class="department-ranking-name" title="${escapeHtmlText(name)}">${escapeHtmlText(name)}</span>
+            <span class="department-ranking-track"><span class="department-ranking-fill" style="--dept-color:${color};width:${width}%"></span></span>
+          </span>
+          <span class="department-ranking-value">${n.toLocaleString()}</span>
+        </button>`;
+      }).join('')}
+    </div>`;
+  host.querySelectorAll('[data-department-name]').forEach(btn => btn.addEventListener('click', () => openPopup('department', btn.dataset.departmentName)));
+}
+
 /* =========================================================
    BAR CHART
    ========================================================= */
@@ -1652,6 +1725,22 @@ function barChart(
       ? ((Number(value || 0) / chartTotal) * 100).toFixed(1) + "%"
       : "0.0%";
 
+  if (id === "departmentChart") {
+    renderDepartmentRanking(data);
+    if ($(wrapper)) {
+      $(wrapper).style.height = "0px";
+      $(wrapper).hidden = true;
+    }
+    const mobileHost = $("mobileDepartmentActivities");
+    if (mobileHost) {
+      mobileHost.hidden = true;
+      mobileHost.replaceChildren();
+    }
+    const canvasEl = $(id);
+    if (canvasEl) canvasEl.style.display = "none";
+    return;
+  }
+
   if (
     wrapper &&
     $(wrapper)
@@ -1660,10 +1749,7 @@ function barChart(
     $(wrapper)
       .style
       .height =
-      Math.max(
-        280,
-        labels.length * 47
-      ) +
+      Math.max(280, labels.length * 47) +
       "px";
   }
 
@@ -1819,6 +1905,7 @@ function barChart(
 
             tooltip: {
               callbacks: {
+                title: items => items.length ? String(labels[items[0].dataIndex] || "") : "",
                 label: context => {
                   const value = Number(context.raw || 0);
                   return `${value.toLocaleString()} (${chartPercent(value)})`;
@@ -1869,13 +1956,19 @@ function barChart(
                         ? chartPercent(values[index])
                         : "0.0%";
 
+                    if (id === "departmentChart") {
+                      const name = String(label || "")
+                        .replace(/^Department of\s+/i, "")
+                        .replace(/^Faculty of\s+/i, "")
+                        .replace(/^Lahore School of\s+/i, "Lahore School: ");
+                      return name.length > 31 ? name.slice(0, 28).trimEnd() + "…" : name;
+                    }
                     return wrapLabel(label, 32);
                   },
 
                 font: {
 
-                  size:
-                    12
+                  size: id === "departmentChart" ? 10 : 12
                 }
               },
 
@@ -1921,8 +2014,14 @@ function activityChart() {
   const availableTypes = unique(allRows.map(row => row.type).filter(type =>
     !isInvalidLabel(type) && norm(type) !== "total activities"
   ));
+  // In complete-institution views, the confirmed internship/placement count
+  // replaces the old 1,087 contribution; it is NOT added to that contribution.
+  // Narrower faculty/department/semester/organization searches remain based on
+  // their actual matched source rows (the 127 lack complete attribution).
+  const useConfirmedIP = isCompleteOverviewScope();
   const entries = availableTypes
-    .map(type => [type, Number(grouped[type] || 0)])
+    .map(type => [type, type === "Internship / Placement" && useConfirmedIP
+      ? CONFIRMED_IP_TOTAL : Number(grouped[type] || 0)])
     .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 
   const labels =
@@ -2354,18 +2453,10 @@ function renderPr41CompanyEvidence(){
 }
 function render() {
 
-  const totalActivities =
-    filteredRows.reduce(
-      (
-        sum,
-        row
-      ) =>
-        sum +
-        rowAmount(
-          row
-        ),
-      0
-    );
+  const totalActivities = reconciledTotal(filteredRows, {
+    wholeCohort: isCompleteOverviewScope() &&
+      ($("activityFilter")?.value || "All") === "All"
+  });
 
   const scheduled =
     filteredRows
@@ -2540,8 +2631,20 @@ function render() {
       const footNode = $("activityTypeKpiFoot");
       const iconNode = $("activityTypeKpiIcon");
       if (labelNode) labelNode.textContent = selectedActivityType;
-      if (valueNode) valueNode.textContent = totalActivities.toLocaleString("en-US");
-      if (footNode) footNode.textContent = footText;
+      // Display the same owner-confirmed 127 as Section 2 for the
+      // unfiltered internship scope. Do not fabricate filtered allocations.
+      const confirmedIpView = selectedActivityType === "Internship / Placement" &&
+        ($("facultyFilter")?.value || "All") === "All" &&
+        ($("departmentFilter")?.value || "All") === "All" &&
+        ($("monthFilter")?.value || "All") === "All" &&
+        ($("organizationFilter")?.value || "All") === "All" &&
+        !($('searchFilter')?.value || '').trim();
+      if (valueNode) valueNode.textContent = (confirmedIpView ? CONFIRMED_IP_TOTAL : totalActivities).toLocaleString("en-US");
+      if (footNode) footNode.textContent = confirmedIpView
+        ? "Internship / Placement"
+        : selectedActivityType === "Internship / Placement"
+          ? "Internship / Placement"
+          : footText;
       if (iconNode) iconNode.textContent = symbol;
       internshipKpiCard.style.setProperty("--activity-gradient", gradient);
       internshipKpiCard.style.setProperty("--activity-icon-bg", iconBg);

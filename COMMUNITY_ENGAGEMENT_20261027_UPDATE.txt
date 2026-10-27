@@ -1,0 +1,6 @@
+Community Engagement source of truth: 8 supplied rows, total How Many = 8.
+The detailed Community Engagement worksheet already had the correct eight records.
+Fixed quantities in All Separated Activities: [(55, 'PRPSTFPT67', 'SAFE Society', '60', 1), (56, 'PRPSTFPT67', 'Chaoon Foundation', '60', 1), (57, 'PRPSTFPT67', 'SAFE Society', '50', 1), (146, 'PRPSTFPT40', '1.\tGovt. Graduate college ( for boys) Kot Radha kishan', '3', 1)]
+The repeated SAFE Society PRPSTFPT67 row is preserved exactly as supplied; potential duplicate requires source confirmation.
+The overall activity total now decreases by 169 relative to the previous master workbook, before any other dashboard-specific adjustment.
+Section 2 internship KPI remains set to the user-confirmed 127.

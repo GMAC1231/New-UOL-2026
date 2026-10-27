@@ -1,0 +1,56 @@
+
+/* Final fix for section 1-3 status card */
+.basic-modern .uol-executive-header{align-items:flex-start!important}
+.basic-modern .status-right.uol-executive-status{
+  background:#f6fbf9!important;
+  border:1px solid #cfe7dd!important;
+  border-radius:16px!important;
+  padding:16px 18px!important;
+  min-width:260px!important;
+  max-width:360px!important;
+  width:auto!important;
+  box-shadow:0 6px 18px rgba(14,92,70,.08)!important;
+  gap:8px!important;
+  text-align:left!important;
+  flex:0 0 auto!important;
+}
+.basic-modern .uol-executive-status .status-caption{
+  display:flex!important;
+  align-items:center!important;
+  gap:9px!important;
+  color:#7f948d!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  letter-spacing:.16em!important;
+  text-transform:uppercase!important;
+  line-height:1.2!important;
+}
+.basic-modern .uol-executive-status .uol-kicker-dot{
+  width:10px!important;height:10px!important;border-radius:50%!important;
+  background:#12a37d!important;box-shadow:0 0 0 4px rgba(18,163,125,.14)!important;
+  flex:none!important;
+}
+.basic-modern .uol-executive-status .connection{
+  display:block!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:none!important;
+  color:#096f59!important;
+  font-size:13px!important;
+  line-height:1.35!important;
+  font-weight:800!important;
+  white-space:normal!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  word-break:break-word!important;
+}
+@media(max-width:900px){
+  .basic-modern .uol-executive-status{min-width:220px!important;max-width:100%!important}
+}
+@media(max-width:760px){
+  .basic-modern .uol-executive-header{flex-direction:column!important;gap:16px!important;align-items:flex-start!important}
+  .basic-modern .status-right.uol-executive-status{
+    width:100%!important;min-width:0!important;max-width:none!important;padding:15px 16px!important;
+  }
+}

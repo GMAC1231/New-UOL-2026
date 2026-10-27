@@ -1,0 +1,5 @@
+User-submitted Guest Lecture / GLIT table: 39 records, quantity total = 47.
+Master All Separated Activities updated from prior 135 to 47 (difference -88).
+Guest Lecture - GLIT, GLIT, Guest Lecture, Summary synchronized.
+Existing Community Engagement correction (8) and Section 2 internship KPI (127) retained.
+Dashboard reads data/UOL_Separated_All_Activity_Data_Cleaned.xlsx.

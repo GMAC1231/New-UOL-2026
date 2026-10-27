@@ -1,0 +1,38 @@
+/* Consolidated Explore Data toolbar: layout only; existing IDs and handlers untouched */
+#top-filters.filter-strip{display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:8px 10px!important;align-items:end!important;padding:12px 14px!important;margin:10px 0 12px!important;border-radius:14px!important}
+#top-filters.filter-strip>*{box-sizing:border-box!important;margin:0!important;min-width:0!important;max-width:none!important;width:100%!important;min-height:0!important;flex:none!important;grid-column:auto!important;align-self:end!important}
+#top-filters .filter-label{grid-column:1/-1!important;align-self:center!important;font-size:10px!important;line-height:17px!important;letter-spacing:.1em!important;margin:0 0 1px!important}
+#top-filters .filter-emoji{font-size:13px!important;margin-right:5px!important}
+#top-filters .uol-snapshot-label{grid-column:span 2!important;display:flex!important;flex-direction:column!important;gap:4px!important;font-size:10px!important;line-height:12px!important;white-space:nowrap!important}
+#top-filters .uol-snapshot-label select{width:100%!important;max-width:100%!important;margin:0!important}
+#top-filters #matchedSubmissionCount{grid-column:span 2!important;display:flex!important;align-items:center!important;justify-content:center!important;line-height:1.2!important;font-size:10px!important;white-space:normal!important;text-align:center!important}
+#top-filters #monthFilter{grid-column:span 2!important}
+#top-filters #facultyFilter{grid-column:span 3!important}
+#top-filters #departmentFilter{grid-column:span 3!important}
+#top-filters #activityFilter{grid-column:span 2!important}
+#top-filters #organizationFilter{grid-column:span 2!important}
+#top-filters #searchFilter{grid-column:span 4!important}
+#top-filters #resetBtn{grid-column:span 1!important}
+#top-filters #exportBtn{grid-column:span 1!important}
+#top-filters #pdfBtn{grid-column:span 2!important}
+#top-filters select.filter,#top-filters input.filter,#top-filters .uol-snapshot-label select{height:36px!important;min-width:0!important;max-width:100%!important;width:100%!important;padding:0 10px!important;font-size:11px!important;border-radius:8px!important;overflow:hidden!important;text-overflow:ellipsis!important;background:#f9fcfe!important}
+#top-filters .btn{height:36px!important;min-height:36px!important;padding:0 6px!important;font-size:10px!important;border-radius:8px!important;white-space:nowrap!important;box-shadow:none!important}
+#top-filters #resetBtn{font-size:10px!important}
+#top-filters #exportBtn{font-size:10px!important}
+@media(max-width:1190px){
+ #top-filters.filter-strip{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+ #top-filters #facultyFilter,#top-filters #departmentFilter{grid-column:span 2!important}
+ #top-filters #activityFilter,#top-filters #organizationFilter{grid-column:span 2!important}
+ #top-filters #searchFilter{grid-column:span 3!important}
+ #top-filters #resetBtn{grid-column:span 1!important}
+ #top-filters #exportBtn,#top-filters #pdfBtn{grid-column:span 1!important}
+}
+@media(max-width:680px){
+ #top-filters.filter-strip{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;padding:11px!important}
+ #top-filters .filter-label{grid-column:1/-1!important}
+ #top-filters .uol-snapshot-label,#top-filters #matchedSubmissionCount,#top-filters #monthFilter,#top-filters #facultyFilter,#top-filters #departmentFilter,#top-filters #activityFilter,#top-filters #organizationFilter{grid-column:span 1!important}
+ #top-filters #searchFilter{grid-column:1/-1!important}
+ #top-filters #resetBtn{grid-column:span 2!important}
+ #top-filters #exportBtn,#top-filters #pdfBtn{grid-column:span 1!important}
+}
+@media(max-width:390px){#top-filters .uol-snapshot-label,#top-filters #matchedSubmissionCount{grid-column:1/-1!important}}

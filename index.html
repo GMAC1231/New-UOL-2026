@@ -13,7 +13,7 @@
 
   <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="pr41-executive.css">
   <link rel="stylesheet" href="powerbi.css">
-<link rel="stylesheet" href="mobile-responsive.css?v=20261011"><link rel="stylesheet" href="submission-snapshots.css"><link rel="stylesheet" href="quality-embedded.css"><link rel="stylesheet" href="mobile-chart-cards.css"><link rel="stylesheet" href="pr41-company-popup.css"><link rel="stylesheet" href="pr46-record-popup.css?v=20261016"></head>
+<link rel="stylesheet" href="mobile-responsive.css?v=20261011"><link rel="stylesheet" href="submission-snapshots.css"><link rel="stylesheet" href="quality-embedded.css"><link rel="stylesheet" href="mobile-chart-cards.css"><link rel="stylesheet" href="pr41-company-popup.css"><link rel="stylesheet" href="pr46-record-popup.css?v=20261016"><link rel="stylesheet" href="uol-2026-redesign.css?v=20261026"><link rel="stylesheet" href="uol-layout-v2.css?v=20261026"><link rel="stylesheet" href="uol-unified-2026.css?v=3"><link rel="stylesheet" href="department-space-optimized.css?v=20261026"><link rel="stylesheet" href="department-label-readability.css?v=2"><link rel="stylesheet" href="department-ranking-card.css?v=20261026"><link rel="stylesheet" href="unified-dropdown-nav.css?v=1"><link rel="stylesheet" href="executive-action-buttons.css?v=20261026"><link rel="stylesheet" href="executive-button-views.css?v=20261026"><link rel="stylesheet" href="filter-graphs.css?v=2"><link rel="stylesheet" href="explore-data-compact.css?v=20261026"></head>
 
 <body>
 
@@ -94,6 +94,19 @@
 
 
 <div class="pbi-toolbar"><div><div class="pbi-toolbar-title">Performance intelligence</div><div class="pbi-toolbar-note">Interactive institutional reporting · Select any slicer to explore the connected data</div></div><div class="pbi-toolbar-right"><span class="pbi-indicator">Connected workbook</span><span class="pbi-view-tag">TENTATIVE REPORT</span></div></div>
+<nav class="executive-actions executive-on-demand" aria-label="Executive Overview sections">
+  <button type="button" class="exec-action exec-action-primary" data-exec-view="summary" aria-pressed="true">▦ Overview</button>
+  <button type="button" class="exec-action" data-exec-view="faculty" aria-pressed="false">Faculty Activities</button>
+  <button type="button" class="exec-action" data-exec-view="activity" aria-pressed="false">Activity Types</button>
+  <button type="button" class="exec-action" data-exec-view="monthly" aria-pressed="false">Semester Comparison</button>
+  <button type="button" class="exec-action" data-exec-view="department" aria-pressed="false">Departments</button>
+  <button type="button" class="exec-action" data-exec-view="internship" aria-pressed="false">Internship Summary</button>
+  
+  <button type="button" class="exec-action" data-exec-view="status" aria-pressed="false">Reporting Pipeline</button>
+  <button type="button" class="exec-action" data-exec-view="quality" aria-pressed="false">Data Quality</button>
+  <button type="button" class="exec-action" data-exec-view="filters" aria-pressed="false">Filters & Export</button>
+</nav>
+<p class="exec-view-hint" id="execViewHint">Select a button to view detailed charts. The main overview stays compact.</p>
 <section class="filter-strip" id="top-filters">
 
       <div class="filter-label"><span class="filter-emoji">⚙</span> EXPLORE DATA</div>
@@ -138,8 +151,15 @@
 
     </section>
 
-
-    <div class="tentative-alert"><span class="notice-dot"></span><div><strong>Reporting overview</strong><span>Figures reflect the connected cleaned Excel workbook. Internship / placement student totals are displayed in relevant views only.</span></div><span class="tentative-chip">TENTATIVE</span></div>
+<section id="filterGraphDashboard" class="filter-graph-dashboard" aria-label="Filtered analytics graphs">
+  <div class="filter-graph-head"><div><h2>Filtered Analytics</h2><p>Graphs reflect your current faculty, department, semester, activity and organization selection.</p></div><div class="filter-graph-actions"><span id="filterGraphCount" aria-live="polite">—</span><button type="button" id="filterGraphExport">Export Graphs (PNG)</button></div></div>
+  <div class="filter-graph-grid">
+    <article><h3>Faculty-wise Activity Volume</h3><div class="filter-graph-canvas"><canvas id="filterFacultyGraph"></canvas></div></article>
+    <article><h3>All Activity Types</h3><div class="filter-graph-canvas"><canvas id="filterActivityGraph"></canvas></div></article>
+    <article><h3>Department-wise Activity Volume</h3><div class="filter-graph-canvas"><canvas id="filterDepartmentGraph"></canvas></div></article>
+    <article><h3>Semester Comparison</h3><div class="filter-graph-canvas"><canvas id="filterSemesterGraph"></canvas></div></article>
+  </div>
+</section>
 <section class="kpi-grid">
       <div class="kpi-card kpi-activities" id="totalActivitiesKpiCard">
         <div class="kpi-icon blue">◫</div>
@@ -260,13 +280,14 @@
           </div>
 
           <span class="click-note">
-            Click bar for details
+            Click a row for details
           </span>
         </div>
 
-        <div id="departmentWrap" class="chart-wrap tall">
+        <div id="departmentRanking" class="department-ranking-card" aria-label="Department activity rankings"></div>
+        <div id="departmentWrap" class="chart-wrap tall" hidden>
           <canvas id="departmentChart"></canvas>
-        </div><div id="mobileDepartmentActivities" class="uol-mobile-chart-list" aria-label="Department activity rankings"></div>
+        </div><div id="mobileDepartmentActivities" class="uol-mobile-chart-list" aria-label="Department activity rankings" hidden></div>
 
       </div>
 
@@ -379,5 +400,40 @@
 
   <script src="excel-connection.js"></script><script src="submission-snapshots.js"></script><script src="pr41-company-popup.js"></script><script src="app.js?v=pr46-record-popup-20261016"></script>
 
-<script src="mobile-navigation.js?v=20261011" defer></script><script src="quality-embedded.js" defer></script></body>
+
+<div class="filter-graph-modal" id="filterGraphModal" hidden>
+  <div class="filter-graph-modal-backdrop" data-close-filter-graph-modal></div>
+  <div class="filter-graph-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="filterGraphModalTitle">
+    <div class="filter-graph-modal-head">
+      <div>
+        <p class="filter-graph-modal-eyebrow">FILTERED ANALYTICS</p>
+        <h2 id="filterGraphModalTitle">Graph Details</h2>
+        <p id="filterGraphModalMeta" class="filter-graph-modal-meta">Current filtered view</p>
+      </div>
+      <button type="button" class="filter-graph-modal-close" id="filterGraphModalClose" aria-label="Close popup">×</button>
+    </div>
+    <div class="filter-graph-modal-content">
+      <div class="filter-graph-modal-chartcard">
+        <div class="filter-graph-modal-summary">
+          <span id="filterGraphModalBadge" class="filter-graph-modal-badge">0 rows</span>
+          <span id="filterGraphModalValue" class="filter-graph-modal-value">0 activities</span>
+        </div>
+        <div class="filter-graph-modal-canvas"><canvas id="filterGraphModalCanvas"></canvas></div>
+      </div>
+      <div class="filter-graph-modal-records">
+        <div class="filter-graph-modal-records-head">
+          <h3>Supporting Records</h3>
+          <span id="filterGraphModalRecordsCount">0 rows</span>
+        </div>
+        <div class="filter-graph-modal-tablewrap">
+          <table class="filter-graph-modal-table">
+            <thead><tr><th>Ref ID</th><th>Faculty</th><th>Department</th><th>Activity</th><th>Organization</th><th>Quantity</th></tr></thead>
+            <tbody id="filterGraphModalTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="mobile-navigation.js?v=20261011" defer></script><script src="quality-embedded.js" defer></script><script src="unified-dropdown-nav.js?v=1" defer></script><script src="executive-button-views.js" defer></script><script src="filter-graphs.js" defer></script></body>
 </html>

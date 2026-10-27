@@ -1,0 +1,12 @@
+/* Section 2 consolidated evidence + organization ranking */
+body.section-modern .ip-organizations-panel .ip-combined-org-list{max-height:540px!important;overflow-y:auto!important;display:block!important;padding:0 6px!important}
+body.section-modern .ip-organizations-panel .ip-combined-org-row{display:grid!important;grid-template-columns:35px minmax(0,1fr) 48px!important;gap:14px!important;align-items:center!important;width:100%!important;border:0!important;border-bottom:1px solid #e8eef3!important;background:#fff!important;cursor:pointer!important;padding:13px 6px!important;text-align:left!important;border-radius:7px!important}
+body.section-modern .ip-organizations-panel .ip-combined-org-row:hover{background:#f2faf7!important}
+body.section-modern .ip-organizations-panel .ip-org-main{display:flex;min-width:0;flex-direction:column;gap:8px}
+body.section-modern .ip-organizations-panel .ip-org-main .ranking-name{font-size:12px;color:#23435c;white-space:normal;overflow-wrap:anywhere}
+body.section-modern .ip-organizations-panel .ip-org-rail{display:block;height:9px;border-radius:99px;background:#eaf0f4;overflow:hidden}
+body.section-modern .ip-organizations-panel .ip-org-fill{display:block;height:100%;border-radius:99px}
+body.section-modern .ip-organizations-panel .ip-org-number{font-size:13px;font-weight:800;color:#173b55;text-align:right}
+body.section-modern .ip-organizations-panel .org-chart-controls{display:flex!important;flex-wrap:wrap;align-items:center;gap:10px;padding:12px!important;margin:12px 0!important}
+body.section-modern .ip-organizations-panel .org-chart-controls select{max-width:310px!important;min-width:210px!important}
+body.section-modern .ip-organizations-panel .ip-evidence-note{font-size:11px;color:#6f8396;line-height:1.5}

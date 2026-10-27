@@ -1,0 +1,36 @@
+/* Shared 2026 full-dashboard layout upgrade. Applied last on all pages. */
+.uol-unified-nav{display:flex;align-items:center;min-width:0;margin:12px 0 14px;padding:5px;background:#edf3f6;border:1px solid #d9e5ec;border-radius:13px;box-shadow:0 3px 12px rgba(12,43,67,.035)}
+.uol-unified-links{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;width:100%}
+.uol-unified-links a{display:block;min-width:0;text-align:center;text-decoration:none;font-size:11px;font-weight:800;line-height:1.35;color:#426077;padding:10px 8px;border-radius:9px;white-space:normal;transition:background .17s,color .17s,box-shadow .17s}
+.uol-unified-links a:hover{background:#f9fcfd;color:#0d725e}
+.uol-unified-links a.active{background:#fff;color:#087c66;box-shadow:0 3px 12px rgba(16,62,85,.09)}
+.uol-unified-select{display:none;width:100%;height:43px;padding:9px 12px;border:1px solid #cbdae5;border-radius:9px;background:#fff;color:#173d54;font-size:13px;font-weight:800}
+.uol-table-responsive{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.uol-table-responsive>table{min-width:680px}
+/* Put relevant content side by side without extra full-width blanks. */
+#analytics-section.analytics-grid{grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:12px!important;align-items:stretch!important}
+#analytics-section>.panel{min-height:0!important;min-width:0!important}
+#analytics-section>.panel-faculty{grid-column:span 7!important;order:1}
+#analytics-section>.panel-activity{grid-column:span 5!important;order:2}
+#analytics-section>.panel-monthly{grid-column:span 5!important;order:3}
+#analytics-section>.panel-internship{grid-column:span 7!important;order:4}
+#analytics-section>.panel-department{grid-column:1/-1!important;order:5}
+#analytics-section>.panel-status{grid-column:1/-1!important;order:6}
+#analytics-section>.panel{padding:15px!important}
+#analytics-section .panel-monthly .chart-wrap{min-height:260px!important;height:260px!important}
+#analytics-section .panel-faculty .chart-wrap{min-height:300px!important;height:300px!important}
+#analytics-section .panel-activity .activity-chart-layout{min-height:300px!important}
+#analytics-section .panel-internship .impact-box{width:100%!important;max-width:none!important}
+#analytics-section .panel-internship .impact-row{padding:9px 12px!important}
+#analytics-section .panel-status .status-flow>.pipeline-stage{min-height:145px!important}
+.basic-modern .charts{gap:12px!important;align-items:stretch!important}
+.basic-modern .charts>.panel{min-width:0!important}
+.basic-modern .metrics{gap:11px!important;margin:13px 0!important}
+.basic-modern .metric{min-height:130px!important}
+.basic-modern .basic-filterbar{padding:15px!important}
+.basic-modern .filter-items{gap:11px!important}
+.detail-dialog,.basic-popup-dialog,.uol-major-modal{max-width:min(96vw,1100px)!important}
+@media(max-width:1100px){#analytics-section>.panel-faculty,#analytics-section>.panel-activity,#analytics-section>.panel-monthly,#analytics-section>.panel-internship{grid-column:span 6!important}.basic-modern .charts{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:850px){.uol-unified-links{display:none}.uol-unified-select{display:block}#analytics-section>.panel-faculty,#analytics-section>.panel-activity,#analytics-section>.panel-monthly,#analytics-section>.panel-internship{grid-column:1/-1!important}.basic-modern .charts{grid-template-columns:1fr!important}.basic-modern .charts>.panel{grid-column:1/-1!important}}
+@media(max-width:600px){html,body{max-width:100%;overflow-x:hidden}.uol-unified-nav{margin:10px 0;padding:6px}.main,.basic-modern main.basic-content{max-width:100%!important;min-width:0!important}.kpi-grid,.basic-modern .metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.kpi-card,.basic-modern .metric{padding:12px!important;min-height:112px!important}.kpi-value,.basic-modern .metric strong{font-size:28px!important}.basic-modern .filter-items{grid-template-columns:1fr!important}.basic-modern .filter-items>*{width:100%!important;min-width:0!important}#analytics-section{gap:10px!important}#analytics-section>.panel{padding:12px!important}#analytics-section .panel-monthly .chart-wrap{min-height:220px!important;height:220px!important}.basic-modern .panel{padding:13px!important}.table-scroll,.uol-table-responsive{max-width:100%;overflow-x:auto!important}.detail-dialog{width:96vw!important}.filter-strip>*{min-width:0!important}}
+@media(max-width:380px){.kpi-grid,.basic-modern .metrics{grid-template-columns:1fr!important}}

@@ -1,0 +1,7 @@
+﻿Activity Category,Source Worksheet,Existing Record Rows,Sum of How Many,Status
+Internship / Placement,Internship - Placement,121,121.0,Already present in cleaned workbook; no duplicates appended
+Alumni Talk / Mentoring,Alumni Talk - Mentoring,4,9.0,Already present in cleaned workbook; no duplicates appended
+Community Engagement,Community Engagement,8,8.0,Already present in cleaned workbook; no duplicates appended
+Guest Lecture / GLIT,Guest Lecture - GLIT,39,47.0,Already present in cleaned workbook; no duplicates appended
+Guest lecture supplied rows,,,39,1 pasted rows not matched exactly
+Internship table supplied,,,,Only first 10 fields; no quantities or organizations in supplied attachment

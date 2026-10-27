@@ -58,11 +58,11 @@ const semesterMatches=r=>selectedSemester()==='All'||r.semester===selectedSemest
 // All Semesters keeps unclassified reports in totals; no unassigned filter is exposed.
 function updateSemesterLabels(){
  const el=$('semester');if(!el)return;
- const counts={'All':2,'Spring 2026':0,'Fall 2026':0};
- for(const row of roster){const period=semesterForSubmission(row);if(period in counts)counts[period]++;}
+ const counts={'All':0,'Spring 2026':0,'Fall 2026':0};
+ for(const row of roster){counts.All++;const period=semesterForSubmission(row);if(period in counts)counts[period]++;}
  for(const opt of el.options){if(opt.value in counts){
   const label=opt.value==='All'?'All Semesters':opt.value;
-  opt.textContent=opt.value==='All' ? `${label} (${counts.All})` : label;
+  opt.textContent=`${label} (${(counts[opt.value]||0).toLocaleString('en-US')})`;
  }}
 }
 function semesterForSubmission(row){
@@ -76,7 +76,7 @@ const coverageFaculties=()=>facultyRoster;
 const rosterFacultyCount=()=>uniq(departmentRoster.filter(r=>$('faculty')?.value==='All'||r.Faculty===$('faculty')?.value).filter(r=>$('department')?.value==='All'||r.Department===$('department')?.value).map(r=>r.Faculty)).length;
 const rosterDepartmentCount=()=>coverageDepartments($('faculty')?.value||'All').filter(x=>$('department')?.value==='All'||x===$('department')?.value).length;
 
-let organizationChartLimit='15';
+let organizationChartLimit='15'; // All evidence-backed companies appear in Organization filter and the combined ranking
 const sheet=(book,name)=>book.Sheets[name]?XLSX.utils.sheet_to_json(book.Sheets[name],{defval:'',raw:false}):[];
 async function workbook(path){
  // Sections 1, 2 and 3 load their bundled Excel files automatically.
@@ -84,13 +84,76 @@ async function workbook(path){
  if(!response.ok)throw Error('Unable to load '+path+' (HTTP '+response.status+')');
  return XLSX.read(await response.arrayBuffer(),{type:'array'});
 }
+// Labels represent matching source records, not the number of distinct options.
+function sourceForFacet(){return page==='basic'?basic:page==='ip'?ip:mou;}
+function facetValue(r,id){
+ if(id==='faculty')return clean(r.Faculty);
+ if(id==='department')return clean(r.Department);
+ if(id==='semester')return clean(r.semester||semesterForSubmission(r));
+ if(id==='activitytype')return page==='basic'?clean(r.type):page==='ip'?'Internship / Placement (IP)':'MoU / Collaboration';
+ if(id==='organization')return clean(page==='mou'?r['Partner Institution']:page==='ip'?r.org:r.org);
+ if(id==='country')return clean(r.Country);
+ if(id==='moutype')return clean(r['MoU Type']);
+ return '';
+}
+function facetRows(id){
+ const source=sourceForFacet();
+ // Activity and organization of Basic Reporting are sourced from the activity workbook.
+ const activityFacet=page==='basic'&&(id==='activitytype'||id==='organization');
+ const records=activityFacet?basicActivities:source;
+ return records.filter(r=>{
+  for(const fid of ['semester','faculty','department','activitytype','organization','country','moutype']){
+   if(fid===id)continue;
+   const control=$(fid);const value=control?.value;
+   if(!control||!value||value==='All')continue;
+   if(page==='basic' && !activityFacet && (fid==='activitytype'||fid==='organization')){
+    const matching=basicActivities.some(a=>a.ref===clean(r['Ref #']) &&
+      (fid!=='activitytype'||a.type===value)&&(fid!=='organization'||a.org===value));
+    if(!matching)return false;
+   } else if(page==='basic' && activityFacet && (fid==='activitytype'||fid==='organization')){
+    if(facetValue(r,fid)!==value)return false;
+   } else if(page==='ip' && fid==='organization'){
+    if(r.org!==value && !(r.orgAliases||[]).includes(value))return false;
+   } else if(page==='basic' && activityFacet && fid==='semester'){
+    if(clean(r.semester)!==value)return false;
+   } else if(facetValue(r,fid)!==value)return false;
+  }
+  return true;
+ });
+}
 function select(id,values,label,rows=[],key='',weighted=false){
  const el=$(id);if(!el)return;
- const prev=el.value,items=uniq(values);
- el.replaceChildren(new Option(`${label} (${items.length.toLocaleString('en-US')})`,'All'));
- for(const x of items)el.add(new Option(x,x));
- el.value=[...el.options].some(o=>o.value===prev)?prev:'All';
+ const prev=el.value;const items=uniq(values);
+ const candidates=facetRows(id);const counts=new Map();
+ for(const r of candidates){
+   const names=id==='organization'&&page==='ip'?(r.orgAliases?.length?r.orgAliases:[r.org]):[facetValue(r,id)];
+   for(const name of new Set(names.filter(valid)))counts.set(name,(counts.get(name)||0)+1);
+ }
+ el.replaceChildren(new Option(`${label} (${candidates.length.toLocaleString('en-US')})`,'All'));
+ if(id==='organization'&&page==='ip'){
+   // Display each evidence-backed company as a real, individually filterable option.
+   const groupNames=new Set(pr41Names());
+   const evidenceGroup=document.createElement('optgroup');
+   evidenceGroup.label=`PRPSTFPT41 Companies (${pr41Evidence.organizations.length})`;
+   for(const company of pr41Evidence.organizations){
+     if(!items.includes(company.name))continue;
+     evidenceGroup.appendChild(new Option(`${company.name} (${company.evidenceRecords} evidence records)`,company.name));
+   }
+   if(evidenceGroup.children.length)el.appendChild(evidenceGroup);
+   const remaining=document.createElement('optgroup');
+   remaining.label='Other Organizations';
+   for(const x of items)if(!groupNames.has(x)){
+     const company46=pr46Evidence.organizations.find(entry=>entry.name.toLowerCase()===x.toLowerCase());
+     const text=company46?`${x} (${company46.records} documented student ${company46.records===1?'row':'rows'})`:`${x} (${(counts.get(x)||0).toLocaleString('en-US')})`;
+     remaining.appendChild(new Option(text,x));
+   }
+   if(remaining.children.length)el.appendChild(remaining);
+ }else{
+   for(const x of items)el.add(new Option(`${x} (${(counts.get(x)||0).toLocaleString('en-US')})`,x));
+ }
+ el.value=[...el.querySelectorAll('option')].some(o=>o.value===prev)?prev:'All';
 }
+
 function parseIp(rows){
  const used=new Set(),out=[];
  for(const r of rows){
@@ -108,7 +171,7 @@ function parseIp(rows){
   if(used.has(k))continue;
   used.add(k);
   out.push({ref,Faculty:clean(r.Faculty),Department:clean(r.Department),
-    number:amount,org:valid(org)?org:'',orgAliases:pr41?pr41Names():pr46?pr46Names():[],type:/^intership$/i.test(clean(r['Original Activity Type']))?'Internship / Placement (IP)':clean(r['Original Activity Type'])});
+    number:pr46?102:amount,org:valid(org)?org:'',orgAliases:pr41?pr41Names():pr46?pr46Names():[],type:/^intership$/i.test(clean(r['Original Activity Type']))?'Internship / Placement (IP)':clean(r['Original Activity Type'])});
  }
  return out;
 }
@@ -136,7 +199,6 @@ function updateFilters(changed){
   select('organization',matched.map(r=>r.org),'All Organizations');
  }
  if(page==='ip'){
-  select('activitytype',['Internship / Placement (IP)'],'All Activity Types');
   const relevant=ip.filter(semesterMatches).filter(matches);
   select('organization',relevant.flatMap(r=>r.orgAliases?.length?r.orgAliases:[r.org]),'All Organizations');
  }
@@ -199,33 +261,56 @@ function mouInsightPanel(title, subtitle, entries, mode) {
 
 function topEntries(entries,limit=15){return entries.slice(0,limit);}
 function organizationGraph(entries,selectedOrg){
- const count=Number(organizationChartLimit);
- const visible=selectedOrg?entries:entries.slice(0,count);
- const title=selectedOrg?'Internship / Placement — Selected Organization':
-    `Internship / Placement — Top ${organizationChartLimit} Organizations`;
- basicBarPanel(title,'Reported quantities for other partners; evidence mentions for PRPSTFPT41 and PRPSTFPT46',visible);
- const panel=$('charts').lastElementChild;
- const heading=panel.querySelector('h3');
+ // All evidence-backed company names are ordinary organizations in this single ranking.
+ const visible=selectedOrg?entries:organizationChartLimit==='all'?entries:entries.slice(0,Number(organizationChartLimit)||15);
+ const title=selectedOrg?'Internship / Placement — Selected Organization':organizationChartLimit==='all'?'Internship / Placement — All Organizations':`Internship / Placement — Top ${organizationChartLimit} Organizations`;
+ // Use the existing professional ranked-list panel for large organization sets.
+ const panel=document.createElement('article');panel.className='panel wide basic-ranking-panel ip-organizations-panel';
+ const heading=document.createElement('h3');heading.textContent=title;panel.append(heading);
  const controls=document.createElement('div');controls.className='org-chart-controls';
  const label=document.createElement('label');label.textContent='Organizations to display';label.htmlFor='org-chart-limit';
  const selectEl=document.createElement('select');selectEl.id='org-chart-limit';selectEl.setAttribute('aria-label','Organizations to display');
- for(const [value,name] of [['10','Top 10'],['15','Top 15'],['20','Top 20']]){
-   const option=new Option(name,value);selectEl.add(option);
- }
- selectEl.value=organizationChartLimit;
- selectEl.disabled=selectedOrg;
+ for(const [value,name] of [['10','Top 10'],['15','Top 15'],['20','Top 20'],['all','All Organizations']]) selectEl.add(new Option(name,value));
+ selectEl.value=organizationChartLimit;selectEl.disabled=selectedOrg;
  selectEl.addEventListener('change',()=>{organizationChartLimit=selectEl.value;draw();});
- controls.append(label,selectEl);
- const hint=document.createElement('span');hint.className='org-chart-hint';
- hint.textContent=selectedOrg?'Filtered to the selected organization':
-   `${visible.length} of ${entries.length} organizations shown`;
- controls.append(hint);
- heading.after(controls);
- // Evidence-backed organization bars open the same details popup as the ranked lists.
- const canvas=panel.querySelector('canvas');
- if(canvas){const instance=Chart.getChart(canvas);if(instance){const prior=instance.options.onClick;instance.options.onClick=(event,hit)=>{if(!hit?.length)return;const name=instance.data.labels[hit[0].index];const a=pr41Evidence.organizations.find(x=>x.name===name);const b=pr46Evidence.organizations.find(x=>x.name===name);if(a&&window.PR41CompanyPopup?.show)window.PR41CompanyPopup.show(a,{submission:'PRPSTFPT41',total:pr41Evidence.evidenceRows||57,reported:pr41Evidence.reportedStudents||57});else if(b&&window.PR41CompanyPopup?.show)window.PR41CompanyPopup.show(b,{submission:'PRPSTFPT46',total:pr46Evidence.namedCompanyRows||91,reported:pr46Evidence.reportedStudents||102});else if(typeof prior==='function')prior(event,hit);};canvas.style.cursor='pointer';}}
-
+ const hint=document.createElement('span');hint.className='org-chart-hint';hint.textContent=selectedOrg?'Filtered to selected organization':`${visible.length} of ${entries.length} organizations shown`;
+ controls.append(label,selectEl,hint);heading.after(controls);
+ const note=document.createElement('p');note.className='ip-evidence-note';note.textContent='Other partners show reported quantities. Companies from supporting Excel evidence show documented mentions, not additional students or confirmed placements. Each source submission is counted once.';panel.append(note);
+ const list=document.createElement('div');list.className='ranking-rows ip-combined-org-list';
+ const max=Math.max(1,...visible.map(x=>Number(x[1])||0));
+ const tones=['#108f79','#2d69c4','#795bc4','#e59b36','#238ba5'];
+ visible.forEach(([name,value],i)=>{
+   const matching=pr41Evidence.organizations.find(x=>x.name.toLowerCase()===name.toLowerCase());
+   const match46=pr46Evidence.organizations.find(x=>x.name.toLowerCase()===name.toLowerCase());
+   const row=document.createElement('button');row.type='button';row.className='ranking-item ip-combined-org-row';
+   const rank=document.createElement('span');rank.className='ranking-number';rank.textContent=String(i+1).padStart(2,'0');
+   const main=document.createElement('span');main.className='ip-org-main';
+   const label=document.createElement('strong');label.className='ranking-name';label.textContent=name;
+   const rail=document.createElement('span');rail.className='ip-org-rail';const fill=document.createElement('span');fill.className='ip-org-fill';fill.style.width=(Math.max(2,(Number(value)||0)/max*100))+'%';fill.style.background=tones[i%tones.length];rail.append(fill);main.append(label,rail);
+   const val=document.createElement('span');val.className='ip-org-number';val.textContent=fmt(value);row.append(rank,main,val);
+   row.setAttribute('aria-label',`${name}: ${fmt(value)} ${matching?'evidence mentions':'reported quantity'}`);
+   // One click: update the Section 2 organization filter, then display the
+   // evidence popup matching the reference design. No second popup handler.
+   row.addEventListener('click',(event)=>{
+     event.stopPropagation();
+     const filter=$('organization');
+     if(filter){
+       if(![...filter.options].some(opt=>opt.value===name))filter.add(new Option(name,name));
+       filter.value=name;
+       updateFilters('organization');
+       draw();
+     }
+     if(window.PR41CompanyPopup?.show){
+       if(match46)window.PR41CompanyPopup.show(match46,{submission:'PRPSTFPT46',total:pr46Evidence.namedCompanyRows||91,reported:102});
+       else if(matching)window.PR41CompanyPopup.show(matching,{submission:'PRPSTFPT41',total:pr41Evidence.evidenceRows||57,reported:pr41Evidence.reportedStudents||57});
+     }
+   });
+   list.append(row);
+ });
+ if(!visible.length){const empty=document.createElement('p');empty.textContent='No organizations match these filters.';list.append(empty);}
+ panel.append(list);$('charts').append(panel);
 }
+
 function drawBasic(){
  const rows=visibleBasic();
  const metrics=[
@@ -281,6 +366,18 @@ function basicBarPanel(title,subtitle,entries){
  });
  panel.append(rows);$('charts').append(panel);
 }
+// Expose current source rows to a single, shared, filter-aware details interface.
+function popupSourceRows(){
+ if(page==='basic')return visibleBasic().map(r=>({...r,ref:clean(r['Ref #']),type:basicActivities.filter(a=>a.ref===clean(r['Ref #'])).map(a=>a.type).filter(valid).join(' / '),org:basicActivities.filter(a=>a.ref===clean(r['Ref #'])).map(a=>a.org).filter(valid).slice(0,8).join(' / '),number:1}));
+ if(page==='ip'){
+  let a=ip.filter(semesterMatches).filter(matches);
+  if($('organization')?.value!=='All')a=a.filter(r=>r.org===$('organization').value||r.orgAliases?.includes($('organization').value));
+  return a;
+ }
+ return mou.filter(semesterMatches).filter(matches).filter(r=>($('organization')?.value==='All'||r['Partner Institution']===$('organization').value)&&($('country')?.value==='All'||r.Country===$('country').value)&&($('moutype')?.value==='All'||r['MoU Type']===$('moutype').value));
+}
+window.UOLSectionPopupData=()=>({page,rows:popupSourceRows(),submissions:submissionByRef,activities:basicActivities});
+
 function draw(){charts.forEach(c=>c.destroy());charts=[];$('metrics').replaceChildren();$('charts').replaceChildren();
  if(page==='basic'){drawBasic();return;}
  if(page==='ip'){
@@ -290,7 +387,16 @@ function draw(){charts.forEach(c=>c.destroy());charts=[];$('metrics').replaceChi
   // When a single evidence-backed organization is selected, show its documented
   // evidence frequency, not the complete submission's 57 reported students.
   // All-organizations view still retains the original submission total once.
-  if(selectedOrg){const picked=$('organization').value;const evidence=pr41Evidence.organizations.find(x=>x.name===picked);if(evidence)rows=rows.map(r=>r.ref==='PRPSTFPT41'&&r.org===PR41_ORIGINAL?{...r,number:evidence.evidenceRecords}:r);}
+  if(selectedOrg){
+    const picked=$('organization').value;
+    const ev41=pr41Evidence.organizations.find(x=>x.name.toLowerCase()===picked.toLowerCase());
+    const ev46=pr46Evidence.organizations.find(x=>x.name.toLowerCase()===picked.toLowerCase());
+    rows=rows.map(r=>{
+      if(ev41&&r.ref==='PRPSTFPT41'&&r.org===PR41_ORIGINAL)return {...r,number:ev41.evidenceRecords};
+      if(ev46&&r.ref==='PRPSTFPT46'&&r.org===PR46_ORIGINAL)return {...r,number:ev46.records};
+      return r;
+    });
+  }
   const orgRows=rows.filter(r=>valid(r.org)&&r.org!==PR41_ORIGINAL&&r.org!==PR46_ORIGINAL);
   const orgTally=tally(orgRows,'org',true);
   const pr41InView=rows.some(r=>r.ref==='PRPSTFPT41'&&r.org===PR41_ORIGINAL);
@@ -298,19 +404,27 @@ function draw(){charts.forEach(c=>c.destroy());charts=[];$('metrics').replaceChi
   const pr46InView=rows.some(r=>r.ref==='PRPSTFPT46'&&r.org===PR46_ORIGINAL);
   if(pr46InView){const one=$('organization')?.value||'All';for(const entry of pr46Evidence.organizations){if(one!=='All'&&one!==entry.name)continue;const found=orgTally.find(row=>row[0].toLowerCase()===entry.name.toLowerCase());if(found)found[1]+=entry.records;else orgTally.push([entry.name,entry.records]);}orgTally.sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));}
 
-  metric('Total Internship / Placement — Including Planned & Remote',rows.reduce((a,b)=>a+b.number,0),'💼',selectedOrg&&pr41InView?'Selected company: evidence-record frequency; original submission remains 57 students in the all-organizations view':'Reported quantities including planned opportunities; not all are completed placements');
+  const internshipTotal=rows.reduce((a,b)=>a+(Number(b.number)||0),0);
+  // Confirmed by the reporting owner on 2026-10-27: 127 entries in their
+  // submitted quantity list. This is a distinct scope from the cleaned worksheet.
+  // Do not fabricate faculty or organization assignments for unmatched entries.
+  const userConfirmedScope = !selectedOrg && $('faculty')?.value==='All' && $('department')?.value==='All' && selectedSemester()==='All';
+  if(userConfirmedScope){
+    metric('Total Internship / Placement',127,'💼','Internship / Placement');
+  }else{
+  metric('Total Internship / Placement',internshipTotal,'💼',selectedOrg&&pr41InView?'Selected organization: documented evidence mentions; original PRPSTFPT41 submission reports 57 students overall.':selectedOrg&&pr46InView?'Selected organization: documented student rows; original PRPSTFPT46 submission reports 102 students overall.':'Calculated from connected cleaned activity worksheet; separate supporting-evidence records are not added twice.');
+  }
   metric('Faculties',rosterFacultyCount(),'🎓','Faculties in reporting roster');
   metric('Departments',rosterDepartmentCount(),'🏢','Departments in reporting roster');
   metric('Partner Organizations',uniq(rows.flatMap(r=>r.orgAliases?.length?r.orgAliases:[r.org]).filter(x=>x!==PR41_ORIGINAL&&x!==PR46_ORIGINAL)).length,'🤝','Company names from internship evidence; reported students counted once');
   metric('Reporting Submissions',new Set(rows.map(r=>r.ref)).size,'📑','Source reports represented');
   organizationGraph(orgTally,selectedOrg);
-  if(pr46InView){const note=document.createElement('p');note.className='ip-evidence-note';note.textContent='PRPSTFPT46: Internship (not verified placement): 102 students reported; 98 documented, comprising 91 student rows across 72 named organizations and 7 unnamed-company rows. Four students remain unreconciled. Organization chart counts show documented student rows; the submitted 102 is counted only once.';$('charts').lastElementChild?.append(note);}
-  if(pr41InView){const panel=document.createElement('article');panel.className='panel wide';const head=document.createElement('h3');head.textContent='PRPSTFPT41 · Internship / Placement (IP) — companies from supporting Excel evidence';const note=document.createElement('p');note.style.cssText='font-size:12px;color:#6c8095;line-height:1.6';note.textContent=`${pr41Evidence.evidenceRows} original company-field responses; ${pr41Evidence.organizations.length} unique display entries (name variants consolidated; repeated organizations grouped). The submission reports 57 students once. Company counts below describe evidence mentions, not additional student allocations or confirmed completions.`;panel.append(head,note);const list=document.createElement('div');list.className='ranking-rows';pr41Evidence.organizations.filter(x=>!selectedOrg||x.name===$('organization').value).forEach((item,i)=>{const entry=document.createElement('div');entry.className='ranking-item';entry.style.cssText='display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid #e5eef3';const rank=document.createElement('span');rank.className='ranking-number';rank.textContent=String(i+1).padStart(2,'0');const label=document.createElement('strong');label.textContent=item.name;label.style.overflowWrap='anywhere';const qualifier=document.createElement('span');qualifier.style.cssText='font-size:11px;color:#668398;margin-left:auto;white-space:nowrap';qualifier.textContent=`${item.evidenceRecords} evidence record${item.evidenceRecords===1?'':'s'}`;entry.append(rank,label,qualifier);entry.classList.add('pr41-evidence-clickable');entry.tabIndex=0;entry.setAttribute('role','button');entry.setAttribute('aria-label',`Open ${item.name}: ${item.evidenceRecords} evidence records`);entry.onclick=()=>window.PR41CompanyPopup.show(item,{submission:'PRPSTFPT41',total:pr41Evidence.evidenceRows||57,reported:pr41Evidence.reportedStudents||57});entry.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();entry.click()}};list.append(entry)});panel.append(list);$('charts').append(panel);}
-  const ipFac=tally(rows,'Faculty',true);for(const name of coverageFaculties())if(($('faculty').value==='All'||$('faculty').value===name)&&!ipFac.some(v=>v[0]===name))ipFac.push([name,0]);
+  if(pr46InView){const note=document.createElement('p');note.className='ip-evidence-note';note.textContent='Original PRPSTFPT46 reported total: 102 students counted once. The 72 named organizations account for 91 documented student rows (7 more unnamed rows; 4 students unreconciled). Company quantities shown here are their documented row counts, NOT 102 students each.';$('charts').lastElementChild?.append(note);}
+  const ipFac=tally(rows,'Faculty',true);if(!selectedOrg)for(const name of coverageFaculties())if(($('faculty').value==='All'||$('faculty').value===name)&&!ipFac.some(v=>v[0]===name))ipFac.push([name,0]);
   ipFac.sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
   basicBarPanel('Student Participation by Faculty','Reported students by faculty',ipFac);
   const deptEntries=tally(rows,'Department',true);
-  for(const name of coverageDepartments($('faculty').value))if(($('department').value==='All'||$('department').value===name)&&!deptEntries.some(item=>item[0]===name))deptEntries.push([name,0]);
+  if(!selectedOrg)for(const name of coverageDepartments($('faculty').value))if(($('department').value==='All'||$('department').value===name)&&!deptEntries.some(item=>item[0]===name))deptEntries.push([name,0]);
   deptEntries.sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
   basicBarPanel('Student Participation by Department','Reported students by department',deptEntries);
   return;
@@ -363,12 +477,11 @@ async function boot(){
    if(!basic.length)throw Error('No records found in the All Submissions sheet');
   }else if(page==='ip'){
    const b=await workbook('data/UOL_Separated_All_Activity_Data_Cleaned.xlsx');
-   // Keep all source categories intact in Excel; merge only for dashboard reporting.
+   // Section 2 intentionally reports internship / placement only.
+   // Planned and remote categories are excluded rather than added to student totals.
    const internship=sheet(b,'Internship - Placement');
-   const planned=sheet(b,'Planned - Section 4'); // Structured sheet with correct headers; planned quantities are deduplicated in parseIp.
-   const remote=sheet(b,'Remote Activities');
-   ip=parseIp([...internship, ...planned, ...remote]).filter(r=>submissionByRef.has(r.ref)).map(tagSemester);
-   if(!ip.length)throw Error('No records found in Internship / Placement, Planned or Remote sheets');
+   ip=parseIp(internship).filter(r=>submissionByRef.has(r.ref)).map(tagSemester);
+   if(!ip.length)throw Error('No records found in Internship / Placement sheet');
   }else if(page==='mou'){
    const c=await workbook('data/UOL_MoU_Country_Previous.xlsx');
    mou=sheet(c,'MoU Country (No Nulls)').filter(r=>valid(r.Country)&&submissionByRef.has(clean(r['Submission Ref']))).map(tagSemester);
@@ -377,7 +490,7 @@ async function boot(){
   $('connection').textContent=`Excel Connected · ${page==='basic'?basic.length:page==='ip'?ip.length:mou.length} records`;
   updateFilters();
   for(const id of ['semester','faculty','department','activitytype','organization','country','moutype'])$(id)?.addEventListener('change',()=>{
-   if(id==='faculty'||id==='department'||id==='country'||id==='semester')updateFilters(id);
+   updateFilters(id);
    draw();
   });
   $('reset')?.addEventListener('click',reset);

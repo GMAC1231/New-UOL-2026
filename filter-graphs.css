@@ -1,0 +1,97 @@
+
+.filter-graph-dashboard{background:#fff;border:1px solid #d9e8ef;border-radius:18px;padding:20px;margin:14px 0;box-shadow:0 10px 28px rgba(21,58,89,.06)}
+.filter-graph-dashboard:not(.exec-visible){display:none!important}
+.filter-graph-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.filter-graph-head h2{font-size:20px;line-height:1.15;color:#183a55;font-weight:850;margin:0 0 6px}.filter-graph-head p{font-size:12px;color:#72869b;margin:0;max-width:700px}
+.filter-graph-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.filter-graph-actions span{font-size:11px;font-weight:800;color:#547087;background:#f3f8fb;border:1px solid #dbe8ef;border-radius:999px;padding:9px 12px}.filter-graph-actions button{background:linear-gradient(135deg,#0c8b72,#0a755f);color:#fff;border:0;border-radius:10px;padding:11px 15px;font-size:11px;font-weight:800;cursor:pointer;box-shadow:0 8px 16px rgba(12,139,114,.18)}
+.filter-graph-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.filter-graph-grid article{border:1px solid #deebf1;border-radius:16px;padding:0;min-width:0;background:linear-gradient(180deg,#ffffff 0%,#fbfdff 100%);box-shadow:0 8px 20px rgba(20,55,83,.05);overflow:hidden}
+.filter-graph-cardhead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:16px 16px 10px;border-bottom:1px solid #edf3f7}
+.filter-graph-cardcopy h3{font-size:13px;color:#21415d;margin:0 0 4px;font-weight:850}.filter-graph-cardcopy p{font-size:10px;color:#7b8ea0;margin:0}
+.filter-graph-cardmeta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.filter-graph-chip{display:inline-flex;align-items:center;justify-content:center;padding:7px 10px;border-radius:999px;background:#f1f8f5;color:#0c866d;border:1px solid #d2ebe1;font-size:10px;font-weight:800;white-space:nowrap}
+.filter-graph-open{border:1px solid #d7e4ec;background:#fff;color:#234360;border-radius:9px;padding:8px 10px;font-size:10px;font-weight:800;cursor:pointer}
+.filter-graph-open:hover{background:#f5faff}
+.filter-graph-canvas{height:270px;position:relative;padding:12px 14px 16px}
+.filter-graph-note{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:0 16px 14px;color:#7b8ea0;font-size:10px}.filter-graph-note strong{color:#21415d}
+.filter-graph-modal[hidden]{display:none!important}.filter-graph-modal{position:fixed;inset:0;z-index:2500}.filter-graph-modal-backdrop{position:absolute;inset:0;background:rgba(10,22,35,.58)}
+.filter-graph-modal-dialog{position:relative;width:min(1180px,96vw);max-height:90vh;overflow:hidden;background:#fff;border-radius:18px;border:1px solid #dbe7ee;box-shadow:0 24px 50px rgba(8,18,28,.28);margin:4vh auto;display:flex;flex-direction:column}
+.filter-graph-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:18px 20px;background:linear-gradient(135deg,#173b56,#214f71);color:#fff}.filter-graph-modal-eyebrow{margin:0 0 5px;font-size:10px;letter-spacing:.14em;font-weight:900;color:#b9d4ea}.filter-graph-modal-head h2{margin:0 0 6px;font-size:24px;line-height:1.08}.filter-graph-modal-meta{margin:0;font-size:12px;color:#dbeaf5}.filter-graph-modal-close{border:0;background:rgba(255,255,255,.12);color:#fff;border-radius:10px;width:38px;height:38px;font-size:26px;line-height:1;cursor:pointer}
+.filter-graph-modal-content{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr);gap:16px;padding:18px;overflow:auto;background:#f7fbfd}.filter-graph-modal-chartcard,.filter-graph-modal-records{background:#fff;border:1px solid #dce8ef;border-radius:16px;box-shadow:0 8px 20px rgba(20,55,83,.04)}
+.filter-graph-modal-chartcard{padding:16px}.filter-graph-modal-summary{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.filter-graph-modal-badge{background:#eef8f4;border:1px solid #d2e9df;color:#0c866d;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800}.filter-graph-modal-value{background:#f3f8fb;border:1px solid #deebf1;color:#21415d;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800}
+.filter-graph-modal-canvas{height:420px;position:relative}
+.filter-graph-modal-records-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 16px 12px;border-bottom:1px solid #ecf2f6}.filter-graph-modal-records-head h3{margin:0;font-size:15px;color:#21415d}.filter-graph-modal-records-head span{font-size:11px;color:#6f8497;font-weight:700}
+.filter-graph-modal-tablewrap{max-height:460px;overflow:auto}.filter-graph-modal-table{width:100%;border-collapse:collapse;min-width:680px;font-size:11px}.filter-graph-modal-table th{position:sticky;top:0;background:#f1f6fa;color:#4d687d;font-size:10px;letter-spacing:.05em;text-transform:uppercase;padding:11px 10px;text-align:left;border-bottom:1px solid #dde8ee}.filter-graph-modal-table td{padding:10px;border-bottom:1px solid #edf2f5;color:#2c4358;vertical-align:top}.filter-graph-modal-table tr:nth-child(even){background:#fbfdff}
+@media(max-width:900px){.filter-graph-grid{grid-template-columns:1fr}.filter-graph-modal-content{grid-template-columns:1fr}.filter-graph-modal-canvas{height:320px}.filter-graph-modal-table{min-width:560px}}
+@media(max-width:640px){.filter-graph-dashboard{padding:14px}.filter-graph-cardhead{padding:14px 14px 10px}.filter-graph-canvas{height:245px;padding:8px 10px 12px}.filter-graph-note{padding:0 14px 12px}.filter-graph-modal-dialog{width:min(98vw,98vw);margin:1vh auto;max-height:96vh}.filter-graph-modal-head{padding:16px}.filter-graph-modal-head h2{font-size:20px}.filter-graph-modal-content{padding:12px}}
+
+/* Professional analytics finishing touches */
+.filter-graph-grid article{background:#fff!important;border-color:#dce6ee!important;box-shadow:0 3px 12px rgba(18,48,72,.055)!important}
+.filter-graph-cardhead{padding:18px 18px 12px!important}
+.filter-graph-cardcopy h3{font-size:14px!important;letter-spacing:-.015em!important}
+.filter-graph-cardcopy p{font-size:11px!important;line-height:1.5!important}
+.filter-graph-canvas{height:300px!important;padding:12px 18px 16px!important}
+.filter-graph-modal-canvas{height:445px!important}
+.filter-graph-open{transition:background .15s,border-color .15s;white-space:nowrap}
+.filter-graph-open:hover{background:#e9f6f2!important;border-color:#99cabc!important}
+.filter-graph-cardmeta .filter-graph-chip{font-variant-numeric:tabular-nums}
+@media(max-width:700px){.filter-graph-canvas{height:270px!important;padding:10px!important}.filter-graph-modal-canvas{height:310px!important}}
+
+/* Allow full activity taxonomy to remain readable. */
+#filterActivityGraph{max-width:100%}
+.filter-graph-grid article:has(#filterActivityGraph){grid-column:1/-1}
+.filter-graph-grid article:has(#filterActivityGraph) .filter-graph-canvas{min-height:270px}
+
+/* Graph-only visual upgrade: enterprise reporting palette, spacious plot areas */
+.filter-graph-grid article{border:1px solid #d8e5ed!important;box-shadow:0 7px 22px rgba(21,57,83,.065)!important;border-radius:17px!important}
+.filter-graph-cardhead{background:#fafcfe;border-bottom:1px solid #e5edf2!important}
+.filter-graph-cardcopy h3{font-size:15px!important;font-weight:800!important;color:#193b55!important}
+.filter-graph-canvas{background:#fff;border-radius:0 0 16px 16px}
+.filter-graph-open{background:#eff8f5!important;border-color:#cbe5da!important;color:#08745d!important;font-weight:800!important}
+.filter-graph-open:hover{background:#dff2eb!important}
+.filter-graph-grid canvas{cursor:pointer}
+.filter-graph-modal-canvas{background:#fff}
+.filter-graph-modal-chartcard{border-color:#d8e5ed}
+.filter-graph-note{border-top:1px solid #eff3f6;padding-top:10px!important}
+@media(min-width:1100px){.filter-graph-grid article:has(#filterActivityGraph){grid-column:1 / -1!important}}
+
+/* Gap-free executive analytics layout: two compact panels followed by
+   two full-width detailed views. Does not affect chart data or handlers. */
+@media (min-width: 901px){
+  #filterGraphDashboard .filter-graph-grid{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    grid-template-areas:"faculty semester" "activity activity" "department department"!important;
+    gap:14px!important;
+    align-items:stretch!important;
+    grid-auto-flow:row!important;
+  }
+  #filterGraphDashboard .filter-graph-grid article:has(#filterFacultyGraph){grid-area:faculty!important;grid-column:auto!important}
+  #filterGraphDashboard .filter-graph-grid article:has(#filterSemesterGraph){grid-area:semester!important;grid-column:auto!important}
+  #filterGraphDashboard .filter-graph-grid article:has(#filterActivityGraph){grid-area:activity!important;grid-column:1/-1!important}
+  #filterGraphDashboard .filter-graph-grid article:has(#filterDepartmentGraph){grid-area:department!important;grid-column:1/-1!important}
+}
+#filterGraphDashboard .filter-graph-grid article{min-width:0!important;margin:0!important}
+#filterGraphDashboard .filter-graph-grid .filter-graph-canvas{width:100%!important;min-width:0!important}
+@media (max-width:900px){
+  #filterGraphDashboard .filter-graph-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-areas:none!important;gap:12px!important}
+  #filterGraphDashboard .filter-graph-grid article{grid-area:auto!important;grid-column:1/-1!important}
+}
+
+
+/* Attractive professional graph polish */
+#filterGraphDashboard{background:linear-gradient(180deg,#ffffff 0%,#f9fcfd 100%)!important;border-color:#d7e6ee!important;box-shadow:0 14px 32px rgba(18,54,82,.07)!important}
+#filterGraphDashboard .filter-graph-head h2{font-size:22px!important;letter-spacing:-.02em!important;color:#163a54!important}
+#filterGraphDashboard .filter-graph-grid article{position:relative;overflow:hidden;border:1px solid #d8e5ed!important;border-radius:18px!important;box-shadow:0 10px 26px rgba(19,53,82,.07)!important;transition:transform .16s ease, box-shadow .16s ease}
+#filterGraphDashboard .filter-graph-grid article:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(19,53,82,.11)!important}
+#filterGraphDashboard .filter-graph-grid article::before{content:"";display:block;height:4px;background:linear-gradient(90deg,#0c8f73,#2c6ec7,#815bc9,#d99737)}
+#filterGraphDashboard .filter-graph-cardhead{background:linear-gradient(180deg,#fbfdfe 0%,#f6fafc 100%)!important;padding:18px 18px 12px!important}
+#filterGraphDashboard .filter-graph-cardcopy h3{font-size:15px!important;font-weight:800!important;color:#173852!important}
+#filterGraphDashboard .filter-graph-cardcopy p{font-size:11px!important;color:#6e8396!important}
+#filterGraphDashboard .filter-graph-chip{background:#eef8f4!important;border-color:#d4e9e0!important;color:#0d8468!important}
+#filterGraphDashboard .filter-graph-open{background:#eef7f4!important;border:1px solid #cfe3da!important;color:#0b745d!important;border-radius:10px!important;padding:8px 11px!important}
+#filterGraphDashboard .filter-graph-canvas{padding:14px 18px 16px!important}
+#filterGraphDashboard .filter-graph-note{padding:10px 16px 14px!important;border-top:1px solid #eef3f6;color:#7990a1!important}
+#filterGraphDashboard .filter-graph-note strong{color:#21415d!important}
+#filterGraphDashboard .filter-graph-modal-head{background:linear-gradient(135deg,#163750,#1d496a 62%,#0c8f73)!important}
+#filterGraphDashboard .filter-graph-modal-chartcard,#filterGraphDashboard .filter-graph-modal-records{box-shadow:0 12px 24px rgba(17,48,74,.06)!important}

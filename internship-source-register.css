@@ -1,0 +1,30 @@
+
+.ip-source-register{background:#fff;border:1px solid #dce8ef;border-radius:20px;box-shadow:0 8px 24px #173e5b0a;margin:16px 0;padding:20px}
+.ip-source-head{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}
+.ip-source-head h2{font-size:20px;color:#173b56;margin:4px 0 6px}.ip-source-head p{margin:0;color:#70859a;font-size:12px;line-height:1.65;max-width:950px}
+.ip-source-kicker{font-size:10px;font-weight:900;letter-spacing:.12em;color:#0b876e}
+.ip-source-badge{background:#eef8f4;color:#078268;border:1px solid #cfeadd;border-radius:99px;padding:9px 12px;font-size:11px;font-weight:800}
+.ip-source-tools{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:12px 0}
+.ip-source-tools input{border:1px solid #d3e3ed;border-radius:10px;padding:11px 13px;min-width:235px;flex:1;font-size:12px}
+.ip-source-tools span{font-size:11px;color:#617c90;font-weight:700}
+.ip-source-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;max-height:420px;overflow:auto;padding-right:6px}
+.ip-source-item{display:flex;align-items:center;gap:12px;justify-content:space-between;text-align:left;padding:12px 14px;border:1px solid #e1ebf0;background:#f9fcfe;border-radius:12px;cursor:pointer;color:#214159}
+.ip-source-item:hover{background:#effaf5;border-color:#bcded2}.ip-source-name{font-size:12px;font-weight:750;overflow-wrap:anywhere}.ip-source-count{flex:none;font-size:11px;font-weight:800;color:#087e66}
+.ip-source-note{font-size:11px;color:#70869a;background:#f4f8fb;border-left:3px solid #12a080;margin:14px 0 0;padding:11px 13px;border-radius:6px}
+.ip-source-modal[hidden]{display:none!important}.ip-source-modal{position:fixed;inset:0;z-index:3500;display:grid;place-items:center;background:#102e43a8;padding:15px}
+.ip-source-dialog{width:min(590px,95vw);max-height:90vh;overflow:auto;background:#fff;border-radius:20px;box-shadow:0 28px 80px #001d3652}
+.ip-source-dialog-head{display:flex;justify-content:space-between;gap:15px;padding:24px;background:linear-gradient(110deg,#183c59,#0c866d);color:#fff}.ip-source-dialog-head h2{margin:8px 0;font-size:22px}.ip-source-dialog-head small{font-size:11px;letter-spacing:.1em;font-weight:800}.ip-source-close{background:#ffffff20;border:1px solid #ffffff50;color:#fff;border-radius:9px;cursor:pointer;font-size:24px;width:37px;height:37px;flex:none}
+.ip-source-dialog-body{padding:21px 24px;font-size:13px;color:#21425b}.ip-source-detail{padding:13px 0;border-bottom:1px solid #eaf0f4}.ip-source-detail span{display:block;color:#7990a0;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}.ip-source-detail strong{font-size:14px;line-height:1.5}
+@media(max-width:740px){.ip-source-list{grid-template-columns:1fr}.ip-source-register{padding:15px}.ip-source-tools input{min-width:0}}
+/* Connected worksheet source filters */
+.ip-source-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:end}
+.ip-source-filter{display:flex;flex-direction:column;gap:5px;min-width:0;font-size:10px;color:#547187;font-weight:800;text-transform:uppercase;letter-spacing:.035em}
+.ip-source-filter select,.ip-source-filter input{margin:0;width:100%;min-width:0;height:39px;border:1px solid #cfdee8;border-radius:9px;padding:6px 10px;color:#20435c;background:white;font-size:11px;text-transform:none;letter-spacing:normal}
+.ip-source-reset{height:39px;background:#0b846e;border:0;border-radius:9px;color:#fff;font-weight:800;cursor:pointer}
+.ip-source-stats{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:6px 2px 12px;color:#40677c;font-size:12px}
+.ip-source-stats strong{color:#11765f}
+.ip-source-name{display:flex;flex-direction:column;min-width:0;gap:5px}
+.ip-source-name strong{font-size:12px;color:#214159}
+.ip-source-name small{font-size:10px;color:#7890a2;line-height:1.4}
+@media(max-width:800px){.ip-source-filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:530px){.ip-source-filters{grid-template-columns:minmax(0,1fr)}}

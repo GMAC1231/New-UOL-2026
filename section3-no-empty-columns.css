@@ -1,0 +1,44 @@
+/* Section 3: remove absolute-positioned masonry gaps and fit cards to the available width. */
+body.mou-modern #charts{
+ display:grid!important;
+ position:static!important;
+ grid-template-columns:minmax(0,1fr)!important;
+ grid-auto-flow:row!important;
+ columns:auto!important;
+ column-gap:normal!important;
+ height:auto!important;
+ min-height:0!important;
+ align-items:start!important;
+ gap:12px!important;
+ margin:12px 0 16px!important;
+}
+body.mou-modern #charts > .panel{
+ position:relative!important;
+ inset:auto!important;
+ top:auto!important;
+ left:auto!important;
+ right:auto!important;
+ bottom:auto!important;
+ float:none!important;
+ display:block!important;
+ grid-column:1/-1!important;
+ width:100%!important;
+ max-width:100%!important;
+ height:auto!important;
+ min-height:0!important;
+ transform:none!important;
+ margin:0!important;
+ padding:16px!important;
+ break-inside:auto!important;
+}
+body.mou-modern #charts .graph-wrap{
+ height:260px!important;
+ min-height:240px!important;
+ max-height:320px!important;
+ width:100%!important;
+ position:relative!important;
+}
+body.mou-modern #charts .basic-ranking-panel .ranking-rows{max-height:370px!important;overflow-y:auto!important}
+body.mou-modern #charts .mou-insight-body{gap:10px!important}
+body.mou-modern #data-quality-scope{margin-top:12px!important}
+@media(max-width:700px){body.mou-modern #charts>.panel{padding:13px!important}body.mou-modern #charts .graph-wrap{height:220px!important;min-height:210px!important}}

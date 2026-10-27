@@ -1,0 +1,5 @@
+/* Executive view uses the existing Section 2 evidence register as an on-demand panel. */
+#internshipSourceRegister[hidden]{display:none!important}
+#internshipSourceRegister.exec-internship-register{margin:14px 0 20px;max-width:100%;width:100%}
+#internshipSourceRegister.exec-internship-register:not(.exec-visible){display:none!important}
+#internshipSourceRegister.exec-internship-register.exec-visible{display:block!important}

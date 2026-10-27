@@ -1,0 +1,40 @@
+/* Sections 2 and 3: independent compact chart columns, no grid row gaps. */
+@media (min-width: 1001px) {
+ body.section-modern .charts {
+   display:block!important;
+   columns:2!important;
+   column-gap:12px!important;
+   margin:12px 0!important;
+ }
+ body.section-modern .charts > .panel {
+   display:inline-block!important;
+   vertical-align:top!important;
+   width:100%!important;
+   max-width:100%!important;
+   min-height:0!important;
+   height:auto!important;
+   break-inside:avoid!important;
+   page-break-inside:avoid!important;
+   margin:0 0 12px!important;
+   padding:15px!important;
+   overflow:hidden!important;
+ }
+ body.section-modern .charts > .panel.wide { width:100%!important; }
+ body.section-modern .charts .graph-wrap {
+   height:250px!important;
+   min-height:225px!important;
+   max-height:280px!important;
+   position:relative!important;
+ }
+ body.section-modern .charts .ranking-rows {
+   max-height:315px!important;
+   overflow-y:auto!important;
+ }
+}
+@media(max-width:1000px){
+ body.section-modern .charts {display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:11px!important}
+ body.section-modern .charts > .panel {grid-column:1/-1!important;margin:0!important;min-height:0!important}
+}
+body.section-modern .metrics {margin:11px 0!important;gap:10px!important}
+body.section-modern .page-intro {margin-bottom:10px!important}
+body.section-modern .basic-filterbar {margin-bottom:11px!important}

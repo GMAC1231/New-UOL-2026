@@ -1,0 +1,42 @@
+/* UOL 2026 — cohesive redesigned visual system */
+:root{--uol-navy:#142b42;--uol-deep:#0c2236;--uol-teal:#0b9b85;--uol-cyan:#29b7ab;--uol-blue:#3476d6;--uol-mist:#eef4f7;--uol-line:#dbe6ec;--uol-ink:#173348}
+body,body.basic-modern{background:#eef3f6!important;color:var(--uol-ink)!important;font-family:Inter,'Segoe UI',Arial,sans-serif!important}
+.side,.basic-sidebar.uol-shared-sidebar{background:linear-gradient(180deg,#102b41 0%,#123a4d 60%,#08685c 100%)!important;border-right:0!important;box-shadow:6px 0 24px #0c2b3e1c!important}
+.brand-wrap,.uol-side-brand{border-bottom:1px solid #ffffff25!important;padding-bottom:20px!important}
+.side .nav-link,.uol-shared-sidebar a.uol-nav-link{color:#d1e3ea!important;border-radius:12px!important;transition:background .2s,transform .2s!important}
+.side .nav-link.active,.uol-shared-sidebar a.uol-nav-link.current{background:linear-gradient(100deg,#0a927e,#10aa94)!important;color:#fff!important;border-left:3px solid #80edce!important;box-shadow:0 8px 20px #031d2240!important}
+.side .nav-link:hover,.uol-shared-sidebar a.uol-nav-link:hover{background:#ffffff1b!important;transform:translateX(2px)}
+.main{padding:0 22px 24px!important}.basic-modern main.basic-content{padding:0 22px 24px!important}
+.topbar,.basic-topbar.uol-executive-header{background:linear-gradient(110deg,#102d47,#145875 67%,#078e79)!important;border:0!important;border-radius:0 0 20px 20px!important;box-shadow:0 12px 32px #09324926!important;padding:22px 28px!important;min-height:125px!important}
+.topbar{margin:0 -22px!important}.basic-topbar.uol-executive-header{margin:0 -22px!important}
+.topbar .title-block h1,.uol-executive-header h1{color:#fff!important;font-size:clamp(25px,2.4vw,37px)!important;letter-spacing:-.045em!important}
+.topbar .header-title-accent{color:#9ef1d9!important}.topbar .title-sub,.uol-executive-header p{color:#d4e9ee!important}.page-number,.uol-executive-kicker{color:#91e8d3!important}
+.status-box,.uol-executive-status{background:#ffffff18!important;border:1px solid #ffffff36!important;color:#fff!important;border-radius:14px!important}
+.status-label,.status-value,.uol-executive-status .connection,.uol-executive-status .status-caption{color:#fff!important}
+.pbi-toolbar,.page-intro{margin-top:16px!important;margin-bottom:12px!important}.pbi-toolbar-title,.page-intro h1{color:#163c52!important;letter-spacing:-.04em!important}
+.filter-strip,.basic-filterbar{background:#fff!important;border:1px solid var(--uol-line)!important;border-radius:18px!important;padding:18px!important;box-shadow:0 8px 26px #173e500b!important}
+.filter-strip .filter,.filter-items select,.filter-items input{border-radius:11px!important;background:#f8fbfc!important;border:1px solid #d2e1e9!important;min-height:42px!important;color:#24465b!important}
+.filter-strip .filter:focus,.filter-items select:focus{outline:2px solid #76cbbd!important;outline-offset:1px!important}
+.filter-strip .btn,.filter-items button{border-radius:11px!important;background:#118c79!important;color:white!important;border:0!important;box-shadow:none!important}
+.tentative-alert,.tentative-label{border-radius:12px!important}
+.kpi-grid,.basic-modern .metrics{gap:13px!important;margin:15px 0!important}
+.kpi-card,.basic-modern .metric{background:#fff!important;border:1px solid #dce8ef!important;border-radius:17px!important;box-shadow:0 7px 22px #153c5810!important;min-height:145px!important;padding:19px!important;position:relative!important;overflow:hidden!important;transition:transform .2s,box-shadow .2s!important}
+.kpi-card:hover,.basic-modern .metric:hover{transform:translateY(-2px);box-shadow:0 12px 28px #153c581a!important}
+.kpi-card:before,.basic-modern .metric:before{content:''!important;display:block!important;position:absolute!important;top:0!important;left:0!important;right:0!important;height:5px!important;background:linear-gradient(90deg,#0c937d,#43baa9)!important}
+.kpi-card:nth-child(3):before,.basic-modern .metric:nth-child(3):before{background:linear-gradient(90deg,#3871d6,#86b0f5)!important}
+.kpi-card:nth-child(4):before,.basic-modern .metric:nth-child(4):before{background:linear-gradient(90deg,#6d60ca,#aaa2fa)!important}
+.kpi-label,.basic-modern .metric small{font-size:11px!important;letter-spacing:.06em!important;color:#657f90!important}
+.kpi-value,.basic-modern .metric strong{font-size:clamp(32px,3vw,44px)!important;color:#103b53!important;line-height:1.05!important;letter-spacing:-.05em!important}
+.analytics-grid,.basic-modern .charts{gap:13px!important;margin-top:14px!important}
+.analytics-grid>.panel,.basic-modern .charts>.panel,.basic-modern .panel{background:#fff!important;border:1px solid #dbe7ed!important;border-radius:18px!important;box-shadow:0 7px 23px #193e530b!important;padding:19px!important;min-width:0!important}
+.analytics-grid .panel-head,.basic-modern .panel h3{border-bottom-color:#edf2f5!important}.panel-head h3,.basic-modern .panel h3{color:#18384e!important;font-size:13px!important;letter-spacing:.025em!important}
+.panel-head p,.chart-subtitle{color:#7890a0!important}
+.impact-banner{border-radius:13px!important}.table-scroll,.tablewrap{border:1px solid #dce8ef!important;border-radius:12px!important}
+.submission-table th,.uol-popup-table th{background:#143d54!important;color:#fff!important}
+.submission-table tr:hover,.uol-popup-table tr:hover{background:#ebf8f4!important}
+.uol-quality-embed,.basic-records{background:#fff!important;border:1px solid #dce8ef!important;border-radius:17px!important;box-shadow:0 7px 23px #193e530b!important}
+.executive-view-tabs,.report-view-switch{background:#e4eff1!important;border-radius:13px!important;padding:6px!important;gap:6px!important}
+.executive-view-tabs .view-tab.active,.report-view-switch button[aria-selected=true]{background:#fff!important;color:#087e6d!important;border-radius:10px!important;box-shadow:0 3px 11px #0c4c481c!important}
+.detail-dialog,.uol-major-popup-dialog{border-radius:18px!important}
+@media(max-width:960px){.main,.basic-modern main.basic-content{padding:0 14px 20px!important}.topbar,.basic-topbar.uol-executive-header{margin:0 -14px!important}.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:600px){.topbar,.basic-topbar.uol-executive-header{padding:16px!important;border-radius:0 0 14px 14px!important}.filter-strip,.basic-filterbar{padding:12px!important}.kpi-grid,.basic-modern .metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}.kpi-card,.basic-modern .metric{padding:13px!important;min-height:120px!important}.kpi-value,.basic-modern .metric strong{font-size:29px!important}.analytics-grid>.panel,.basic-modern .charts>.panel{padding:13px!important}}

@@ -1,0 +1,11 @@
+/* Department-wise activity chart: all rows remain visible in a compact panel. */
+@media(min-width:851px){
+  .panel-department{min-height:0!important;height:auto!important}
+  .panel-department #departmentWrap{min-height:310px!important;max-height:none!important;flex:none!important;overflow:visible!important}
+  .panel-department #departmentChart{max-width:100%!important}
+}
+@media(max-width:850px){
+ .panel-department{min-height:0!important}
+ .panel-department #mobileDepartmentActivities{gap:6px!important}
+ .panel-department .uol-mobile-chart-card{padding:8px!important}
+}

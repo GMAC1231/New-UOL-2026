@@ -1,0 +1,7 @@
+NEW DATASET: UOL_Separated_All_Activity_Data_Updated_Reconciled(1).xlsx
+
+Updated authoritative activity workbook in data/UOL_Separated_All_Activity_Data_Cleaned.xlsx (and root fallback).
+Executive Overview, Section 1 Basic Reporting, Section 2 Internship & Placement use this updated workbook.
+The separately sourced Section 3 MoU country report still uses data/UOL_MoU_Country_Previous.xlsx because its Country mapping does not exist in the updated activity workbook.
+Original uploaded new workbook is preserved as data/UOL_Separated_All_Activity_Data_Updated_20261027.xlsx.
+Submission snapshot inputs and company evidence workbooks have not been overwritten.

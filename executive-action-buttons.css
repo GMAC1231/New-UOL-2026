@@ -1,0 +1,11 @@
+
+.executive-actions{display:flex;flex-wrap:wrap;align-items:stretch;gap:9px;margin:12px 0 4px;padding:0;width:100%;}
+.executive-actions .exec-action{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:43px;padding:10px 14px;border:1px solid #d9e5ef;border-radius:10px;background:#fff;color:#264c69;font:750 12px/1.25 Inter,'Segoe UI',Arial,sans-serif;text-decoration:none;box-shadow:0 3px 10px rgba(12,42,65,.04);transition:background .18s,border-color .18s,transform .18s;}
+.executive-actions .exec-action:hover{background:#eef8f5;border-color:#94d5c0;transform:translateY(-1px)}
+.executive-actions .exec-action:focus-visible{outline:3px solid #3eaa96;outline-offset:2px}
+.executive-actions .exec-action-primary{background:#0c8772;color:white;border-color:#0c8772}
+.executive-actions .exec-action-primary:hover{background:#086d5d;color:white}
+.executive-actions .exec-action-icon{font-size:16px;line-height:1}
+html{scroll-behavior:smooth}
+@media(max-width:800px){.executive-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.executive-actions .exec-action{min-width:0;padding:10px 8px;font-size:11px}}
+@media(max-width:480px){.executive-actions{grid-template-columns:minmax(0,1fr)}}

@@ -1,0 +1,11 @@
+/* Give horizontal category labels their own readable line. */
+@media (min-width:851px) {
+ .panel-department #departmentWrap { min-height:690px!important; height:auto; max-height:none!important; }
+ .panel-department #departmentChart { max-width:100%!important; }
+}
+@media (max-width:850px) {
+ .panel-department #mobileDepartmentActivities {grid-template-columns:repeat(2,minmax(0,1fr));gap:7px!important}
+}
+@media (max-width:480px) {
+ .panel-department #mobileDepartmentActivities {grid-template-columns:1fr}
+}

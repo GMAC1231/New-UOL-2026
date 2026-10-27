@@ -1,0 +1,58 @@
+
+/* Section 3 masonry, measured to avoid blank grid cells.
+   Does not alter workbook data, chart handlers, or popup logic. */
+@media(min-width:1001px) {
+ body.mou-modern #charts {
+   display:block!important;
+   position:relative!important;
+   columns:auto!important;
+   column-count:auto!important;
+   column-gap:normal!important;
+   grid-template-columns:none!important;
+   min-height:0!important;
+   margin:10px 0 14px!important;
+ }
+ body.mou-modern #charts > .panel {
+   position:absolute!important;
+   display:block!important;
+   box-sizing:border-box!important;
+   width:calc((100% - 12px)/2)!important;
+   max-width:calc((100% - 12px)/2)!important;
+   grid-column:auto!important;
+   float:none!important;
+   min-height:0!important;
+   height:auto!important;
+   margin:0!important;
+   padding:15px!important;
+   break-inside:auto!important;
+ }
+ body.mou-modern #charts .graph-wrap {
+   height:235px!important;
+   min-height:235px!important;
+   max-height:235px!important;
+ }
+ body.mou-modern #charts .mou-insight-panel {padding:16px!important}
+ body.mou-modern #charts .mou-insight-heading {padding-bottom:10px!important}
+ body.mou-modern #charts .mou-insight-body {padding-top:12px!important;gap:10px!important}
+ body.mou-modern #charts .mou-insight-rowtop {margin-bottom:5px!important}
+ body.mou-modern #charts .mou-insight-name {font-size:11px!important}
+ body.mou-modern #charts .mou-insight-value {font-size:13px!important}
+ body.mou-modern #charts .mou-insight-track {height:7px!important}
+ body.mou-modern #charts .mou-type-summary {padding:5px 0!important}
+ body.mou-modern #charts .mou-type-summary strong {font-size:29px!important}
+ body.mou-modern #charts .mou-insight-status .mou-insight-body {
+   display:grid!important;
+   grid-template-columns:repeat(3,minmax(0,1fr))!important;
+   gap:7px!important;
+ }
+ body.mou-modern #charts .mou-insight-status .mou-insight-row {
+   padding:9px!important;border-radius:9px!important;
+ }
+ body.mou-modern #charts .mou-insight-status .mou-insight-rowtop {
+   flex-direction:column!important;align-items:flex-start!important;gap:4px!important;
+ }
+}
+@media(max-width:1000px) {
+ body.mou-modern #charts {position:static!important;height:auto!important;columns:auto!important;display:grid!important;grid-template-columns:1fr!important}
+ body.mou-modern #charts>.panel {position:static!important;transform:none!important;width:100%!important;max-width:100%!important;left:auto!important;top:auto!important;}
+}

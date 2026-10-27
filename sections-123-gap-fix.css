@@ -1,0 +1,77 @@
+
+/* Gap correction for Sections 1–3; keeps source data, IDs, popup handlers intact. */
+@media(min-width:901px){
+ body.basic-modern .charts,
+ body.section-modern .charts{
+   display:grid!important;
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;
+   grid-auto-flow:row dense!important;
+   grid-auto-rows:auto!important;
+   align-items:start!important;
+   gap:12px!important;
+   margin:12px 0!important;
+ }
+ body.basic-modern .charts>.panel,
+ body.section-modern .charts>.panel{
+   grid-column:auto!important;
+   min-width:0!important;
+   min-height:0!important;
+   height:auto!important;
+   align-self:start!important;
+   padding:16px!important;
+   margin:0!important;
+ }
+ body.basic-modern .charts>.panel.wide,
+ body.section-modern .charts>.panel.wide{
+   grid-column:1/-1!important;
+ }
+ body.basic-modern .charts>.panel:empty{display:none!important}
+ body.basic-modern .charts .graph-wrap,
+ body.section-modern .charts .graph-wrap{
+   min-height:220px!important;
+   height:260px!important;
+   max-height:320px!important;
+   width:100%!important;
+   position:relative!important;
+ }
+ body.basic-modern .charts .graph-wrap canvas,
+ body.section-modern .charts .graph-wrap canvas{max-width:100%!important}
+ body.basic-modern .charts .basic-ranking-panel .ranking-rows,
+ body.section-modern .charts .basic-ranking-panel .ranking-rows{
+   max-height:300px!important;overflow-y:auto!important;
+ }
+}
+body.basic-modern main.basic-content{padding-bottom:15px!important}
+body.basic-modern .report-inner{padding-top:12px!important}
+body.basic-modern .page-intro{margin-bottom:11px!important}
+body.basic-modern .page-intro h1{margin:5px 0!important}
+body.basic-modern .basic-filterbar{padding:14px 17px!important}
+body.basic-modern .filter-items{gap:9px!important;margin-top:12px!important}
+body.basic-modern .metrics{gap:10px!important;margin:12px 0!important;align-items:stretch!important}
+body.basic-modern .metrics>.metric{min-height:115px!important;padding:14px!important;margin:0!important}
+body.basic-modern .metric strong{margin:15px 0 4px!important;font-size:32px!important}
+body.basic-modern .charts>.panel h3{margin:0 0 5px!important}
+body.basic-modern .chart-subtitle{margin:0 0 9px!important}
+body.basic-modern #data-quality-scope{margin-top:12px!important}
+body.basic-modern .basic-records{margin-top:12px!important}
+@media(min-width:901px) and (max-width:1180px){
+ body.basic-modern .charts,
+ body.section-modern .charts{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:900px){
+ body.basic-modern .charts,body.section-modern .charts{
+   display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+   gap:11px!important;align-items:start!important;margin:11px 0!important}
+ body.basic-modern .charts>.panel,body.section-modern .charts>.panel{
+   grid-column:1/-1!important;min-height:0!important;height:auto!important;
+   margin:0!important;padding:13px!important}
+ body.basic-modern .charts .graph-wrap,body.section-modern .charts .graph-wrap{
+   height:260px!important;min-height:220px!important}
+}
+@media(max-width:550px){
+ body.basic-modern .filter-items{grid-template-columns:minmax(0,1fr)!important}
+ body.basic-modern .metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ body.basic-modern .metrics>.metric{min-height:108px!important;padding:12px!important}
+ body.basic-modern .charts .graph-wrap,body.section-modern .charts .graph-wrap{
+   height:225px!important;min-height:200px!important}
+}
