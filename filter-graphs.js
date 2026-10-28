@@ -24,7 +24,15 @@ const chartBackdrop={id:'uolChartBackdrop',beforeDraw(chart){const {ctx,chartAre
 const professionalValues={id:'uolProfessionalValueLabels',afterDatasetsDraw(chart){if(chart.config.type!=='bar')return;const {ctx,chartArea}=chart;const meta=chart.getDatasetMeta(0);if(!meta||!meta.data)return;ctx.save();ctx.font='700 10px Segoe UI, Arial';ctx.fillStyle='#435c70';ctx.textBaseline='middle';meta.data.forEach((bar,i)=>{const value=Number(chart.data.datasets[0].data[i]||0);if(chart.options.indexAxis==='y'){ctx.textAlign='left';const x=Math.min(bar.x+7,chartArea.right-40);ctx.fillText(pretty(value),x,bar.y)}else{ctx.textAlign='center';ctx.fillText(pretty(value),bar.x,Math.max(chartArea.top+12,bar.y-11))}});ctx.restore()}};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const total=(list)=>list.reduce((s,p)=>s+(Number(p[1])||0),0);
-function dataset(){try{return Array.isArray(filteredRows)?filteredRows:[]}catch(e){return []}}
+function dataset(){
+  try {
+    const rows=Array.isArray(filteredRows)?filteredRows:[];
+    const org=document.getElementById('organizationFilter')?.value||'All';
+    // Recheck the current filter against the cleaned worksheet, not old evidence lists.
+    return rows.filter(r=>org==='All'||(typeof currentOverviewOrganizations==='function'
+      ? currentOverviewOrganizations(r).includes(org):clean(r.organization)===org));
+  } catch(e){return []}
+}
 function aggregate(rows,key){const map=new Map();for(const r of rows){const label=clean(key(r));if(!label||label==='—')continue;const v=Number(rowAmount(r))||0;map.set(label,(map.get(label)||0)+v)}return [...map.entries()].sort((a,b)=>b[1]-a[1])}
 function chartOptions(type,horizontal,items){
  const doughnut=type==='doughnut';
@@ -84,7 +92,7 @@ function renderModal(spec,selectedLabel){
   document.getElementById('filterGraphModalValue').textContent=`${rows.reduce((sum,r)=>sum+(Number(rowAmount(r))||0),0).toLocaleString()} reported activities`;
   document.getElementById('filterGraphModalRecordsCount').textContent=`${rows.length.toLocaleString()} records`;
   const tbody=document.getElementById('filterGraphModalTbody');
-  tbody.innerHTML=rows.slice(0,150).map(r=>`<tr><td>${esc(r.ref||r.refId||r.id||'—')}</td><td>${esc(r.faculty||'—')}</td><td>${esc(r.department||'—')}</td><td>${esc(r.type||'—')}</td><td>${esc(r.organization||'—')}</td><td>${(Number(rowAmount(r))||0).toLocaleString()}</td></tr>`).join('') || '<tr><td colspan="6">No matching records found.</td></tr>';
+  tbody.innerHTML=rows.slice(0,150).map(r=>`<tr><td>${esc(r.ref||r.refId||r.id||'—')}</td><td>${esc(r.faculty||'—')}</td><td>${esc(r.department||'—')}</td><td>${esc(r.type||'—')}</td><td>${esc((typeof currentOverviewOrganizations==='function'?currentOverviewOrganizations(r)[0]:r.organization)||'—')}</td><td>${(Number(rowAmount(r))||0).toLocaleString()}</td></tr>`).join('') || '<tr><td colspan="6">No matching records found.</td></tr>';
   const canvas=document.getElementById('filterGraphModalCanvas'); const popupCanvasHolder=canvas?.parentElement; if(popupCanvasHolder)popupCanvasHolder.style.height=spec.key==='activity'?Math.max(420,110+spec.items.length*37)+'px':'420px';
   if(modalChart){try{modalChart.destroy()}catch(e){}}
   modal.hidden=false; document.body.style.overflow='hidden';
@@ -123,7 +131,7 @@ document.getElementById('filterGraphExport').addEventListener('click',()=>{
   refresh(); const canvases=[...dashboard.querySelectorAll('canvas')]; if(!instances.length)return;
   const w=1600,h=1100; const output=document.createElement('canvas'); output.width=w; output.height=h; const ctx=output.getContext('2d'); ctx.fillStyle='#f6fbfd'; ctx.fillRect(0,0,w,h); ctx.fillStyle='#17364e'; ctx.font='bold 27px Arial'; ctx.fillText('UOL — Filtered Analytics',35,47); ctx.font='16px Arial'; ctx.fillText(document.getElementById('filterGraphCount').textContent,35,75);
   canvases.forEach((canvas,i)=>{const x=35+(i%2)*785,y=105+Math.floor(i/2)*490; ctx.fillStyle='#ffffff'; ctx.strokeStyle='#dfeaf1'; ctx.lineWidth=1; ctx.fillRect(x,y,745,455); ctx.strokeRect(x,y,745,455); ctx.fillStyle='#17364e'; ctx.font='bold 18px Arial'; const title=canvas.closest('article').querySelector('.filter-graph-cardcopy h3').textContent; ctx.fillText(title,x+14,y+28); try{ctx.drawImage(canvas,x+14,y+43,716,390)}catch(e){}});
-  const a=document.createElement('a'); a.download='UOL_Filtered_Analytics.png'; a.href=output.toDataURL('image/png'); a.click();
+  const a=document.createElement('a'); a.download='UOL_Filtered_Analytics_Current_Organizations.png'; a.href=output.toDataURL('image/png'); a.click();
 });
 const modal=document.getElementById('filterGraphModal'); if(modal){modal.addEventListener('click',e=>{if(e.target.matches('[data-close-filter-graph-modal], .filter-graph-modal')) closeModal();}); document.getElementById('filterGraphModalClose')?.addEventListener('click',closeModal); document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden) closeModal();});}
 refresh();

@@ -1,0 +1,32 @@
+/* Section 2 only — visual layout; analytics and source data are unchanged. */
+.ip-modern .report-inner{max-width:1660px!important;padding:22px clamp(15px,2.4vw,36px) 36px!important}
+.ip-modern .page-intro{display:flex!important;align-items:center!important;justify-content:space-between!important;margin:0 0 17px!important;padding:4px 2px!important}
+.ip-modern .page-intro h1{font-size:clamp(23px,2vw,32px)!important;margin:5px 0!important}
+.ip-modern .page-intro p{margin:0!important}
+.ip-modern .tentative-label{background:#e9f6f3!important;color:#077666!important;border:1px solid #c8e8de!important;border-radius:100px!important;padding:8px 13px!important;white-space:nowrap}
+.ip-modern .basic-filterbar{padding:18px 20px!important;border-radius:15px!important;box-shadow:0 3px 17px #102e4910!important;margin:0 0 18px!important}
+.ip-modern .filterbar-heading{margin-bottom:12px!important}
+.ip-modern .filter-items{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important;align-items:end!important}
+.ip-modern .filter-items label{min-width:0!important;margin:0!important}
+.ip-modern .filter-items select{width:100%!important;min-width:0!important;min-height:42px!important;border-radius:9px!important}
+.ip-modern .filter-items #reset{min-height:42px!important;border-radius:9px!important;white-space:nowrap!important}
+.ip-modern .metrics{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:12px!important;margin:12px 0 24px!important}
+.ip-modern .metrics .metric{min-height:148px!important;border-radius:14px!important;padding:18px 16px 15px!important;box-shadow:0 3px 14px #102e4910!important}
+.ip-modern .metrics .metric strong{font-size:clamp(27px,2.4vw,38px)!important;margin:10px 0 6px!important}
+.ip-modern .metrics .metric .metric-icon{width:38px!important;height:38px!important;right:13px!important;top:13px!important;font-size:18px!important}
+.ip-modern .ip-section-heading{margin:23px 1px 12px!important;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}
+.ip-modern .ip-section-heading h2{font-size:18px!important;font-weight:800!important;letter-spacing:-.02em;color:#113754!important;margin:0!important}
+.ip-modern .ip-section-heading p{margin:3px 0 0!important;font-size:12px!important;color:#70849a!important}
+.ip-modern .ip-heading-tag{font-size:11px;font-weight:800;letter-spacing:.07em;color:#087f70;background:#eaf8f3;border:1px solid #d5eee5;padding:7px 10px;border-radius:30px}
+.ip-modern .charts{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important;margin-top:0!important;align-items:start!important}
+.ip-modern .charts .panel{min-width:0!important;padding:19px!important;border-radius:15px!important;box-shadow:0 3px 15px #12334d0c!important}
+.ip-modern .charts .panel h3{font-size:15px!important;margin-bottom:12px!important}
+.ip-modern .charts .panel.wide,.ip-modern .charts .ip-full-records{grid-column:1/-1!important}
+.ip-modern .charts .ip-full-records{order:10!important}
+.ip-modern .ip-record-scroll{max-height:520px!important}
+.ip-modern .ip-record-toolbar{flex-wrap:wrap!important}
+.ip-modern #data-quality-scope{margin-top:23px!important}
+@media(max-width:1260px){.ip-modern .metrics{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:1000px){.ip-modern .charts{grid-template-columns:1fr!important}.ip-modern .filter-items{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:700px){.ip-modern .metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}.ip-modern .page-intro{align-items:flex-start!important}.ip-modern .tentative-label{display:none!important}.ip-modern .basic-filterbar{padding:15px!important}.ip-modern .filter-items{grid-template-columns:1fr!important}.ip-modern .charts .panel{padding:15px!important}}
+@media(max-width:440px){.ip-modern .metrics{grid-template-columns:1fr!important}.ip-modern .ip-section-heading{align-items:flex-start}}

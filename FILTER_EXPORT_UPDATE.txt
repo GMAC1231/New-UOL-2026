@@ -1,0 +1,1 @@
+Filters & Export now uses the current Executive Overview organization selection. Graph popup evidence excludes removed organizations, and the PDF filter summary includes the selected organization. The main worksheet is not modified.

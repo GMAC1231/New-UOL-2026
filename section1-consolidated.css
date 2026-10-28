@@ -1,0 +1,40 @@
+/* Section 1 compact and consolidated layout; view-only, no changes to data or computations */
+body.basic-modern {background:#f3f6fa!important}
+body.basic-modern .basic-content {padding:18px clamp(16px,2.4vw,34px) 26px!important}
+body.basic-modern .basic-topbar {padding:15px clamp(16px,2.4vw,34px)!important; margin:-18px calc(-1 * clamp(16px,2.4vw,34px)) 16px; border-top:0!important; box-shadow:0 1px 0 #dfe8f1}
+body.basic-modern .basic-topbar h1 {font-size:clamp(21px,2vw,27px)!important;line-height:1.15;margin:4px 0!important}
+body.basic-modern .basic-topbar p {font-size:11px!important;margin:5px 0 0!important}
+body.basic-modern .report-inner {max-width:1560px!important;margin:auto!important}
+.basic-consolidated-heading {display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 11px}
+.basic-consolidated-heading .tentative-label {font-size:10px;padding:6px 10px}
+body.basic-modern .basic-filterbar {padding:15px 18px!important;border-radius:13px!important;box-shadow:none!important}
+body.basic-modern .filterbar-heading {align-items:center!important;gap:12px}
+body.basic-modern .filterbar-heading strong {font-size:13px!important}
+body.basic-modern .filterbar-heading p {font-size:11px!important;margin:2px 0 0!important}
+body.basic-modern .filterbar-heading>span {font-size:9px!important;padding:5px 8px!important}
+body.basic-modern .filter-items {grid-template-columns:repeat(6,minmax(0,1fr)) auto!important;align-items:end!important;gap:10px!important;margin-top:12px!important}
+body.basic-modern .filter-items label {min-width:0;font-size:10px!important;letter-spacing:0!important}
+body.basic-modern .filter-items select {height:38px!important;margin-top:5px!important;padding:6px 8px!important;font-size:11px!important;min-width:0!important}
+body.basic-modern .filter-items button {height:38px!important;padding:0 12px!important;white-space:nowrap;font-size:11px!important}
+.basic-section-label {display:flex;align-items:center;justify-content:space-between;gap:12px;margin:19px 2px 9px}
+.basic-section-label>div {display:flex;align-items:center;gap:9px}
+.basic-section-label span {display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:#e2f2ef;color:#0c7b69;font-size:10px;font-weight:800}
+.basic-section-label strong {color:#173850;font-size:14px}
+.basic-section-label small {color:#8193a3;font-size:11px}
+body.basic-modern .metrics {gap:11px!important;margin:0!important;grid-template-columns:repeat(4,minmax(0,1fr))!important}
+body.basic-modern .metric {min-height:117px!important;padding:16px 18px!important;border-radius:12px!important;box-shadow:none!important}
+body.basic-modern .metric strong {font-size:30px!important;margin:13px 0 5px!important;line-height:1!important}
+body.basic-modern .metric small {font-size:10px!important}
+body.basic-modern .metric .metric-icon {top:12px!important;right:13px!important;width:33px!important;height:33px!important;font-size:16px!important}
+body.basic-modern .metric-caption {font-size:10px!important}
+body.basic-modern .charts {display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:12px!important;margin:0 0 15px!important;align-items:start!important}
+body.basic-modern .charts .panel {grid-column:auto!important;min-width:0!important;padding:17px 17px 13px!important;box-shadow:none!important;border-radius:12px!important}
+body.basic-modern .charts .ranking-rows {max-height:425px!important;overflow:auto!important;overscroll-behavior:contain}
+body.basic-modern .charts .ranking-item {min-height:42px!important}
+body.basic-modern .charts h3 {font-size:14px!important}
+body.basic-modern .charts .chart-subtitle {margin:4px 0 9px!important;font-size:10px!important}
+body.basic-modern #data-quality-scope {margin-top:13px!important}
+body.basic-modern .basic-footer {padding:17px 0 0!important}
+@media(max-width:1350px){body.basic-modern .filter-items{grid-template-columns:repeat(3,minmax(0,1fr))!important}body.basic-modern .filter-items button{width:100%!important}}
+@media(max-width:850px){body.basic-modern .charts{grid-template-columns:minmax(0,1fr)!important}body.basic-modern .metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:550px){body.basic-modern .filter-items{grid-template-columns:repeat(2,minmax(0,1fr))!important}body.basic-modern .filterbar-heading>span,.basic-section-label small{display:none!important}body.basic-modern .metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}body.basic-modern .metric{padding:13px!important;min-height:115px!important}body.basic-modern .metric strong{font-size:27px!important}body.basic-modern .filter-items button{grid-column:1/-1}}
