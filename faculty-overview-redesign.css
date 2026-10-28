@@ -1,0 +1,29 @@
+/* Faculty-wise Executive Overview redesign — layout only; original quantities retained. */
+.panel-faculty #facultyWrap { display:none!important; }
+.panel-faculty #mobileFacultyActivities.uol-faculty-ranking-desktop {
+ display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;
+ max-height:465px; overflow-y:auto; padding:7px 8px 10px 2px; min-width:0;
+ scrollbar-width:thin; scrollbar-color:#b7cbd5 transparent;
+}
+.panel-faculty #mobileFacultyActivities .uol-mobile-chart-intro {grid-column:1/-1;font-size:12px;font-weight:750;color:#627b8d;margin:0 0 4px}
+.panel-faculty #mobileFacultyActivities .uol-mobile-chart-card {
+ display:block;appearance:none;width:100%;min-width:0;height:auto!important;
+ border:1px solid #dde9ee!important;border-left:3px solid var(--rank-color)!important;
+ border-radius:12px!important;background:#fff!important;text-align:left;
+ padding:13px 14px!important;color:#18374d!important;cursor:pointer;
+ box-shadow:0 2px 7px rgba(20,52,73,.035);transition:border-color .16s,box-shadow .16s,transform .16s;
+}
+.panel-faculty #mobileFacultyActivities .uol-mobile-chart-card:hover {border-color:#8fc6b7!important;box-shadow:0 6px 15px rgba(20,52,73,.08);transform:translateY(-1px)}
+.panel-faculty #mobileFacultyActivities .uol-mobile-chart-card:focus-visible{outline:2px solid #138c74;outline-offset:2px}
+.panel-faculty #mobileFacultyActivities .uol-mobile-chart-head {display:flex;align-items:center;gap:10px;min-width:0}
+.panel-faculty #mobileFacultyActivities .uol-mobile-chart-rank {display:grid;place-items:center;flex-shrink:0;width:29px;height:29px;border-radius:8px;background:#eef4f7;color:var(--rank-color);font-size:11px;font-weight:850}
+.panel-faculty #mobileFacultyActivities .uol-mobile-chart-head strong {flex:1;min-width:0;font-size:12px;line-height:1.45;overflow-wrap:anywhere}
+.panel-faculty #mobileFacultyActivities .uol-mobile-chart-value {font-size:18px;font-weight:850;color:#143d51;flex-shrink:0;font-variant-numeric:tabular-nums}
+.panel-faculty #mobileFacultyActivities .uol-mobile-chart-bottom {display:flex;align-items:center;gap:10px;margin:12px 0 0 39px}
+.panel-faculty #mobileFacultyActivities .uol-mobile-chart-track {display:block;flex:1;min-width:0;height:7px;background:#e8eff2;border-radius:8px;overflow:hidden}
+.panel-faculty #mobileFacultyActivities .uol-mobile-chart-track>span {display:block;height:100%;background:var(--rank-color);border-radius:8px}
+.panel-faculty #mobileFacultyActivities .uol-mobile-chart-pct {width:53px;text-align:right;font-size:11px;font-weight:750;color:#688195;font-variant-numeric:tabular-nums}
+.panel-faculty #mobileFacultyActivities .uol-ranking-zero {background:#f8fafb!important;opacity:.68}
+.panel-faculty #mobileFacultyActivities .uol-ranking-zero .uol-mobile-chart-track>span {width:0!important}
+@media(max-width:900px){.panel-faculty #mobileFacultyActivities.uol-faculty-ranking-desktop{grid-template-columns:1fr;max-height:480px}}
+@media(max-width:600px){.panel-faculty #mobileFacultyActivities.uol-faculty-ranking-desktop{max-height:none;overflow:visible;padding:3px 0}}

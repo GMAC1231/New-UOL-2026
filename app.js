@@ -1762,6 +1762,24 @@ function barChart(
     }
   }
 
+  // Unified faculty-ranking design: use the responsive, interactive cards
+  // instead of Chart.js bars with clipped labels and a crowded zero axis.
+  if (id === "facultyChart") {
+    const wrapEl = $(wrapper);
+    if (wrapEl) { wrapEl.hidden = true; wrapEl.style.display = "none"; }
+    const canvasEl = $(id);
+    if (canvasEl) canvasEl.style.display = "none";
+    const host = $("mobileFacultyActivities");
+    if (host) {
+      host.classList.add("uol-faculty-ranking-desktop");
+      host.querySelectorAll(".uol-mobile-chart-card").forEach(card => {
+        const value = Number(card.querySelector(".uol-mobile-chart-value")?.textContent.replace(/,/g, "") || 0);
+        card.classList.toggle("uol-ranking-zero", value === 0);
+      });
+    }
+    return;
+  }
+
   const visibleBarValuePlugin = {
     id: `visibleBarValue_${id}`,
     afterDatasetsDraw(chart) {

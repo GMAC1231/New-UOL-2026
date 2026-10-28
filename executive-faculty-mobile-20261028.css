@@ -1,0 +1,39 @@
+/* Executive Overview mobile refinement — presentation only, preserves data and event handlers */
+@media (max-width: 900px) {
+ html,body {max-width:100%;overflow-x:hidden}
+ .panel-faculty, .panel-faculty .panel-body, .panel-faculty #mobileFacultyActivities {min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+ .panel-faculty #mobileFacultyActivities.uol-faculty-ranking-desktop {grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;max-height:none!important;overflow:visible!important}
+ .panel-faculty #mobileFacultyActivities .uol-mobile-chart-card {min-height:94px!important;padding:12px!important;box-sizing:border-box!important}
+ .panel-faculty #mobileFacultyActivities .uol-mobile-chart-head {gap:8px!important}
+ .panel-faculty #mobileFacultyActivities .uol-mobile-chart-head strong {font-size:12px!important;line-height:1.4!important}
+ .panel-faculty #mobileFacultyActivities .uol-mobile-chart-bottom {margin:10px 0 0 0!important}
+ .panel-faculty #mobileFacultyActivities .uol-mobile-chart-value {font-size:17px!important}
+ #top-filters.filter-strip {max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+ .kpi-grid {grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important}
+ .kpi-grid .kpi-card {min-width:0!important;min-height:150px!important;padding:15px!important;box-sizing:border-box!important}
+}
+@media (max-width: 600px) {
+ #top-filters.filter-strip {display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;padding:13px!important;border-radius:14px!important}
+ #top-filters.filter-strip>* {min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+ #top-filters .filter-label {grid-column:1/-1!important}
+ #top-filters .uol-snapshot-label, #top-filters #matchedSubmissionCount, #top-filters #monthFilter, #top-filters #facultyFilter, #top-filters #departmentFilter, #top-filters #activityFilter, #top-filters #organizationFilter, #top-filters #searchFilter {grid-column:1/-1!important}
+ #top-filters #resetBtn {grid-column:1/-1!important}
+ #top-filters #exportBtn,#top-filters #pdfBtn {grid-column:span 1!important}
+ #top-filters select.filter,#top-filters input.filter,#top-filters .uol-snapshot-label select,#top-filters .btn {width:100%!important;min-height:44px!important;font-size:13px!important}
+ .panel-faculty #mobileFacultyActivities.uol-faculty-ranking-desktop {grid-template-columns:1fr!important;gap:8px!important;max-height:none!important;overflow:visible!important;padding:3px 1px!important}
+ .panel-faculty #mobileFacultyActivities .uol-mobile-chart-card {min-height:82px!important;padding:11px 12px!important}
+ .panel-faculty #mobileFacultyActivities .uol-mobile-chart-rank {width:26px!important;height:26px!important}
+ .panel-faculty #mobileFacultyActivities .uol-mobile-chart-value {font-size:17px!important}
+ .panel-faculty #mobileFacultyActivities .uol-mobile-chart-pct {width:45px!important;font-size:10px!important}
+ .panel-faculty #mobileFacultyActivities .uol-mobile-chart-track {height:6px!important}
+ .kpi-grid {grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+ .kpi-grid .kpi-card {min-height:132px!important;padding:12px!important;border-radius:13px!important}
+ .kpi-grid .kpi-value {font-size:clamp(28px,9vw,40px)!important;line-height:1.15!important;overflow-wrap:anywhere!important}
+ .kpi-grid .kpi-label {font-size:11px!important;line-height:1.35!important}
+ .kpi-grid .kpi-foot {font-size:10px!important;line-height:1.4!important}
+}
+@media (max-width: 360px) {
+ #top-filters #exportBtn,#top-filters #pdfBtn {grid-column:1/-1!important}
+ .kpi-grid .kpi-card {min-height:120px!important;padding:10px!important}
+ .kpi-grid .kpi-value {font-size:27px!important}
+}
