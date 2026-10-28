@@ -1,0 +1,279 @@
+{
+  "submission": "PRPSTFPT41",
+  "faculty": "Faculty of Information Technology",
+  "department": "Department of Software Engineering",
+  "activity": "Internship / Placement",
+  "organizations": [
+    {
+      "name": "Code Alpha",
+      "evidenceRecords": 4,
+      "variants": "Code Alpha | Codealpha",
+      "action": "Grouped organization label; underlying evidence retained"
+    },
+    {
+      "name": "Texense",
+      "evidenceRecords": 3,
+      "variants": "Texense",
+      "action": "Grouped organization label; underlying evidence retained"
+    },
+    {
+      "name": "Astute Software",
+      "evidenceRecords": 2,
+      "variants": "Astute Software",
+      "action": "Grouped organization label; underlying evidence retained"
+    },
+    {
+      "name": "Bookme",
+      "evidenceRecords": 2,
+      "variants": "Bookme",
+      "action": "Grouped organization label; underlying evidence retained"
+    },
+    {
+      "name": "FlyRank AI (Remote Machine Learning Internship)",
+      "evidenceRecords": 2,
+      "variants": "FlyRank AI (Remote Machine Learning Internship) | Flyrank Ai, Chicago",
+      "action": "Grouped organization label; underlying evidence retained"
+    },
+    {
+      "name": "NerithonX Technologies (PVT.) LTD.",
+      "evidenceRecords": 2,
+      "variants": "NerithonX Technologies (PVT.) LTD.",
+      "action": "Grouped organization label; underlying evidence retained"
+    },
+    {
+      "name": "Shabbir Industries & Amir Steel",
+      "evidenceRecords": 2,
+      "variants": "Shabbir Industries & Amir Steel | Shabbir Industries & Amir Steels",
+      "action": "Grouped organization label; underlying evidence retained"
+    },
+    {
+      "name": "Systems Limited Head Office (intern/trainee in Automations )",
+      "evidenceRecords": 2,
+      "variants": "Systems Limited Head Office (intern/trainee in Automations ) | Systems Limited Head office (Trainee/Intern in automations)",
+      "action": "Grouped organization label; underlying evidence retained"
+    },
+    {
+      "name": "10Pearls",
+      "evidenceRecords": 1,
+      "variants": "10Pearls",
+      "action": "Retained"
+    },
+    {
+      "name": "American Prime Solution",
+      "evidenceRecords": 2,
+      "variants": "American Prime Solution | Americans Prime Solution",
+      "action": "Grouped organization label; underlying evidence retained"
+    },
+    {
+      "name": "Amrood labs",
+      "evidenceRecords": 1,
+      "variants": "Amrood labs",
+      "action": "Retained"
+    },
+    {
+      "name": "Arch Technologies",
+      "evidenceRecords": 1,
+      "variants": "Arch Technologies",
+      "action": "Retained"
+    },
+    {
+      "name": "Arfa tower",
+      "evidenceRecords": 1,
+      "variants": "Arfa tower",
+      "action": "Retained"
+    },
+    {
+      "name": "Arhamsoft",
+      "evidenceRecords": 1,
+      "variants": "Arhamsoft",
+      "action": "Retained"
+    },
+    {
+      "name": "CCI ( coca-cola Icecek)",
+      "evidenceRecords": 1,
+      "variants": "CCI ( coca-cola Icecek)",
+      "action": "Retained"
+    },
+    {
+      "name": "Claim Care",
+      "evidenceRecords": 1,
+      "variants": "Claim Care",
+      "action": "Retained"
+    },
+    {
+      "name": "Clicktake technologies",
+      "evidenceRecords": 1,
+      "variants": "Clicktake technologies",
+      "action": "Retained"
+    },
+    {
+      "name": "Cobb Uk.",
+      "evidenceRecords": 1,
+      "variants": "Cobb Uk.",
+      "action": "Retained"
+    },
+    {
+      "name": "Code Alpha (Remote) , Vision Plus Technologies (On-Site)",
+      "evidenceRecords": 1,
+      "variants": "Code Alpha (Remote) , Vision Plus Technologies (On-Site)",
+      "action": "Retained"
+    },
+    {
+      "name": "Code Room Hub",
+      "evidenceRecords": 1,
+      "variants": "Code Room Hub",
+      "action": "Retained"
+    },
+    {
+      "name": "Code Room Hub(Remote) + Netsol(NIAI Training Program)",
+      "evidenceRecords": 1,
+      "variants": "Code Room Hub(Remote) + Netsol(NIAI Training Program)",
+      "action": "Retained"
+    },
+    {
+      "name": "CodetoKloud (job)",
+      "evidenceRecords": 1,
+      "variants": "CodetoKloud (job)",
+      "action": "Retained"
+    },
+    {
+      "name": "DarkBytes",
+      "evidenceRecords": 1,
+      "variants": "DarkBytes",
+      "action": "Retained"
+    },
+    {
+      "name": "DevelopersHub Corporation",
+      "evidenceRecords": 1,
+      "variants": "DevelopersHub Corporation",
+      "action": "Retained"
+    },
+    {
+      "name": "Devntech",
+      "evidenceRecords": 1,
+      "variants": "Devntech",
+      "action": "Retained"
+    },
+    {
+      "name": "Everyone Company",
+      "evidenceRecords": 1,
+      "variants": "Everyone Company",
+      "action": "Retained"
+    },
+    {
+      "name": "Fly",
+      "evidenceRecords": 1,
+      "variants": "Fly",
+      "action": "Retained"
+    },
+    {
+      "name": "Glosix System",
+      "evidenceRecords": 1,
+      "variants": "Glosix System",
+      "action": "Retained"
+    },
+    {
+      "name": "Incubee",
+      "evidenceRecords": 1,
+      "variants": "Incubee",
+      "action": "Retained"
+    },
+    {
+      "name": "ISPR (Inter Service Public Relations)",
+      "evidenceRecords": 1,
+      "variants": "ISPR (Inter Service Public Relations)",
+      "action": "Retained"
+    },
+    {
+      "name": "Parallax Labs(remote)",
+      "evidenceRecords": 1,
+      "variants": "Parallax Labs(remote)",
+      "action": "Retained"
+    },
+    {
+      "name": "Poplone",
+      "evidenceRecords": 1,
+      "variants": "Poplone",
+      "action": "Retained"
+    },
+    {
+      "name": "Quantum logistics",
+      "evidenceRecords": 1,
+      "variants": "Quantum logistics",
+      "action": "Retained"
+    },
+    {
+      "name": "Shezan International Limited",
+      "evidenceRecords": 1,
+      "variants": "Shezan International Limited",
+      "action": "Retained"
+    },
+    {
+      "name": "Synoptix.ai",
+      "evidenceRecords": 1,
+      "variants": "Synoptix.ai",
+      "action": "Retained"
+    },
+    {
+      "name": "System",
+      "evidenceRecords": 1,
+      "variants": "System",
+      "action": "Retained"
+    },
+    {
+      "name": "system solution",
+      "evidenceRecords": 1,
+      "variants": "system solution",
+      "action": "Retained"
+    },
+    {
+      "name": "Tech Orbito",
+      "evidenceRecords": 1,
+      "variants": "Tech Orbito",
+      "action": "Retained"
+    },
+    {
+      "name": "Technisia",
+      "evidenceRecords": 1,
+      "variants": "Technisia",
+      "action": "Retained"
+    },
+    {
+      "name": "Techtimize.co",
+      "evidenceRecords": 1,
+      "variants": "Techtimize.co",
+      "action": "Retained"
+    },
+    {
+      "name": "Unilever",
+      "evidenceRecords": 1,
+      "variants": "Unilever",
+      "action": "Retained"
+    },
+    {
+      "name": "Unisoftware",
+      "evidenceRecords": 1,
+      "variants": "Unisoftware",
+      "action": "Retained"
+    },
+    {
+      "name": "UniSoftwares Pakistan",
+      "evidenceRecords": 1,
+      "variants": "UniSoftwares Pakistan",
+      "action": "Retained"
+    },
+    {
+      "name": "Web marketing solutions",
+      "evidenceRecords": 1,
+      "variants": "Web marketing solutions",
+      "action": "Retained"
+    },
+    {
+      "name": "Web7labs",
+      "evidenceRecords": 1,
+      "variants": "Web7labs",
+      "action": "Retained"
+    }
+  ],
+  "evidenceRecords": 57
+}

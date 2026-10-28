@@ -15,15 +15,24 @@
     },
     {
       "name": "Texense",
-      "evidenceRecords": 3
+      "evidenceRecords": 3,
+      "sourceVariants": [
+        "Texense"
+      ]
     },
     {
       "name": "Astute Software",
-      "evidenceRecords": 2
+      "evidenceRecords": 2,
+      "sourceVariants": [
+        "Astute Software"
+      ]
     },
     {
       "name": "Bookme",
-      "evidenceRecords": 2
+      "evidenceRecords": 2,
+      "sourceVariants": [
+        "Bookme"
+      ]
     },
     {
       "name": "FlyRank AI (Remote Machine Learning Internship)",
@@ -35,7 +44,10 @@
     },
     {
       "name": "NerithonX Technologies (PVT.) LTD.",
-      "evidenceRecords": 2
+      "evidenceRecords": 2,
+      "sourceVariants": [
+        "NerithonX Technologies (PVT.) LTD."
+      ]
     },
     {
       "name": "Shabbir Industries & Amir Steel",
@@ -55,7 +67,10 @@
     },
     {
       "name": "10Pearls",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "10Pearls"
+      ]
     },
     {
       "name": "American Prime Solution",
@@ -67,143 +82,248 @@
     },
     {
       "name": "Amrood labs",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Amrood labs"
+      ]
     },
     {
       "name": "Arch Technologies",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Arch Technologies"
+      ]
     },
     {
       "name": "Arfa tower",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Arfa tower"
+      ]
     },
     {
       "name": "Arhamsoft",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Arhamsoft"
+      ]
     },
     {
       "name": "CCI ( coca-cola Icecek)",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "CCI ( coca-cola Icecek)"
+      ]
     },
     {
       "name": "Claim Care",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Claim Care"
+      ]
     },
     {
       "name": "Clicktake technologies",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Clicktake technologies"
+      ]
     },
     {
       "name": "Cobb Uk.",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Cobb Uk."
+      ]
     },
     {
       "name": "Code Alpha (Remote) , Vision Plus Technologies (On-Site)",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Code Alpha (Remote) , Vision Plus Technologies (On-Site)"
+      ]
     },
     {
       "name": "Code Room Hub",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Code Room Hub"
+      ]
     },
     {
       "name": "Code Room Hub(Remote) + Netsol(NIAI Training Program)",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Code Room Hub(Remote) + Netsol(NIAI Training Program)"
+      ]
     },
     {
       "name": "CodetoKloud (job)",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "CodetoKloud (job)"
+      ]
     },
     {
       "name": "DarkBytes",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "DarkBytes"
+      ]
     },
     {
       "name": "DevelopersHub Corporation",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "DevelopersHub Corporation"
+      ]
     },
     {
       "name": "Devntech",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Devntech"
+      ]
     },
     {
       "name": "Everyone Company",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Everyone Company"
+      ]
     },
     {
       "name": "Fly",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Fly"
+      ]
     },
     {
       "name": "Glosix System",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Glosix System"
+      ]
     },
     {
       "name": "Incubee",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Incubee"
+      ]
     },
     {
       "name": "ISPR (Inter Service Public Relations)",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "ISPR (Inter Service Public Relations)"
+      ]
     },
     {
       "name": "Parallax Labs(remote)",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Parallax Labs(remote)"
+      ]
     },
     {
       "name": "Poplone",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Poplone"
+      ]
     },
     {
       "name": "Quantum logistics",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Quantum logistics"
+      ]
     },
     {
       "name": "Shezan International Limited",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Shezan International Limited"
+      ]
     },
     {
       "name": "Synoptix.ai",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Synoptix.ai"
+      ]
     },
     {
       "name": "System",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "System"
+      ]
     },
     {
       "name": "system solution",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "system solution"
+      ]
     },
     {
       "name": "Tech Orbito",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Tech Orbito"
+      ]
     },
     {
       "name": "Technisia",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Technisia"
+      ]
     },
     {
       "name": "Techtimize.co",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Techtimize.co"
+      ]
     },
     {
       "name": "Unilever",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Unilever"
+      ]
     },
     {
       "name": "Unisoftware",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Unisoftware"
+      ]
     },
     {
       "name": "UniSoftwares Pakistan",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "UniSoftwares Pakistan"
+      ]
     },
     {
       "name": "Web marketing solutions",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Web marketing solutions"
+      ]
     },
     {
       "name": "Web7labs",
-      "evidenceRecords": 1
+      "evidenceRecords": 1,
+      "sourceVariants": [
+        "Web7labs"
+      ]
     }
   ],
   "deduplicationNote": "Consolidated company-name spelling/case/description variants, including American(s) Prime Solution; 45 unique display labels. All 57 evidence records and the submission-reported 57 students remain intact; multiple different students at one company are not deleted. Compound company fields remain intact. This is organization-name deduplication, not proof of duplicated students."
