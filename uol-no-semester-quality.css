@@ -1,0 +1,7 @@
+/* UOL OEL — remove semester navigation, filters and embedded data quality from UI.
+   Hidden controls remain mounted at All so existing JS/PDF routines continue to work. */
+#monthFilter, label:has(> #semester), .panel-monthly,
+#filterSemesterGraph, article:has(#filterSemesterGraph),
+#data-quality-scope, [data-exec-view="monthly"], [data-exec-view="quality"] { display:none !important; }
+/* Ensure analytics rows use available space after semester panel is removed. */
+#analytics-section .panel:not(.panel-monthly) { min-width:0; }

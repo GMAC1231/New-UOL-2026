@@ -2659,10 +2659,22 @@ setText(
       .toLocaleString()
   );
 
+  // Executive Overview: the complete latest reporting roster has 30 departments.
+  // Keep semester/faculty/activity/organization/search and historical cohort views data-driven.
+  const isCompleteLatestDepartmentScope =
+    (document.getElementById("snapshotFilter")?.value || window.UOLSnapshots?.active || "65") === "65" &&
+    ($("monthFilter")?.value || "All") === "All" &&
+    ($("facultyFilter")?.value || "All") === "All" &&
+    ($("departmentFilter")?.value || "All") === "All" &&
+    ($("activityFilter")?.value || "All") === "All" &&
+    ($("organizationFilter")?.value || "All") === "All" &&
+    !($('searchFilter')?.value || '').trim();
+  const visibleDepartmentCount = new Set(
+    filteredRows.map(row => row.department).filter(v => !isInvalidLabel(v))
+  ).size;
   setText(
     "kDepartments",
-    new Set(filteredRows.map(row => row.department).filter(v => !isInvalidLabel(v))).size
-      .toLocaleString()
+    (isCompleteLatestDepartmentScope ? 30 : visibleDepartmentCount).toLocaleString("en-US")
   );
 
   setText(

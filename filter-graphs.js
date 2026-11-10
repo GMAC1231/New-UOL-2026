@@ -110,7 +110,7 @@ function draw(){
     {id:'filterFacultyGraph',title:'Faculty-wise Activity Volume',type:'bar',items:faculty,horizontal:true,key:'faculty'},
     {id:'filterActivityGraph',title:'All Activity Types',type:'bar',items:activity,horizontal:true,key:'activity'},
     {id:'filterDepartmentGraph',title:'Department-wise Activity Volume',type:'bar',items:dept,horizontal:true,key:'department'},
-    {id:'filterSemesterGraph',title:'Semester Comparison',type:'bar',items:semester,horizontal:false,key:'semester'}
+    /* Semester graph removed by reporting requirements */
   ];
   lastSpecs=specs;
   for(const spec of specs){
