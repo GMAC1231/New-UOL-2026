@@ -1,7 +1,7 @@
 (()=>{'use strict';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const get=()=>window.UOLSectionPopupData?.();
-const root=document.createElement('div');root.className='uol-major-overlay';root.hidden=true;root.innerHTML='<section class="uol-major-dialog" role="dialog" aria-modal="true" aria-labelledby="uolMajorTitle"><div class="uol-major-head"><div><small>UOL · SOURCE EVIDENCE</small><h2 id="uolMajorTitle">Details</h2><p id="uolMajorSummary"></p></div><button type="button" class="uol-major-close" aria-label="Close details">×</button></div><div class="uol-major-tools"><input id="uolMajorSearch" placeholder="Search focal person, activity, department, organization…" aria-label="Search popup records"><button id="uolMajorExport" type="button">Export CSV</button></div><div class="uol-major-scroll"><table><thead><tr><th>Ref ID</th><th>Faculty</th><th>Department</th><th>Focal Person</th><th>Activity</th><th>Organization / Partner</th><th>Quantity</th><th>Semester</th></tr></thead><tbody id="uolMajorRows"></tbody></table></div><p class="uol-major-note">Source records and reported quantities are separate. Repeated source entries are shown for review, not automatically deleted.</p></section>';
+const root=document.createElement('div');root.className='uol-major-overlay';root.hidden=true;root.innerHTML='<section class="uol-major-dialog" role="dialog" aria-modal="true" aria-labelledby="uolMajorTitle"><div class="uol-major-head"><div><small>UOL · SOURCE EVIDENCE</small><h2 id="uolMajorTitle">Details</h2><p id="uolMajorSummary"></p></div><button type="button" class="uol-major-close" aria-label="Close details">×</button></div><div class="uol-major-tools"><input id="uolMajorSearch" placeholder="Search focal person, activity, department, organization…" aria-label="Search popup records"><button id="uolMajorExport" type="button">Export CSV</button></div><div class="uol-major-scroll"><table><thead><tr><th>Ref ID</th><th>Faculty</th><th>Department</th><th>Focal Person</th><th>Activity</th><th>Organization / Partner</th><th>Quantity</th></tr></thead><tbody id="uolMajorRows"></tbody></table></div><p class="uol-major-note">Source records and reported quantities are separate. Repeated source entries are shown for review, not automatically deleted.</p></section>';
 document.body.append(root);
 let full=[],shown=[];
 const val=(r,k,ctx)=>{
@@ -14,10 +14,10 @@ const val=(r,k,ctx)=>{
  case 'Activity':return r.type||r['MoU Type']||r['Section 2: Activity Dashboard']||(ctx.page==='basic'?'Submission Record':'MoU / Collaboration');
  case 'Organization / Partner':return r.org||r['Partner Institution']||r['Organization / Activity Title']||'';
  case 'Quantity':return r.number??r['How Many']??'1';
- case 'Semester':return r.semester||'';
+
  }
 };
-const cols=['Ref ID','Faculty','Department','Focal Person','Activity','Organization / Partner','Quantity','Semester'];
+const cols=['Ref ID','Faculty','Department','Focal Person','Activity','Organization / Partner','Quantity'];
 function paint(){const query=document.getElementById('uolMajorSearch').value.trim().toLowerCase(),ctx=get();shown=full.filter(r=>!query||cols.some(k=>String(val(r,k,ctx)).toLowerCase().includes(query)));document.getElementById('uolMajorRows').innerHTML=shown.slice(0,600).map(r=>'<tr>'+cols.map(k=>'<td>'+esc(val(r,k,ctx)||'—')+'</td>').join('')+'</tr>').join('')||'<tr><td colspan="8">No matching source records</td></tr>';document.getElementById('uolMajorSummary').textContent=`${shown.length.toLocaleString()} matching rows · ${new Set(shown.map(r=>String(r.ref||r['Ref #']||r['Submission Ref']||''))).size.toLocaleString()} submissions · ${shown.reduce((t,r)=>t+(Number(r.number??r['How Many']??1)||0),0).toLocaleString()} reported quantity`}
 function open(title,filter){const ctx=get();if(!ctx)return;full=ctx.rows.filter(r=>!filter||filter(r,ctx));document.getElementById('uolMajorTitle').textContent=title;document.getElementById('uolMajorSearch').value='';root.hidden=false;document.body.classList.add('uol-major-open');paint()}
 function close(){root.hidden=true;document.body.classList.remove('uol-major-open')}

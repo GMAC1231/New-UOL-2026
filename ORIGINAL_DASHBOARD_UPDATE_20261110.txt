@@ -1,0 +1,6 @@
+Original UOL dashboard (HTML/CSS/JavaScript; no React)
+
+Executive Overview: the unfiltered 65-submission view displays the confirmed 30-department reporting roster. Filtered or historical selections continue to use their matching departments.
+Other figures, filters, popups, workbook files and PDF logic are not modified.
+
+Open START_DASHBOARD.bat (Windows) and visit http://localhost:8765/index.html. If the submission selector had been saved to a historical snapshot, explicitly select 65 Submissions (Latest).

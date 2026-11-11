@@ -3277,10 +3277,6 @@ function openPopup(
                 <strong>${Number(row.events || 0).toLocaleString()}${isPr46Internship(row) ? " reported students (98 documented)" : ""}</strong>
               </div>
 
-              <div class="detail-field">
-                <small>Semester</small>
-                <strong>${displayValue(semesterForActivity(row))}</strong>
-              </div>
 
               <div class="detail-field">
                 <small>Person</small>
