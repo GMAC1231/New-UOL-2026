@@ -4826,6 +4826,48 @@ function drawPdfChartPage(doc, item, title = "Graph", startY = 58, section = nul
     {size:7, color:[114, 133, 150]});
 }
 
+// PDF-only output normalization.  Some source remarks contain irrecoverable
+// mojibake (for example "Ø5Ü...") caused by the data extraction process.
+// These bytes cannot be repaired by a PDF font.  Preserve the source Excel
+// values verbatim; only replace unreadable fragments in generated PDF tables.
+function pdfSafeCellText(value) {
+  if (value === null || value === undefined) return "-";
+  let text = String(value).normalize("NFKC")
+    .replace(/&amp;/gi, "&").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"').replace(/&#39;|&apos;/gi, "'")
+    .replace(/[\u200B-\u200D\uFEFF\u2060]/g, "")
+    .replace(/\r\n?/g, "\n")
+    .replace(/[\t\u00A0]+/g, " ")
+    .replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"')
+    .replace(/[\u2013\u2014]/g, "-")
+    .replace(/\u2022/g, "-");
+
+  // Delete only individual corrupted source tokens, not complete cell values.
+  // Show a readable audit marker rather than printing the source's bad bytes.
+  let corruptFound = false;
+  text = text.split(/(\s+)/).map(part => {
+    if (/^(?:\s+)$/.test(part)) return part;
+    if (/[\uFFFDØÙ]/u.test(part) || /(?:Ã.|Â.|â€)/u.test(part)) {
+      corruptFound = true;
+      return "";
+    }
+    return part;
+  }).join(" ").replace(/\s+/g, " ").trim();
+  if (corruptFound) text = (text ? text + " " : "") + "[Unreadable source text; verify in Excel]";
+
+  // Helvetica/jsPDF cannot draw Arabic and many other non-Latin glyphs.
+  // Do not fabricate a transliteration.  Source remains intact in the workbook.
+  if (/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/u.test(text)) {
+    text = text.replace(/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]+/gu, " [Non-Latin source text in Excel] ");
+  }
+  // Break long unspaced words (URLs, faulty OCR, etc.) so AutoTable wraps them.
+  // Make a real whitespace break: jsPDF's built-in Helvetica has no soft-hyphen.
+  text = text.replace(/\S{57,}/g, token =>
+    token.match(/.{1,35}/g).join(" ")
+  );
+  return text.replace(/\s+/g, " ").trim() || "-";
+}
+
 // Central table renderer: one consistent, print-friendly visual system for
 // faculty, department, activity and detailed-record pages.
 function addModernPdfTable(doc, config) {
@@ -4849,16 +4891,17 @@ function addModernPdfTable(doc, config) {
   doc.autoTable({
     startY: config.startY || 60,
     head: [config.headers],
-    body: config.rows,
+    body: config.rows.map(row => row.map(pdfSafeCellText)),
     theme: "grid",
     showHead: "everyPage",
     rowPageBreak: "avoid",
-    margin: { left: 14, right: 14, top: 58, bottom: 18 },
+    pageBreak: "auto",
+    margin: { left: 14, right: 14, top: 58, bottom: 21 },
     tableWidth: usableWidth,
     styles: {
       font: "helvetica", fontSize: compact ? 7.4 : 9.2,
       cellPadding: compact ? {top: 2.8, bottom: 2.8, left: 2.2, right: 2.2} : {top: 4.1, bottom: 4.1, left: 4, right: 4},
-      overflow: "linebreak", valign: "middle", textColor: [8, 25, 42],
+      overflow: "linebreak", valign: "top", textColor: [8, 25, 42],
       lineColor: [218, 228, 235], lineWidth: 0.16
     },
     headStyles: {
