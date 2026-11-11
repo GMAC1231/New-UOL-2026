@@ -15,7 +15,7 @@
    const sh=book.Sheets['All Submissions'];
    if(!sh)throw Error('All Submissions worksheet missing');
    const all=XLSX.utils.sheet_to_json(sh,{defval:'',raw:false});
-   const departments=new Set(all.map(row=>String(row.Department||'').trim()).filter(valid));
+   const departments=new Set(all.map(row=>String(row.Department||'').trim()).filter(v=>valid(v) && normal(v) !== 'department of physics'));
    const physics=all.filter(r=>normal(r.Department)==='department of physics');
    const badge=document.createElement('section');badge.className='uol-coverage-banner';
    badge.setAttribute('aria-label','Submission department coverage');

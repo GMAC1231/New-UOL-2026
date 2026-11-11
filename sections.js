@@ -507,7 +507,7 @@ async function boot(){
   const source=await workbook('data/65_Submissions_Source.xlsx');
   roster=sheet(source,'All Submissions').filter(r=>valid(r['Ref #']) && window.UOLSnapshots.contains(r['Ref #']));
   submissionByRef=new Map(roster.map(r=>[clean(r['Ref #']),r]));
-  departmentRoster=roster.filter(r=>valid(r.Department)).map(r=>({Department:clean(r.Department),Faculty:clean(r.Faculty)}));
+  departmentRoster=roster.filter(r=>valid(r.Department) && clean(r.Department).toLowerCase() !== 'department of physics').map(r=>({Department:clean(r.Department),Faculty:clean(r.Faculty)}));
   facultyRoster=uniq(roster.map(r=>r.Faculty));
    updateSemesterLabels();
   const tagSemester=r=>{

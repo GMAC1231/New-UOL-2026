@@ -708,7 +708,7 @@ async function loadInstitutionalRoster(){
    .filter(r=>window.UOLSnapshots.contains(r['Ref #']));
   uolSubmissionRoster=submissionRows.map(r=>({ref:clean(r['Ref #']),faculty:clean(r.Faculty),department:clean(r.Department),month:clean(r['Reporting Month'])}));
   uolInstitutionalRoster=submissionRows
-   .filter(r=>!isInvalidLabel(r.Department))
+   .filter(r=>!isInvalidLabel(r.Department) && clean(r.Department).toLowerCase() !== 'department of physics')
    .map(r=>({department:clean(r.Department),faculty:clean(r.Faculty)}));
  }catch(err){console.warn('Institutional department roster unavailable',err);}
 }
@@ -727,7 +727,7 @@ function updateDepartmentFilter() {
 
   setSelectOptions(
     "departmentFilter",
-    [...rows.map(row => row.department),...uolInstitutionalRoster.filter(r=>faculty==='All'||r.faculty===faculty).map(r=>r.department)],
+    [...rows.filter(r=>clean(r.department).toLowerCase() !== 'department of physics').map(row => row.department),...uolInstitutionalRoster.filter(r=>faculty==='All'||r.faculty===faculty).map(r=>r.department)],
     "All Departments", optionTotals(rows, "department"), reconciledTotal(rows, {wholeCohort:isCompleteOverviewScope()})
   );
 }
@@ -2659,7 +2659,7 @@ setText(
       .toLocaleString()
   );
 
-  // Executive Overview: the complete latest reporting roster has 30 departments.
+  // Reporting scope: 29 departments; Department of Physics is outside the active reporting roster.
   // Keep semester/faculty/activity/organization/search and historical cohort views data-driven.
   const isCompleteLatestDepartmentScope =
     (document.getElementById("snapshotFilter")?.value || window.UOLSnapshots?.active || "65") === "65" &&
@@ -2670,11 +2670,11 @@ setText(
     ($("organizationFilter")?.value || "All") === "All" &&
     !($('searchFilter')?.value || '').trim();
   const visibleDepartmentCount = new Set(
-    filteredRows.map(row => row.department).filter(v => !isInvalidLabel(v))
+    filteredRows.map(row => row.department).filter(v => !isInvalidLabel(v) && clean(v).toLowerCase() !== 'department of physics')
   ).size;
   setText(
     "kDepartments",
-    (isCompleteLatestDepartmentScope ? 30 : visibleDepartmentCount).toLocaleString("en-US")
+    (isCompleteLatestDepartmentScope ? 29 : visibleDepartmentCount).toLocaleString("en-US")
   );
 
   setText(
