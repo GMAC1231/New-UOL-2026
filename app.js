@@ -3644,7 +3644,6 @@ function reportFilterDetails(section = null) {
   const current = getCurrentFilterSummary();
 
   return [
-    ["Semester", current.month === "All" ? "All Semesters" : current.month],
     ["Faculty", current.faculty === "All" ? "All Faculties" : current.faculty],
     ["Department", current.department === "All" ? "All Departments" : current.department],
     ["Activity Type", current.activity === "All" ? "All Activity Types" : current.activity],
@@ -3663,10 +3662,10 @@ function addPdfFilterBanner(doc, section, startY = 57) {
   const boxH = 30;
 
   const boxes = [
-    ["SEMESTER", items["Semester"], left, startY, boxW],
-    ["FACULTY", items["Faculty"], left + (boxW + gap), startY, boxW],
-    ["DEPARTMENT", items["Department"], left + (boxW + gap) * 2, startY, boxW],
-    ["ACTIVITY TYPE", items["Activity Type"], left + (boxW + gap) * 3, startY, boxW]
+    ["FACULTY", items["Faculty"], left, startY, boxW],
+    ["DEPARTMENT", items["Department"], left + (boxW + gap), startY, boxW],
+    ["ACTIVITY TYPE", items["Activity Type"], left + (boxW + gap) * 2, startY, boxW],
+    ["ORGANIZATION", items["Organization"], left + (boxW + gap) * 3, startY, boxW]
   ];
 
   boxes.forEach(([label, value, x, y, w]) => {
@@ -3702,7 +3701,6 @@ function reportSections() {
   const f = getCurrentFilterSummary();
   const parts = [];
 
-  if (f.month !== "All") parts.push(f.month);
   if (f.faculty !== "All") parts.push(f.faculty);
   if (f.department !== "All") parts.push(f.department);
   if (f.activity !== "All") parts.push(f.activity);
@@ -3888,7 +3886,6 @@ function reportDisplayValue(value) {
 
 function detailRows(rows) {
   return rows.filter(row => !row.pdfAggregateOnly).map(row => [
-    semesterForActivity(row) || "-",
     reportDisplayValue(row.faculty),
     reportDisplayValue(row.department),
     reportDisplayValue(row.type),
@@ -4467,7 +4464,6 @@ async function buildSectionCharts(section) {
   const facultyEntries = reportGroupBy(rows, "faculty").slice(0, 10);
   const departmentEntries = reportGroupBy(rows, "department");
   const typeEntries = activityBreakdown(rows);
-  const monthEntries = reportMonthBreakdown(rows);
 
   if (facultyEntries.length > 1) {
     charts.push({
@@ -4549,44 +4545,6 @@ async function buildSectionCharts(section) {
     });
   }
 
-  if (monthEntries.length) {
-    charts.push({
-      title: "Semester Trend",
-      image: await renderReportChart({
-        type: "line",
-        data: {
-          labels: monthEntries.map(item => wrapChartLabel(item[0], 18)),
-          datasets: [{
-            label: "Activities",
-            data: monthEntries.map(item => item[1]),
-            borderColor: "#0b6b3a",
-            backgroundColor: "#0b6b3a",
-            borderWidth: 12,
-            fill: false,
-            tension: 0,
-            spanGaps: true,
-            pointRadius: 18,
-            pointHoverRadius: 18,
-            pointBackgroundColor: "#ffffff",
-            pointBorderColor: "#0b6b3a",
-            pointBorderWidth: 8
-          }]
-        },
-        plugins: [semesterValueLabelsPlugin()],
-        options: {
-          plugins: {
-            title: { display: false },
-            legend: { display: false }
-          },
-          layout: { padding: { left: 80, right: 80, top: 80, bottom: 55 } },
-          scales: {
-            y: { beginAtZero: true, suggestedMax: Math.max(...monthEntries.map(item => item[1])) * 1.18, ticks: { precision: 0, autoSkip: false, font: { size: 30, weight: "bold" }, color: "#0f172a", padding: 12 }, grid: { color: "rgba(15,23,42,.14)", lineWidth: 2 }, border: { color: "#334155", width: 3 } },
-            x: { offset: true, grid: { display: false }, ticks: { autoSkip: false, maxRotation: 0, minRotation: 0, color: "#0f172a", padding: 18, font: { size: 30, weight: "bold" } }, border: { color: "#334155", width: 3 } }
-          }
-        }
-      }, 3200, 1650)
-    });
-  }
 
   return charts.slice(0, 4);
 }
@@ -5116,7 +5074,7 @@ async function generatePdfReport() {
     // ---------- VECTOR GRAPH PAGES: ONE GRAPH PER PAGE ----------
     const graphTitles = [
       "Faculty-wise Activities", "Activity Type Distribution",
-      "Department-wise Activities", "Semester Trend"
+      "Department-wise Activities"
     ];
     const orderedCharts = graphTitles
       .map(title => ({ title, entries: pdfGraphEntries(section, title) }))
@@ -5142,10 +5100,10 @@ async function generatePdfReport() {
 
     addModernPdfTable(doc, {
       startY: 58,
-      headers: ["SEMESTER", "FACULTY", "DEPARTMENT", "ACTIVITY TYPE", "HOW MANY", "ORGANIZATION", "FOCAL PERSON", "DESIGNATION", "SCHEDULED", "REMARKS / RESULT"],
+      headers: ["FACULTY", "DEPARTMENT", "ACTIVITY TYPE", "HOW MANY", "ORGANIZATION", "FOCAL PERSON", "DESIGNATION", "SCHEDULED", "REMARKS / RESULT"],
       rows: detailRows(section.rows),
-      numericColumns: [4],
-      widths: [20, 27, 30, 24, 13, 36, 22, 21, 14, 62],
+      numericColumns: [3],
+      widths: [33, 35, 28, 14, 40, 27, 25, 16, 65],
       compact: true,
       onPage: () => addPdfHeader(doc, detailSection, index, sections.length, "DETAILED RECORDS", logoDataUrl)
     });
@@ -5222,7 +5180,7 @@ async function printReport() {
         <div class="generated-on">Generated on: ${esc(reportGeneratedOn())}</div>
 
         ${sectionIndex === 0 ? `<div class="print-filters">
-          ${reportFilterDetails(section).filter(([label]) => label !== "Organization").map(([label,value]) => `<div class="print-filter"><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`).join("")}
+          ${reportFilterDetails(section).map(([label,value]) => `<div class="print-filter"><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`).join("")}
         </div>` : ""}
 
         <div class="kpis">
@@ -5260,7 +5218,7 @@ async function printReport() {
 
         <div class="page-section detailed-records-section">
         <h2>Detailed Records</h2>
-        <table><thead><tr><th>Semester</th><th>Faculty</th><th>Department</th><th>Activity Type</th><th>How Many</th><th>Organization</th><th>Focal Person</th><th>Designation</th><th>Scheduled</th></tr></thead><tbody>
+        <table><thead><tr><th>Faculty</th><th>Department</th><th>Activity Type</th><th>How Many</th><th>Organization</th><th>Focal Person</th><th>Designation</th><th>Scheduled</th><th>Remarks / Result</th></tr></thead><tbody>
           ${rows.map(cols => `<tr>${cols.map(col => `<td>${esc(col)}</td>`).join("")}</tr>`).join("")}
         </tbody></table>
         </div>
